@@ -1,0 +1,17 @@
+:root {
+  /* Colors */
+  --primary: #6366f1; /* Purple/Blue for buttons */
+  --text-primary: #1f2937; /* Dark text */
+  --text-secondary: #6b7280; /* Gray text */
+  --background: #f8fafc; /* Light gray background */
+  --error: #ef4444; /* Red for errors */
+
+  /* Spacing */
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 1.5rem; /* 24px */
+
+  /* Border radius */
+  --border-radius: 6px;
+}
