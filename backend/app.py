@@ -24,7 +24,11 @@ def test():
     cursor = mysql.get_db().cursor()
     cursor.execute('SHOW DATABASES')
     result = cursor.fetchall()
-    return jsonify({'databases': result})
+    return jsonify({
+        'status': 'success',
+        'message': 'API is running',
+        'databases': result
+    })
 
 app.register_blueprint(user_bp, url_prefix='/api')
 
