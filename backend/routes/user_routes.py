@@ -1,23 +1,18 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify
 from services.user_service import UserService
+from utils.jwt_util import token_required
 
-user_bp = Blueprint('users', __name__)
+user_bp = Blueprint('user', __name__)
 
-@user_bp.route('/users', methods=['POST'])
-def create_user():
-    try:
-        user_data = request.json
-        user_id = UserService.create_user(user_data)
-        return jsonify({'user_id': user_id}), 201
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
+@user_bp.route('/profile', methods=['GET'])
+@token_required
+def get_profile(current_user):
+    profile = UserService.get_profile(current_user['user_id'])
+    return jsonify(profile)
 
-@user_bp.route('/users/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    try:
-        user = UserService.get_user(user_id)
-        if user:
-            return jsonify(user)
-        return jsonify({'message': 'User not found'}), 404
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
+@user_bp.route('/profile', methods=['PUT'])
+@token_required
+def update_profile(current_user):
+    data = request.json
+    UserService.update_profile(current_user['user_id'], data)
+    return jsonify({'message': 'Profile updated'})

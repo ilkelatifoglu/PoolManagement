@@ -6,22 +6,34 @@ import {
   Navigate,
 } from "react-router-dom";
 
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/routing/ProtectedRoute";
 import Navbar from "./components/layout/Navbar/Navbar";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-
+import Dashboard from "./pages/dashboard/Dashboard";
 function App() {
   const [apiStatus, setApiStatus] = useState({ status: "loading" });
 
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

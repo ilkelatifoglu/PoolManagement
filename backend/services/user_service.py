@@ -1,58 +1,73 @@
 from database.connection import get_cursor, commit_db
 from database.queries.user_queries import *
-from werkzeug.security import generate_password_hash, check_password_hash
 
 class UserService:
     @staticmethod
-    def create_user(user_data):
-        cursor = get_cursor()
+    def get_profile(user_id):
         try:
-            # Hash password before storing
-            hashed_password = generate_password_hash(user_data['password'])
+            cursor = get_cursor()
+            cursor.execute(GET_USER_PROFILE, (user_id,))
+            profile = cursor.fetchone()
             
-            # Insert base user
-            cursor.execute(CREATE_USER, (
-                user_data['name'],
-                user_data['gender'],
-                user_data['email'],
-                hashed_password,
-                user_data['birth_date'],
-                user_data['blood_type'],
-                user_data['phone_number']
-            ))
-            
-            user_id = cursor.lastrowid
-            
-            # Handle role-specific data
-            if user_data['role'] == 'manager':
-                cursor.execute(CREATE_MANAGER, (
-                    user_id,
-                    user_data['employment_date'],
-                    user_data['experience_level']
-                ))
-            elif user_data['role'] == 'swimmer':
-                cursor.execute(CREATE_SWIMMER, (
-                    user_id,
-                    user_data['swim_level'],
-                    user_data['balance']
-                ))
-            # TODO: add other roles
-            
-            commit_db()
-            return user_id
-            
+            if not profile:
+                raise ValueError("User not found")
+                
+            return profile
         except Exception as e:
-            print(f"Error creating user: {e}")
+            print(f"Error fetching profile: {e}")
             raise
 
     @staticmethod
-    def get_user(user_id):
-        cursor = get_cursor()
-        cursor.execute(GET_USER_BY_ID, (user_id,))
-        return cursor.fetchone()
+    def update_profile(user_id, data):
+        try:
+            cursor = get_cursor()
+            
+            # Update basic user info
+            cursor.execute(UPDATE_USER_PROFILE, (
+                data.get('name'),
+                data.get('gender'),
+                data.get('blood_type'),
+                user_id
+            ))
+
+            # Update phone if provided
+            if 'phone_number' in data:
+                cursor.execute(UPDATE_USER_PHONE, (
+                    user_id,
+                    data['phone_number']
+                ))
+
+            # Update role-specific info
+            if 'swim_level' in data:
+                cursor.execute(UPDATE_SWIMMER_PROFILE, (
+                    data['swim_level'],
+                    user_id
+                ))
+
+            commit_db()
+            return self.get_profile(user_id)
+        except Exception as e:
+            print(f"Error updating profile: {e}")
+            raise
 
     @staticmethod
-    def get_user_by_email(email):
-        cursor = get_cursor()
-        cursor.execute(GET_USER_BY_EMAIL, (email,))
-        return cursor.fetchone()
+    def get_balance(user_id):
+        try:
+            cursor = get_cursor()
+            cursor.execute(GET_USER_BALANCE, (user_id,))
+            result = cursor.fetchone()
+            return result['balance'] if result else 0
+        except Exception as e:
+            print(f"Error getting balance: {e}")
+            raise
+
+    @staticmethod
+    def update_balance(user_id, amount):
+        try:
+            cursor = get_cursor()
+            cursor.execute(UPDATE_USER_BALANCE, (amount, user_id))
+            commit_db()
+            return self.get_balance(user_id)
+        except Exception as e:
+            print(f"Error updating balance: {e}")
+            raise

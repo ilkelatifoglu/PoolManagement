@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { authService } from "../../services/auth.service";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button/Button";
 import "./login.css";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [credentials, setCredentials] = useState({
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
@@ -14,8 +15,8 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
-    setCredentials({
-      ...credentials,
+    setFormData({
+      ...formData,
       [e.target.name]: e.target.value,
     });
   };
@@ -26,11 +27,10 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await authService.login(credentials);
-      localStorage.setItem("token", response.data.token);
+      await login(formData);
       navigate("/dashboard");
     } catch (err) {
-      setError("Invalid email or password");
+      setError(err.response?.data?.message || "Invalid email or password");
     } finally {
       setIsLoading(false);
     }
@@ -40,6 +40,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-card">
         <h1>Welcome Back!</h1>
+        <p className="login-subtitle">Please Log In</p>
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
@@ -47,8 +48,9 @@ const Login = () => {
               type="email"
               name="email"
               placeholder="Email"
-              value={credentials.email}
+              value={formData.email}
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -57,8 +59,9 @@ const Login = () => {
               type="password"
               name="password"
               placeholder="Password"
-              value={credentials.password}
+              value={formData.password}
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -68,8 +71,13 @@ const Login = () => {
             Log In
           </Button>
 
-          <div className="forgot-password">
-            <a href="/forgot-password">Forgot password?</a>
+          <div className="form-footer">
+            <Link to="/forgot-password" className="forgot-password">
+              Forgot password?
+            </Link>
+            <Link to="/register" className="register-link">
+              Don't have an account? Register
+            </Link>
           </div>
         </form>
       </div>

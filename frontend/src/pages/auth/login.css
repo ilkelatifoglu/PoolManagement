@@ -60,3 +60,23 @@
   text-decoration: none;
   font-size: 0.875rem;
 }
+
+.form-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.forgot-password,
+.register-link {
+  color: #6366f1;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s;
+}
+
+.forgot-password:hover,
+.register-link:hover {
+  color: #4f46e5;
+}
