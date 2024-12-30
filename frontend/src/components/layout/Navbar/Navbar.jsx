@@ -74,7 +74,7 @@ const Navbar = () => {
               Cart
             </Link>
             <button onClick={handleLogout} className="logout">
-              Log out
+              Logout
             </button>
           </div>
         ) : (
