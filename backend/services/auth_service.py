@@ -31,16 +31,15 @@ class AuthService:
                 user_data['birth_date'],
                 user_data['blood_type']
             ))
-            user_id = cursor.lastrowid
+            
+            # Insert phone - only pass phone_number since LAST_INSERT_ID() is used
+            cursor.execute(REGISTER_PHONE, (user_data['phone_number'],))
 
-            # Insert phone
-            cursor.execute(REGISTER_PHONE, (user_id, user_data['phone_number']))
-
-            # Insert swimmer details
-            cursor.execute(REGISTER_SWIMMER, (user_id, user_data['swim_level']))
+            # Insert swimmer - only pass swim_level since LAST_INSERT_ID() is used
+            cursor.execute(REGISTER_SWIMMER, (user_data['swim_level'],))
 
             commit_db()
-            return user_id
+            return cursor.lastrowid
         except Exception as e:
             print(f"Registration error: {e}")
             raise

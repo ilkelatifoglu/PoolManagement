@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from database.connection import mysql, init_app
 from routes.auth_routes import auth_bp
@@ -12,13 +12,11 @@ def create_app():
     
     # Configure CORS with specific settings
     CORS(app, 
-         resources={r"/auth/*": {  # This will apply to all /auth routes
-             "origins": ["http://localhost:3000"],
+         resources={r"/auth/*": {
+             "origins": "http://localhost:3000",
              "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
              "allow_headers": ["Content-Type", "Authorization"],
-             "expose_headers": ["Content-Type", "Authorization"],
-             "supports_credentials": True,
-             "max_age": 120  # Cache preflight requests for 2 minutes
+             "supports_credentials": True
          }})
 
     # Configure MySQL
@@ -27,21 +25,14 @@ def create_app():
     app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
     app.config['MYSQL_DATABASE_DB'] = os.getenv('MYSQL_DATABASE')
     
+    # Configure JWT Secret Key
+    app.config['SECRET_KEY'] = os.getenv('JWT_SECRET')
+    
     # Initialize extensions
     init_app(app)
     
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/auth')
-    
-    @app.after_request
-    def after_request(response):
-        origin = request.headers.get('Origin')
-        if origin == 'http://localhost:3000':
-            response.headers.add('Access-Control-Allow-Origin', origin)
-            response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-            response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-            response.headers.add('Access-Control-Allow-Credentials', 'true')
-        return response
     
     return app
 
