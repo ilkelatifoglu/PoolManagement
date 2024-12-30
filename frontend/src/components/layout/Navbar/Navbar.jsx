@@ -3,6 +3,7 @@ import { authService } from "../../../services/auth.service";
 import "./navbar.css";
 
 import poolIcon from "../../../assets/icons/pool-icon.png";
+import cartIcon from "../../../assets/icons/cart-icon.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -57,7 +58,22 @@ const Navbar = () => {
             >
               Events
             </Link>
-            <button onClick={handleLogout} className="nav-link logout">
+            <Link
+              to="/profile"
+              className={`nav-link ${isActive("/profile") ? "active" : ""}`}
+            >
+              Profile
+            </Link>
+            <Link
+              to="/cart"
+              className={`nav-link cart-link ${
+                isActive("/cart") ? "active" : ""
+              }`}
+            >
+              <img src={cartIcon} alt="Cart" className="cart-icon" />
+              Cart
+            </Link>
+            <button onClick={handleLogout} className="logout">
               Log out
             </button>
           </div>

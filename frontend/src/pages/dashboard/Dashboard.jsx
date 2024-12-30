@@ -26,38 +26,30 @@ const Dashboard = () => {
       <div className="dashboard-grid">
         {/* User Info Card */}
         <div className="dashboard-card">
-          <h2>Account Summary</h2>
+          <h2>Summary</h2>
           <div className="info-list">
-            {user?.role === "swimmer" && (
-              <>
-                <div className="info-item">
-                  <span className="label">Balance</span>
-                  <span className="value">$50.00</span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Swim Level</span>
-                  <span className="value">Intermediate</span>
-                </div>
-              </>
-            )}
+            <div className="info-item">
+              <span className="label">Balance</span>
+              <span className="value">$50.00</span>
+            </div>
             <div className="info-item">
               <span className="label">Phone</span>
               <span className="value">{user?.phone_number}</span>
             </div>
+            {user?.role === "swimmer" && (
+              <div className="info-item">
+                <span className="label">Swim Level</span>
+                <span className="value">Intermediate</span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Quick Actions Card */}
+        {/* Notifications Card (replacing Quick Actions) */}
         <div className="dashboard-card">
-          <h2>Quick Actions</h2>
-          <div className="action-buttons">
-            {user?.role === "swimmer" && (
-              <>
-                <button className="action-btn">Book Session</button>
-                <button className="action-btn">Add Money</button>
-              </>
-            )}
-            <button className="action-btn">View Schedule</button>
+          <h2>Notifications</h2>
+          <div className="notifications-list">
+            <p className="empty-state">No new notifications</p>
           </div>
         </div>
 
