@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState } from "react"; // Added `useState` import
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
-
 
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/routing/ProtectedRoute";
@@ -16,10 +15,10 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Profile from "./pages/profile/Profile";
 import CreateClass from "./pages/classes/CreateClass"; // Corrected path
 import AddClass from "./pages/classes/ClassList"; // Corrected path
-function App() {
-  const [apiStatus, setApiStatus] = useState({ status: "loading" });
 
 function App() {
+  const [apiStatus, setApiStatus] = useState({ status: "loading" }); // Correctly initialized `useState`
+
   return (
     <AuthProvider>
       <Router>
@@ -41,7 +40,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/profile"
             element={
@@ -50,7 +48,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
         </Routes>
       </Router>
     </AuthProvider>
