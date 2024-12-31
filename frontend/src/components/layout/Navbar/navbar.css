@@ -28,7 +28,7 @@
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .nav-link {
@@ -64,13 +64,15 @@
   background-color: var(--primary-dark);
 }
 
-.cart-link {
+.icon-link {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  position: relative;
+  padding: 0.25rem;
+  margin: 0;
 }
 
-.cart-icon {
-  height: 20px;
-  width: 20px;
+.nav-icon {
+  height: 34px;
+  width: 34px;
 }

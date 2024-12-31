@@ -11,13 +11,11 @@ def create_app():
     app = Flask(__name__)
     
     # Configure CORS with specific settings
-    CORS(app, 
-         resources={r"/auth/*": {
-             "origins": "http://localhost:3000",
-             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-             "allow_headers": ["Content-Type", "Authorization"],
-             "supports_credentials": True
-         }})
+    CORS(app,
+         supports_credentials=True,
+         origins=["http://localhost:3000"],
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
     # Configure MySQL
     app.config['MYSQL_DATABASE_HOST'] = os.getenv('MYSQL_HOST')
