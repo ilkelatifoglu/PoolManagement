@@ -3,6 +3,10 @@ import { authService } from "../../../services/auth.service";
 import "./navbar.css";
 
 import poolIcon from "../../../assets/icons/pool-icon.png";
+import bellIconPrimary from "../../../assets/icons/bell-icon-primary.png";
+import bellIconSecondary from "../../../assets/icons/bell-icon-secondary.png";
+import cartIconPrimary from "../../../assets/icons/cart-icon-primary.png";
+import cartIconSecondary from "../../../assets/icons/cart-icon-secondary.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -57,8 +61,42 @@ const Navbar = () => {
             >
               Events
             </Link>
-            <button onClick={handleLogout} className="nav-link logout">
-              Log out
+            <Link
+              to="/profile"
+              className={`nav-link ${isActive("/profile") ? "active" : ""}`}
+            >
+              Profile
+            </Link>
+            <Link
+              to="/notifications"
+              className={`nav-link icon-link ${
+                isActive("/notifications") ? "active" : ""
+              }`}
+            >
+              <img
+                src={
+                  isActive("/notifications")
+                    ? bellIconPrimary
+                    : bellIconSecondary
+                }
+                alt="Notifications"
+                className="nav-icon"
+              />
+            </Link>
+            <Link
+              to="/cart"
+              className={`nav-link icon-link ${
+                isActive("/cart") ? "active" : ""
+              }`}
+            >
+              <img
+                src={isActive("/cart") ? cartIconPrimary : cartIconSecondary}
+                alt="Cart"
+                className="nav-icon"
+              />
+            </Link>
+            <button onClick={handleLogout} className="logout">
+              Logout
             </button>
           </div>
         ) : (

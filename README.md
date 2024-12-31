@@ -1,3 +1,5 @@
+**_Important Note: Don't forget to add JWT_SECRET to your backend .env file_**
+
 # Pool Management System
 
 ## Project Setup
@@ -31,6 +33,7 @@ MYSQL_USER=your_rds_username
 MYSQL_PASSWORD=your_rds_password
 MYSQL_PORT=your_rds_port
 MYSQL_DATABASE=pool_management
+JWT_SECRET=your_jwt_secret
 ```
 
 4. Run Flask server:

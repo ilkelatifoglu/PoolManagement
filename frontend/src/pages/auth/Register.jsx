@@ -39,7 +39,18 @@ const Register = () => {
     }
 
     try {
-      await authService.register(formData);
+      const registrationData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        birth_date: formData.birthDate,
+        blood_type: formData.bloodType,
+        phone_number: formData.phoneNumber,
+        swim_level: formData.swimLevel,
+        gender: formData.gender,
+      };
+
+      await authService.register(registrationData);
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
@@ -137,9 +148,8 @@ const Register = () => {
           <div className="form-row">
             <div className="form-group half">
               <input
-                type="text"
+                type="date"
                 name="birthDate"
-                placeholder="YYYY-MM-DD"
                 value={formData.birthDate}
                 onChange={handleChange}
                 required
@@ -168,7 +178,7 @@ const Register = () => {
               required
             >
               <option value="">Select Blood Type</option>
-              {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(
+              {["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"].map(
                 (type) => (
                   <option key={type} value={type}>
                     {type}

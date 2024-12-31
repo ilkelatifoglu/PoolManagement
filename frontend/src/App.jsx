@@ -6,14 +6,18 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import { AuthProvider } from "./context/AuthContext"; // Corrected path
-import ProtectedRoute from "./components/routing/ProtectedRoute"; // Corrected path
-import Navbar from "./components/layout/Navbar/Navbar"; // Corrected path
-import Login from "./pages/auth/Login"; // Corrected path
-import Register from "./pages/auth/Register"; // Corrected path
-import Dashboard from "./pages/dashboard/Dashboard"; // Corrected path
+
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/routing/ProtectedRoute";
+import Navbar from "./components/layout/Navbar/Navbar";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import Dashboard from "./pages/dashboard/Dashboard";
+import Profile from "./pages/profile/Profile";
 import CreateClass from "./pages/classes/CreateClass"; // Corrected path
 import AddClass from "./pages/classes/ClassList"; // Corrected path
+function App() {
+  const [apiStatus, setApiStatus] = useState({ status: "loading" });
 
 function App() {
   return (
@@ -37,7 +41,16 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
+
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+
         </Routes>
       </Router>
     </AuthProvider>
