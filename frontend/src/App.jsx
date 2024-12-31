@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
+
 
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/routing/ProtectedRoute";
@@ -13,17 +14,25 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Profile from "./pages/profile/Profile";
+import CreateClass from "./pages/classes/CreateClass"; // Corrected path
+import AddClass from "./pages/classes/ClassList"; // Corrected path
 function App() {
   const [apiStatus, setApiStatus] = useState({ status: "loading" });
 
+function App() {
   return (
     <AuthProvider>
       <Router>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
+          {/* Public Routes */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/create-class" element={<CreateClass />} />
+          <Route path="/add-class" element={<AddClass />} />
+
+          {/* Protected Routes */}
           <Route
             path="/dashboard"
             element={
@@ -32,6 +41,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/profile"
             element={
@@ -40,6 +50,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
         </Routes>
       </Router>
     </AuthProvider>
