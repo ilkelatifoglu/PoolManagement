@@ -31,3 +31,11 @@ def close_db(e=None):
 def init_app(app):
     mysql.init_app(app)
     app.teardown_appcontext(close_db)
+
+# Expose a `db` object for backward compatibility
+db = {
+    "execute": lambda query, params=(): get_cursor().execute(query, params),
+    "fetchone": lambda: get_cursor().fetchone(),
+    "fetchall": lambda: get_cursor().fetchall(),
+    "commit": commit_db
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -6,23 +6,29 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/routing/ProtectedRoute";
-import Navbar from "./components/layout/Navbar/Navbar";
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import Dashboard from "./pages/dashboard/Dashboard";
-function App() {
-  const [apiStatus, setApiStatus] = useState({ status: "loading" });
+import { AuthProvider } from "./context/AuthContext"; // Corrected path
+import ProtectedRoute from "./components/routing/ProtectedRoute"; // Corrected path
+import Navbar from "./components/layout/Navbar/Navbar"; // Corrected path
+import Login from "./pages/auth/Login"; // Corrected path
+import Register from "./pages/auth/Register"; // Corrected path
+import Dashboard from "./pages/dashboard/Dashboard"; // Corrected path
+import CreateClass from "./pages/classes/CreateClass"; // Corrected path
+import AddClass from "./pages/classes/ClassList"; // Corrected path
 
+function App() {
   return (
     <AuthProvider>
       <Router>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
+          {/* Public Routes */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/create-class" element={<CreateClass />} />
+          <Route path="/add-class" element={<AddClass />} />
+
+          {/* Protected Routes */}
           <Route
             path="/dashboard"
             element={
@@ -31,6 +37,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          
         </Routes>
       </Router>
     </AuthProvider>
