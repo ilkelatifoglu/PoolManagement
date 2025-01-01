@@ -23,6 +23,18 @@ const ReportService = {
             throw error;
         }
     },
+
+    deleteReport: async (reportId) => {
+        console.log(reportId);
+        try {
+            const response = await axios.delete(`${API_BASE_URL}/report/delete/${reportId}`);
+            return response.data;
+        } catch (error) {
+            console.error("Failed to delete report:", error);
+            throw error;
+        }
+    },
+
 };
 
 export default ReportService;

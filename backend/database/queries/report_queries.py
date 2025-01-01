@@ -67,7 +67,6 @@ WHERE date = %s
 
 GENERATE_SYSTEM_REPORT = """INSERT INTO system_report (
     administrator_id,
-    report_id,
     date,
     daily_peak_hours,
     avg_cancellation_rate,
@@ -79,7 +78,7 @@ GENERATE_SYSTEM_REPORT = """INSERT INTO system_report (
     daily_class_count,
     avg_event_attendance_rate
 ) VALUES (
-    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
 );
 """
 
@@ -89,3 +88,8 @@ FROM system_report
 WHERE administrator_id = %s
 ORDER BY date DESC;
 """
+
+CHECK_SYSTEM_REPORT = """SELECT * FROM system_report WHERE report_id = %s"""
+DELETE_SYSTEM_REPORT = """DELETE FROM system_report WHERE report_id = %s"""
+INCREMENT_REPORT_COUNT = """UPDATE administrator SET report_count = report_count + 1 WHERE administrator_id = %s"""
+DECREMENT_REPORT_COUNT = """UPDATE administrator SET report_count = GREATEST(report_count - 1, 0) WHERE administrator_id = %s"""

@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     console.log("Initializing AuthContext");
     const token = localStorage.getItem("token");
-  
+
     if (token) {
       setLoading(true);
       authService
@@ -36,14 +36,14 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       console.log("No token found, setting loading to false");
     }
-  }, []);  
+  }, []);
 
   const login = async (credentials) => {
     setLoading(true);
     try {
       const response = await authService.login(credentials);
       if (!response.data.user.user_type) {
-          throw new Error("User role is missing");
+        throw new Error("User role is missing");
       }
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("role", response.data.user.user_type);
@@ -57,6 +57,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     authService.logout();
+    localStorage.clear();
     setUser(null);
   };
 

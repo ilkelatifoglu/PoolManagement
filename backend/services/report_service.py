@@ -3,7 +3,7 @@ from database.queries.report_queries import *
 
 class ReportService:
     @staticmethod
-    def generate_system_report(administrator_id, report_id, date):
+    def generate_system_report(administrator_id, date):
         cursor = get_cursor()
         try:
             # Fetch data for the report
@@ -52,7 +52,6 @@ class ReportService:
             # Insert the system report
             cursor.execute(GENERATE_SYSTEM_REPORT, (
                 administrator_id,
-                report_id,
                 date,
                 daily_peak_hours,
                 avg_cancellation_rate,
@@ -65,10 +64,13 @@ class ReportService:
                 avg_event_attendance_rate,
             ))
 
+            # Increment report count for the administrator
+            cursor.execute(INCREMENT_REPORT_COUNT, (administrator_id,))
+
             commit_db()
             return "System report generated successfully."
         except Exception as e:
-            print(f"Error generating system report for administrator_id={administrator_id}, report_id={report_id}, date={date}: {e}")
+            print(f"Error generating system report for administrator_id={administrator_id}, date={date}: {e}")
             raise
 
 
@@ -85,4 +87,29 @@ class ReportService:
             return reports
         except Exception as e:
             print(f"Error fetching system reports: {e}")
+            raise
+
+    @staticmethod
+    def delete_system_report(report_id):
+        cursor = get_cursor()
+        try:
+            # Check if the report exists
+            cursor.execute(CHECK_SYSTEM_REPORT, (report_id,))
+            report = cursor.fetchone()
+
+            if not report:
+                return False  # Report not found
+
+            administrator_id = report['administrator_id']  # Fetch the administrator ID from the report
+
+            # Delete the report
+            cursor.execute(DELETE_SYSTEM_REPORT, (report_id,))
+
+            # Decrement report count for the administrator
+            cursor.execute(DECREMENT_REPORT_COUNT, (administrator_id,))
+
+            commit_db()
+            return True
+        except Exception as e:
+            print(f"Error deleting report: {e}")
             raise

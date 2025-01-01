@@ -10,17 +10,15 @@ def generate_report():
         #print(data)
         # Extract input data
         administrator_id = data.get('administrator_id')
-        report_id = data.get('report_id')
         date = data.get('date')
 
         # Validate required fields
-        if not (administrator_id and report_id and date):
+        if not (administrator_id and date):
             return jsonify({'message': 'Missing required fields'}), 400
 
         # Generate the system report
         message = ReportService.generate_system_report(
             administrator_id=administrator_id,
-            report_id=report_id,
             date=date,
         )
 
@@ -39,5 +37,18 @@ def get_reports(administrator_id):
             return jsonify({'message': 'No reports found for the given administrator'}), 404
 
         return jsonify({'reports': reports}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+@report_bp.route('/delete/<int:report_id>', methods=['DELETE'])
+def delete_report(report_id):
+    try:
+        # Call the service method to delete the report
+        result = ReportService.delete_system_report(report_id)
+
+        if result:
+            return jsonify({'message': 'Report deleted successfully'}), 200
+        else:
+            return jsonify({'message': 'Report not found or could not be deleted'}), 404
     except Exception as e:
         return jsonify({'message': str(e)}), 500
