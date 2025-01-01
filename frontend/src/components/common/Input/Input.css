@@ -1,0 +1,117 @@
+/* General container styling */
+.mb-6 {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Label styling */
+  label {
+    font-weight: 500;
+    color: #4a5568; /* Gray-700 */
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  
+  label span {
+    color: #f56565; /* Red-500 */
+  }
+  
+  /* Input field styling */
+  input,
+  select {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0; /* Gray-300 */
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    outline: none;
+  }
+  
+  /* Focused input and select */
+  input:focus,
+  select:focus {
+    border-color: #4299e1; /* Blue-500 */
+    box-shadow: 0 4px 6px rgba(66, 153, 225, 0.3); /* Blue shadow */
+  }
+  
+  /* Disabled input and select */
+  input:disabled,
+  select:disabled {
+    background-color: #edf2f7; /* Gray-100 */
+    cursor: not-allowed;
+    color: #a0aec0; /* Gray-400 */
+  }
+  
+  /* Select dropdown styling */
+  select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNDI5OUUxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCIgd2lkdGg9IjEwIj4gPHBhdGggZD0iTTkgNEw0IDEwTDkgMTYiLz48cGF0aCBkPSJNMTIgNEwxNyAxMEwxMiAxNiIvPjwvc3ZnPg==');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+  }
+  
+  /* Error message styling */
+  .text-red-500 {
+    color: #f56565; /* Red-500 */
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  
+  /* Info text styling */
+  .text-gray-500 {
+    color: #a0aec0; /* Gray-400 */
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  
+  /* Toggle button container */
+  .flex.items-center.gap-4 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  /* Toggle button styling */
+  button {
+    width: 3.5rem;
+    height: 2rem;
+    border-radius: 1rem;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #e2e8f0; /* Gray-300 */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, justify-content 0.3s ease;
+  }
+  
+  button.bg-blue-500 {
+    background-color: #4299e1; /* Blue-500 */
+    justify-content: flex-end;
+  }
+  
+  /* Toggle circle styling */
+  button div {
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+  }
+  
+  /* Error shadow for input fields */
+  input.error,
+  select.error {
+    border-color: #f56565; /* Red-500 */
+    box-shadow: 0 4px 6px rgba(245, 101, 101, 0.3); /* Red shadow */
+  }
+  
+  /* Smooth hover effect */
+  input:hover,
+  select:hover {
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+  }
+  

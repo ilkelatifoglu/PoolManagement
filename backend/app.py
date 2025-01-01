@@ -5,6 +5,7 @@ from routes.auth_routes import auth_bp
 from routes.activity_routes import activities_bp
 from dotenv import load_dotenv
 import os
+from routes.class_routes import class_routes  # Import your class routes
 
 load_dotenv()
 
@@ -32,8 +33,18 @@ def create_app():
     
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/auth')
-
     app.register_blueprint(activities_bp, url_prefix='/activities')
+    app.register_blueprint(class_routes, url_prefix='/api')  # This registers the `/api` prefix
+
+    @app.after_request
+    def after_request(response):
+        origin = request.headers.get('Origin')
+        if origin == 'http://localhost:3000':
+            response.headers.add('Access-Control-Allow-Origin', origin)
+            response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+            response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+            response.headers.add('Access-Control-Allow-Credentials', 'true')
+        return response
     
     return app
 

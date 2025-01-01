@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; // Added `useState` import
 import {
   BrowserRouter as Router,
   Routes,
@@ -14,9 +14,12 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Profile from "./pages/profile/Profile";
+import CreateClass from "./pages/classes/CreateClass"; // Corrected path
+import AddClass from "./pages/classes/ClassList"; // Corrected path
 import MyActivities from "./pages/my_activities/MyActivities";
 
 function App() {
+  const [apiStatus, setApiStatus] = useState({ status: "loading" });
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   const toggleSidebar = () => {
@@ -26,7 +29,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div style={{ display: "flex" }}>
+      <div style={{ display: "flex" }}>
           <Sidebar isVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
           <div style={{ flex: 1 }}>
             <Navbar toggleSidebar={toggleSidebar} />
@@ -34,6 +37,10 @@ function App() {
               <Route path="/" element={<Navigate to="/login" />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/create-class" element={<CreateClass />} />
+              <Route path="/add-class" element={<AddClass />} />
+
+              {/* Protected Routes */}
               <Route
                 path="/dashboard"
                 element={
