@@ -53,7 +53,7 @@ def create_class(class_data):
 
 
 # Query to fetch all available classes
-def get_filtered_classes_query(filters):
+def get_filtered_classes_query(filters, swimmer_id):
     conn = get_db()
     try:
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -84,11 +84,13 @@ def get_filtered_classes_query(filters):
                     pool p ON b.pool_id = p.pool_id
                 JOIN 
                     user u ON c.coach_id = u.user_id
+                LEFT JOIN 
+                    schedules sch ON c.class_id = sch.class_id AND sch.swimmer_id = %(swimmer_id)s
                 WHERE 
-                    1=1
+                    sch.class_id IS NULL
             """
             conditions = []
-            params = {}
+            params = {'swimmer_id': swimmer_id}
 
             # Apply filters dynamically
             if 'name' in filters:
@@ -115,13 +117,11 @@ def get_filtered_classes_query(filters):
 
             query += " ORDER BY s.date ASC, s.start_time ASC"
 
-            print("Query to execute:", query)
-            print("With parameters:", params)
-            
             cursor.execute(query, params)
             return cursor.fetchall()
     except Exception as e:
         raise Exception(f"Error fetching classes: {e}")
+
     
 def fetch_classes():
     query = """
@@ -150,12 +150,60 @@ def add_class_to_cart_query(data):
                 INSERT INTO schedules (swimmer_id, class_id, is_paid)
                 VALUES (%(swimmer_id)s, %(class_id)s, 0)
             """
-            print(f"Executing query: {query} with data: {data}")  # Debug log
             cursor.execute(query, data)
             conn.commit()
     except pymysql.err.IntegrityError as e:
         conn.rollback()
-        raise Exception(f"Integrity error: {e}")  # Handles foreign key constraint issues
+        raise Exception(f"Integrity error: {e}")
     except Exception as e:
         conn.rollback()
-        raise Exception(f"Error adding to cart: {e}")  # Handles other exceptions
+        raise Exception(f"Error adding to cart: {e}")
+    
+def get_unadded_classes(swimmer_id):
+    conn = get_db()
+    try:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            query = """
+            SELECT 
+                c.class_id, 
+                c.name AS class_name, 
+                c.level, 
+                c.age_req, 
+                c.gender_req, 
+                c.capacity, 
+                c.price,
+                c.enroll_deadline,
+                p.name AS pool_name,
+                u.name AS coach_name,
+                s.date AS session_date,
+                CONCAT(TIME_FORMAT(s.start_time, '%%H:%%i'), ' - ', TIME_FORMAT(s.end_time, '%%H:%%i')) AS session_time,
+                l.lane_number AS lane_number,
+                (SELECT COUNT(*) FROM schedules sch WHERE sch.class_id = c.class_id) AS occupied_places
+            FROM
+                class c
+            JOIN
+                booking b ON c.class_id = b.booking_id
+            JOIN
+                session s ON b.session_id = s.session_id
+            JOIN
+                pool p ON b.pool_id = p.pool_id
+            JOIN
+                user u ON c.coach_id = u.user_id
+            LEFT JOIN
+                schedules sch ON c.class_id = sch.class_id AND sch.swimmer_id = %(swimmer_id)s
+            LEFT JOIN
+                lane l ON b.lane_number = l.lane_number AND b.pool_id = l.pool_id
+            WHERE
+                sch.class_id IS NULL
+                AND (SELECT COUNT(*) FROM schedules sch WHERE sch.class_id = c.class_id) < c.capacity
+            ORDER BY s.date ASC, s.start_time ASC
+            """
+
+            params = {'swimmer_id': swimmer_id}
+            print("Executing query:", query)
+            print("With parameters:", params)
+            cursor.execute(query, params)
+            return cursor.fetchall()
+    except Exception as e:
+        print(f"Database query failed: {e}")
+        raise Exception(f"Error fetching classes not in cart: {e}")

@@ -3,7 +3,8 @@ from services.class_service import create_new_class, get_filtered_classes, add_c
 from services.pool_service import get_all_pools
 from services.class_service import get_filtered_classes, add_class_to_cart
 from services.class_service import create_new_class, get_filtered_classes, add_class_to_cart
-
+from utils.jwt_util import token_required
+from services.class_service import fetch_classes_not_in_cart
 
 class_routes = Blueprint('class_routes', __name__)
 
@@ -24,30 +25,34 @@ def create_class_route():
 
 # Route to fetch all available classes
 @class_routes.route('/fetch-classes', methods=['GET'])
-def fetch_classes():
+@token_required
+def fetch_classes(user_data):
     try:
-        filters = request.args.to_dict()
-        print("Filters received:", filters)  # Debugging
-        classes = get_filtered_classes(filters)
+        swimmer_id = user_data['user_id']
+        classes = fetch_classes_not_in_cart(swimmer_id)
         return jsonify(classes), 200
     except Exception as e:
-        print("Error in fetching classes:", str(e))  # Debugging
         return jsonify({"error": str(e)}), 500
 
     
 @class_routes.route('/cart', methods=['POST'])
-def add_to_cart():
+@token_required
+def add_to_cart(user_data):
     try:
         data = request.json
-        required_fields = ['swimmer_id', 'class_id']
+        required_fields = ['class_id']
         missing_fields = [field for field in required_fields if field not in data]
         if missing_fields:
             return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400
-        
+
+        data['swimmer_id'] = user_data['user_id']  # Add user_id from token
         add_class_to_cart(data)
-        return jsonify({"message": "Class added to cart"}), 201
+        return jsonify({"message": "Class added to cart successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+
     
 # Route to fetch all pools
 @class_routes.route('/pools', methods=['GET'])

@@ -34,9 +34,10 @@ def token_required(f):
 
         token = token.split(' ')[1] if token.startswith('Bearer ') else token
         user_data = verify_token(token)
-        
+
         if not user_data:
             return jsonify({'message': 'Invalid token'}), 401
 
+        print(f"Decoded user_data: {user_data}")  # Debugging
         return f(user_data, *args, **kwargs)
     return decorated

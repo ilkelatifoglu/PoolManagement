@@ -23,6 +23,10 @@
     justify-content: flex-end;
   }
   
+  .table-section {
+    margin-top: 20px;
+  }
+  
   .classes-table {
     width: 100%;
     border-collapse: collapse;

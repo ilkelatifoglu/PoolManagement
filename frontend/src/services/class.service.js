@@ -1,19 +1,34 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:3001/api';
 
 export const createClass = async (classData) => {
     const response = await axios.post(`${API_URL}/classes`, classData);
     return response.data;
 };
 
-export const fetchClasses = async (filters = {}) => {
-    const queryString = new URLSearchParams(filters).toString();
-    const response = await axios.get(`${API_URL}/fetch-classes?${queryString}`);
-    return response.data;
-};
-
-  export const addToCart = async (cartData) => {
-    const response = await axios.post(`${API_URL}/cart`, cartData);
-    return response.data;
+export const fetchClasses = async () => {  
+    try {
+      const response = await axios.get(`${API_URL}/fetch-classes`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Replace with your token logic
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   };
+
+export const addToCart = async (classData) => {
+    try {
+        const response = await axios.post(`${API_URL}/cart`, classData, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`, // Replace with your token logic
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+};
