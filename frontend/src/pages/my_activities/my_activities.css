@@ -1,0 +1,27 @@
+.activities-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .activities-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .activity-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+  }
+  
+  .activity-item h2 {
+    margin: 0;
+    font-size: 1.5em;
+  }
+  
+  .activity-item p {
+    margin: 5px 0;
+  }
+  
