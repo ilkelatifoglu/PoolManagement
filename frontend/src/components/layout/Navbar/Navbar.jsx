@@ -8,7 +8,7 @@ import bellIconSecondary from "../../../assets/icons/bell-icon-secondary.png";
 import cartIconPrimary from "../../../assets/icons/cart-icon-primary.png";
 import cartIconSecondary from "../../../assets/icons/cart-icon-secondary.png";
 
-const Navbar = () => {
+const Navbar = ({ toggleSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthenticated = authService.isAuthenticated();
@@ -24,6 +24,11 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
+        {isAuthenticated && (
+          <button className="sidebar-toggle" onClick={toggleSidebar}>
+            ☰
+          </button>
+        )}
         <div className="navbar-brand">
           <img src={poolIcon} alt="Pool Icon" />
           <span>Pool Management</span>
@@ -60,6 +65,14 @@ const Navbar = () => {
               className={`nav-link ${isActive("/events") ? "active" : ""}`}
             >
               Events
+            </Link>
+            <Link
+              to="/my-activities"
+              className={`nav-link ${
+                isActive("/my-activities") ? "active" : ""
+              }`}
+            >
+              My Activities
             </Link>
             <Link
               to="/profile"

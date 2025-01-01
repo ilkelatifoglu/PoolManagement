@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from database.connection import mysql, init_app
 from routes.auth_routes import auth_bp
+from routes.activity_routes import activities_bp
 from dotenv import load_dotenv
 import os
 from routes.class_routes import class_routes  # Import your class routes
@@ -33,6 +34,7 @@ def create_app():
     
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(activities_bp, url_prefix='/activities')
     app.register_blueprint(class_routes, url_prefix='/api')  # This registers the `/api` prefix
     app.register_blueprint(report_bp, url_prefix='/report')  # Register report routes with `/report` prefix
 
