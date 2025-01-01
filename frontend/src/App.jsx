@@ -15,6 +15,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Profile from "./pages/profile/Profile";
 import CreateClass from "./pages/classes/CreateClass"; // Corrected path
 import AddClass from "./pages/classes/ClassList"; // Corrected path
+import SystemReport from "./pages/system-report/SystemReport"; // Corrected path
 
 function App() {
   const [apiStatus, setApiStatus] = useState({ status: "loading" }); // Correctly initialized `useState`
@@ -30,6 +31,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/create-class" element={<CreateClass />} />
           <Route path="/add-class" element={<AddClass />} />
+          <Route path="/system-reports" element={<SystemReport />} />
 
           {/* Protected Routes */}
           <Route
