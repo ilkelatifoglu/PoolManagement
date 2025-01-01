@@ -5,6 +5,8 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/routing/ProtectedRoute";
@@ -14,6 +16,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Profile from "./pages/profile/Profile";
+import ShoppingPage from "./pages/cart/ShoppingPage";
 import CreateClass from "./pages/classes/CreateClass"; // Corrected path
 import AddClass from "./pages/classes/ClassList"; // Corrected path
 import MyActivities from "./pages/my_activities/MyActivities";
@@ -55,8 +58,16 @@ function App() {
                   <ProtectedRoute>
                     <Profile />
                   </ProtectedRoute>
-                }
-              />
+            }
+          />
+          <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <ShoppingPage />
+            </ProtectedRoute>
+              }
+            />
               <Route
                 path="/my-activities"
                 element={
@@ -68,6 +79,18 @@ function App() {
             </Routes>
           </div>
         </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </Router>
     </AuthProvider>
   );

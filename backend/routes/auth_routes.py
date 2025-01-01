@@ -1,8 +1,10 @@
 from flask import Blueprint, request, jsonify
+from flask_cors import CORS
 from services.auth_service import AuthService
 from utils.jwt_util import verify_token
 
 auth_bp = Blueprint('auth', __name__)
+CORS(auth_bp, origins=["http://localhost:3000"], supports_credentials=True)
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
@@ -16,8 +18,11 @@ def login():
         })
     return jsonify({'message': 'Invalid credentials'}), 401
 
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/register', methods=['POST', 'OPTIONS'])
 def register():
+    if request.method == 'OPTIONS':
+        # Respond to preflight request
+        return '', 200
     try:
         user_data = request.json
         
