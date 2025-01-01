@@ -6,6 +6,8 @@ from routes.activity_routes import activities_bp
 from dotenv import load_dotenv
 import os
 from routes.class_routes import class_routes  # Import your class routes
+from routes.event_routes import event_routes  # Import the new routes
+from routes.pool_routes import pool_routes
 
 load_dotenv()
 
@@ -35,6 +37,8 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(activities_bp, url_prefix='/activities')
     app.register_blueprint(class_routes, url_prefix='/api')  # This registers the `/api` prefix
+    app.register_blueprint(event_routes, url_prefix='/api')  # Register the new blueprint
+    app.register_blueprint(pool_routes, url_prefix='/api')
 
     @app.after_request
     def after_request(response):

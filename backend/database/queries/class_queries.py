@@ -150,12 +150,12 @@ def add_class_to_cart_query(data):
                 INSERT INTO schedules (swimmer_id, class_id, is_paid)
                 VALUES (%(swimmer_id)s, %(class_id)s, 0)
             """
-            print(f"Executing query: {query} with data: {data}")  # Debug log
             cursor.execute(query, data)
             conn.commit()
     except pymysql.err.IntegrityError as e:
         conn.rollback()
-        raise Exception(f"Integrity error: {e}")  # Handles foreign key constraint issues
+        raise Exception(f"Integrity error: {e}")
     except Exception as e:
         conn.rollback()
-        raise Exception(f"Error adding to cart: {e}")  # Handles other exceptions
+        raise Exception(f"Error adding to cart: {e}")
+

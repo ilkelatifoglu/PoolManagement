@@ -8,7 +8,6 @@ def create_new_class(class_data):
 # Service to fetch all available classes
 def get_all_classes():
     return fetch_classes()
-
 def get_filtered_classes(filters):
     return get_filtered_classes_query(filters)
 

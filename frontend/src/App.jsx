@@ -17,6 +17,7 @@ import Profile from "./pages/profile/Profile";
 import CreateClass from "./pages/classes/CreateClass"; // Corrected path
 import AddClass from "./pages/classes/ClassList"; // Corrected path
 import MyActivities from "./pages/my_activities/MyActivities";
+import CreateEvent from "./pages/eventts/CreateEvent";
 
 function App() {
   const [apiStatus, setApiStatus] = useState({ status: "loading" });
@@ -39,6 +40,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/create-class" element={<CreateClass />} />
               <Route path="/add-class" element={<AddClass />} />
+              <Route path="/create-event" element={<CreateEvent />} />
 
               {/* Protected Routes */}
               <Route

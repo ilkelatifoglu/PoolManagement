@@ -3,8 +3,10 @@ import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button"; // Import the reusable Button component
 import { fetchClasses, addToCart } from "../../services/class.service";
 import "./ClassList.css";
+import { useAuth } from "../../context/AuthContext"; // Import the useAuth hook
 
 const ClassList = () => {
+  const { user } = useAuth(); // Move this inside the functional component
   const [filters, setFilters] = useState({});
   const [classes, setClasses] = useState([]);
   const [success, setSuccess] = useState("");
@@ -24,13 +26,29 @@ const ClassList = () => {
   };
 
   const handleAddToCart = async (classId) => {
+    if (!user) {
+      console.error("User is null or undefined. Ensure user is logged in.");
+      setError("User not logged in.");
+      return;
+    }
+  
+    if (!user.user_id) {
+      console.error("user_id is missing in user object:", user);
+      setError("User ID is missing. Please log in again.");
+      return;
+    }
+  
     try {
-      await addToCart({ swimmer_id: 1, class_id: classId }); // Replace with actual swimmer_id
+      console.log("Adding class to cart for user:", user.user_id);
+      await addToCart({ swimmer_id: user.user_id, class_id: classId });
       setSuccess("Class added to cart successfully!");
     } catch (error) {
-      setError("Failed to add class to cart");
+      console.error("Failed to add class to cart:", error);
+      setError("Failed to add class to cart.");
     }
   };
+  
+
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

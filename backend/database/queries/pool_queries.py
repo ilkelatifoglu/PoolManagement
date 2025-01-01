@@ -7,6 +7,6 @@ def fetch_pools():
     try:
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute(query)
-            return cursor.fetchall()
+            return cursor.fetchall()  # Ensure data is returned in a list format
     except Exception as e:
         raise Exception(f"Error fetching pools: {e}")

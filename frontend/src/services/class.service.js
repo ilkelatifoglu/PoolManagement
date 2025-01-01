@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:3001/api';
 
 export const createClass = async (classData) => {
     const response = await axios.post(`${API_URL}/classes`, classData);
@@ -13,7 +13,11 @@ export const fetchClasses = async (filters = {}) => {
     return response.data;
 };
 
-  export const addToCart = async (cartData) => {
-    const response = await axios.post(`${API_URL}/cart`, cartData);
-    return response.data;
-  };
+export const addToCart = async (classData) => {
+    try {
+        const response = await axios.post("/cart", classData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+};
