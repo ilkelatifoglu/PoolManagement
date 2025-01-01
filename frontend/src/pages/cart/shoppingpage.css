@@ -1,0 +1,84 @@
+/* Container for the entire shopping page */
+.shopping-page-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+
+  .mycart-header{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+  
+  /* Table styles */
+  .shopping-page-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border-radius: 8px; 
+    overflow: hidden; 
+    border: 1px solid #ddd; /* Add outer border to the table */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Optional for a subtle shadow */
+  }
+  
+  .shopping-page-table th,
+  .shopping-page-table td {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .shopping-page-table th {
+    background-color: #dbdbf8;
+    ;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .shopping-page-table td {
+    border-top: 1px solid #ddd;
+}
+  
+  /* Total price container */
+  .shopping-page-total-price {
+    text-align: right;
+    margin-top: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+  
+  /* Delete button styles */
+  .shopping-page-delete-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .shopping-page-delete-button:hover {
+    background-color: #ff1a1a;
+  }
+  
+  /* Links styles */
+  .shopping-page-links {
+    margin-top: 20px;
+    align-items: center;
+  }
+  
+  .shopping-page-link {
+    color: #4f46e5;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .shopping-page-link:hover {
+    text-decoration: underline;
+  }
+  
+  .p-balance{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
