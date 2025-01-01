@@ -1,64 +1,101 @@
 import React, { useState, useEffect } from "react";
 import Input from "../../components/common/Input/Input";
-import Button from "../../components/common/Button/Button"; // Import the reusable Button component
+import Button from "../../components/common/Button/Button";
+import Table from "../../components/common/Table/Table"; // Import the Table component
 import { fetchClasses, addToCart } from "../../services/class.service";
 import "./ClassList.css";
-import { useAuth } from "../../context/AuthContext"; // Import the useAuth hook
+import { useAuth } from "../../context/AuthContext";
 
 const ClassList = () => {
-  const { user } = useAuth(); // Move this inside the functional component
-  const [filters, setFilters] = useState({});
+  const { user } = useAuth();
   const [classes, setClasses] = useState([]);
+  const [filteredClasses, setFilteredClasses] = useState([]);
+  const [filters, setFilters] = useState({});
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchClassesData();
+    loadClasses();
   }, []);
 
-  const fetchClassesData = async () => {
+  const loadClasses = async () => {
     try {
-      const data = await fetchClasses(filters);
+      const data = await fetchClasses();
       setClasses(data);
-    } catch (error) {
-      setError("Failed to fetch classes");
+      setFilteredClasses(data);
+    } catch (err) {
+      console.error("Error fetching classes:", err.response || err);
+      setError(err.response?.data?.error || "Internal Server Error");
     }
   };
 
-  const handleAddToCart = async (classId) => {
-    if (!user) {
-      console.error("User is null or undefined. Ensure user is logged in.");
-      setError("User not logged in.");
-      return;
-    }
-  
-    if (!user.user_id) {
-      console.error("user_id is missing in user object:", user);
-      setError("User ID is missing. Please log in again.");
-      return;
-    }
-  
+  const handleAddToCart = async (classData) => {
     try {
-      console.log("Adding class to cart for user:", user.user_id);
-      await addToCart({ swimmer_id: user.user_id, class_id: classId });
+      await addToCart({ swimmer_id: user.user_id, class_id: classData.class_id });
       setSuccess("Class added to cart successfully!");
-    } catch (error) {
-      console.error("Failed to add class to cart:", error);
-      setError("Failed to add class to cart.");
+      setFilteredClasses((prev) =>
+        prev.filter((cls) => cls.class_id !== classData.class_id)
+      );
+    } catch (err) {
+      setError("Failed to add class to cart");
     }
   };
-  
 
+  const applyFilters = () => {
+    let filtered = classes;
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
+    if (filters.pool_name) {
+      filtered = filtered.filter((cls) =>
+        cls.pool_name.toLowerCase().includes(filters.pool_name.toLowerCase())
+      );
+    }
+    if (filters.coach_name) {
+      filtered = filtered.filter((cls) =>
+        cls.coach_name.toLowerCase().includes(filters.coach_name.toLowerCase())
+      );
+    }
+    if (filters.level) {
+      filtered = filtered.filter((cls) => cls.level === Number(filters.level));
+    }
+    if (filters.gender_req) {
+      filtered = filtered.filter((cls) => cls.gender_req === filters.gender_req);
+    }
+    if (filters.capacity) {
+      filtered = filtered.filter((cls) => cls.capacity >= Number(filters.capacity));
+    }
+    if (filters.age_req) {
+      filtered = filtered.filter((cls) => cls.age_req <= Number(filters.age_req));
+    }
+    if (filters.date) {
+      filtered = filtered.filter((cls) =>
+        cls.session_date.startsWith(filters.date)
+      );
+    }
+
+    setFilteredClasses(filtered);
   };
 
-  const handleClearFilters = () => {
+  const clearFilters = () => {
     setFilters({});
-    fetchClassesData(); // Fetch all classes again after clearing filters
+    setFilteredClasses(classes);
   };
+
+  const columns = [
+    { header: "Class Name", accessor: "class_name" },
+    { header: "Coach", accessor: "coach_name" },
+    { header: "Pool", accessor: "pool_name" },
+    { header: "Date", accessor: "session_date" },
+    { header: "Time", accessor: "session_time" },
+    { header: "Capacity", accessor: "capacity" },
+    { header: "Price", accessor: "price" },
+  ];
+
+  const actions = [
+    {
+      label: "Add to Cart",
+      onClick: handleAddToCart,
+    },
+  ];
 
   return (
     <div className="class-list-container">
@@ -67,64 +104,67 @@ const ClassList = () => {
       {error && <p className="error">{error}</p>}
 
       <div className="filter-section">
-        <Input name="pool_name" label="Pool Name" onChange={handleFilterChange} value={filters.pool_name || ""} />
-        <Input name="coach_name" label="Coach Name" onChange={handleFilterChange} value={filters.coach_name || ""} />
-        <Input name="level" label="Level" type="number" onChange={handleFilterChange} value={filters.level || ""} />
+        <Input
+          name="pool_name"
+          label="Pool Name"
+          onChange={(e) => setFilters({ ...filters, pool_name: e.target.value })}
+          value={filters.pool_name || ""}
+        />
+        <Input
+          name="coach_name"
+          label="Coach Name"
+          onChange={(e) => setFilters({ ...filters, coach_name: e.target.value })}
+          value={filters.coach_name || ""}
+        />
+        <Input
+          name="level"
+          label="Level"
+          type="number"
+          onChange={(e) => setFilters({ ...filters, level: e.target.value })}
+          value={filters.level || ""}
+        />
         <Input
           name="gender_req"
           label="Gender Requirement"
           isSelect
-          options={[{ value: "", label: "Any" }, { value: "M", label: "Male" }, { value: "F", label: "Female" }]}
-          onChange={handleFilterChange}
+          options={[
+            { value: "", label: "Any" },
+            { value: "M", label: "Male" },
+            { value: "F", label: "Female" },
+          ]}
+          onChange={(e) => setFilters({ ...filters, gender_req: e.target.value })}
           value={filters.gender_req || ""}
         />
-        <Input name="capacity" label="Capacity" type="number" onChange={handleFilterChange} value={filters.capacity || ""} />
-        <Input name="age_req" label="Age Requirement" type="number" onChange={handleFilterChange} value={filters.age_req || ""} />
-        <Input name="date" label="Date" type="date" onChange={handleFilterChange} value={filters.date || ""} />
+        <Input
+          name="capacity"
+          label="Capacity"
+          type="number"
+          onChange={(e) => setFilters({ ...filters, capacity: e.target.value })}
+          value={filters.capacity || ""}
+        />
+        <Input
+          name="age_req"
+          label="Age Requirement"
+          type="number"
+          onChange={(e) => setFilters({ ...filters, age_req: e.target.value })}
+          value={filters.age_req || ""}
+        />
+        <Input
+          name="date"
+          label="Date"
+          type="date"
+          onChange={(e) => setFilters({ ...filters, date: e.target.value })}
+          value={filters.date || ""}
+        />
         <div className="button-group">
-          <Button onClick={fetchClassesData} className="btn-primary">Search</Button>
-          <Button onClick={handleClearFilters} className="btn-secondary">Clear Filters</Button>
+          <Button onClick={applyFilters}>Search</Button>
+          <Button onClick={clearFilters}>Clear Filters</Button>
         </div>
       </div>
 
-      <table className="classes-table">
-        <thead>
-          <tr>
-            <th>Class Name</th>
-            <th>Coach</th>
-            <th>Pool</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Lane</th>
-            <th>Capacity</th>
-            <th>Age Req.</th>
-            <th>Gender Req.</th>
-            <th>Price</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {classes.map((cls) => (
-            <tr key={cls.class_id}>
-              <td>{cls.class_name}</td>
-              <td>{cls.coach_name}</td>
-              <td>{cls.pool_name}</td>
-              <td>{cls.session_date || "N/A"}</td>
-              <td>{cls.session_time || "N/A"}</td>
-              <td>{cls.lane_number || "N/A"}</td>
-              <td>{cls.capacity || "N/A"}</td>
-              <td>{cls.age_req || "N/A"}</td>
-              <td>{cls.gender_req || "N/A"}</td>
-              <td>${cls.price}</td>
-              <td>
-                <Button onClick={() => handleAddToCart(cls.class_id)} className="btn-success">
-                  Add to Cart
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="table-section">
+        <Table columns={columns} data={filteredClasses} actions={actions} />
+      </div>
     </div>
   );
 };

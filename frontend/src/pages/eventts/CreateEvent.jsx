@@ -20,6 +20,11 @@ const CreateEvent = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const hourlyOptions = Array.from({ length: 15 }, (_, i) => {
+    const hour = 6 + i; // Generate hours from 6 to 20
+    return hour < 10 ? `0${hour}:00` : `${hour}:00`;
+  });
+
   useEffect(() => {
     // Fetch pools on component load
     const fetchPoolsData = async () => {
@@ -40,6 +45,10 @@ const CreateEvent = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (eventData.start_time >= eventData.end_time) {
+      setErrorMessage("Start time must be earlier than end time.");
+      return;
+    }
     try {
       await createEvent(eventData);
       setSuccessMessage("Event created successfully!");
@@ -98,20 +107,38 @@ const CreateEvent = () => {
           value={eventData.date}
           onChange={handleInputChange}
         />
-        <Input
-          name="start_time"
-          label="Start Time"
-          type="time"
-          value={eventData.start_time}
-          onChange={handleInputChange}
-        />
-        <Input
-          name="end_time"
-          label="End Time"
-          type="time"
-          value={eventData.end_time}
-          onChange={handleInputChange}
-        />
+        <div className="form-group">
+          <label htmlFor="start_time">Start Time</label>
+          <select
+            name="start_time"
+            value={eventData.start_time}
+            onChange={handleInputChange}
+            className="form-control"
+          >
+            <option value="">Select Start Time</option>
+            {hourlyOptions.map((time) => (
+              <option key={time} value={time}>
+                {time}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="end_time">End Time</label>
+          <select
+            name="end_time"
+            value={eventData.end_time}
+            onChange={handleInputChange}
+            className="form-control"
+          >
+            <option value="">Select End Time</option>
+            {hourlyOptions.map((time) => (
+              <option key={time} value={time}>
+                {time}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="form-group">
           <label htmlFor="pool_id">Select Pool</label>
           <select
@@ -132,7 +159,7 @@ const CreateEvent = () => {
             )}
           </select>
         </div>
-        <Button type="submit" className="btn-primary">
+        <Button type="submit">
           Create Event
         </Button>
       </form>
