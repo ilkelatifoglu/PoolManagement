@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from services.auth_service import AuthService
+from utils.jwt_util import verify_token
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -37,3 +38,15 @@ def register():
         return jsonify({'message': 'Registration successful', 'user_id': user_id}), 201
     except Exception as e:
         return jsonify({'message': str(e)}), 400
+    
+@auth_bp.route('/validateToken', methods=['POST'])
+def validate_token():
+    token = request.json.get('token')
+    if not token:
+        return jsonify({"message": "Token is missing"}), 400
+    try:
+        decoded = verify_token(token)
+        return jsonify({"user": decoded}), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+

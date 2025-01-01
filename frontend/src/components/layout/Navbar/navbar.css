@@ -76,3 +76,16 @@
   height: 34px;
   width: 34px;
 }
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  margin-right: 1rem;
+}
+
+.sidebar-toggle:hover {
+  color: var(--primary);
+}

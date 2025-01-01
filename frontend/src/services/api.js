@@ -29,4 +29,29 @@ api.interceptors.response.use(
   }
 );
 
+export const getCartItems = async () => {
+  const response = await api.get("/cart");
+  return response.data;
+};
+
+export const removeCartItem = async (itemId) => {
+  const response = await api.delete(`/cart/${itemId}`);
+  return response.data;
+};
+
+export const getTrainings = async () => {
+  const response = await api.get("/trainings");
+  return response.data;
+};
+
+export const getSelfTrainings = async () => {
+  const response = await api.get("/self-trainings");
+  return response.data;
+};
+
+export const addToCart = async (activityType, count) => {
+  const response = await api.post("/cart", { activityType, count });
+  return response.data;
+};
+
 export default api;

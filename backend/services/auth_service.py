@@ -6,9 +6,12 @@ from utils.jwt_util import generate_token
 class AuthService:
     @staticmethod
     def login(email, password):
+        hashed_password = generate_password_hash('john123')
+        print("Hashed Password:", hashed_password)
         cursor = get_cursor()
         cursor.execute(LOGIN_USER, (email,))
         user = cursor.fetchone()
+        print("User fetched from database:", user) 
 
         if user and check_password_hash(user['password'], password):
             token = generate_token(user)
