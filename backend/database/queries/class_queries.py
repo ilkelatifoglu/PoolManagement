@@ -5,6 +5,7 @@ import pymysql
 def create_class(class_data):
     conn = get_db()
     try:
+        print(f"Received class data: {class_data}")  # Debug statement
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             # Step 1: Check if the session already exists
             session_query = """
@@ -28,21 +29,20 @@ def create_class(class_data):
             # Update session_id in class_data
             class_data['session_id'] = session_id
 
-            # Step 3: Insert a new booking
+            # Step 3: Insert a new booking with status as 'READY'
             booking_query = """
             INSERT INTO booking (session_id, lane_number, pool_id, status)
-            VALUES (%(session_id)s, %(lane_number)s, %(pool_id)s, 'Pending')
+            VALUES (%(session_id)s, %(lane_number)s, %(pool_id)s, 'READY')
             """
             cursor.execute(booking_query, class_data)
             booking_id = cursor.lastrowid
 
             # Step 4: Insert the class entry
-            # Update Step 4: Insert the class entry
             class_query = """
             INSERT INTO class (class_id, name, coach_id, level, age_req, gender_req, capacity, avg_rating, course_content, enroll_deadline, price)
             VALUES (%(booking_id)s, %(name)s, %(coach_id)s, %(level)s, %(age_req)s, %(gender_req)s, %(capacity)s, %(avg_rating)s, %(course_content)s, %(enroll_deadline)s, %(price)s)
             """
-
+            print(f"Inserting class with price: {class_data['price']}")  # Debug statement
             class_data['booking_id'] = booking_id
             cursor.execute(class_query, class_data)
 
@@ -50,6 +50,7 @@ def create_class(class_data):
     except Exception as e:
         conn.rollback()
         raise Exception(f"Error inserting class: {e}")
+
 
 
 # Query to fetch all available classes
@@ -175,7 +176,7 @@ def get_unadded_classes(swimmer_id):
                 c.enroll_deadline,
                 p.name AS pool_name,
                 u.name AS coach_name,
-                s.date AS session_date,
+                DATE_FORMAT(s.date, '%%Y-%%m-%%d') AS session_date, -- Format date
                 CONCAT(TIME_FORMAT(s.start_time, '%%H:%%i'), ' - ', TIME_FORMAT(s.end_time, '%%H:%%i')) AS session_time,
                 l.lane_number AS lane_number,
                 (SELECT COUNT(*) FROM schedules sch WHERE sch.class_id = c.class_id) AS occupied_places
@@ -195,15 +196,74 @@ def get_unadded_classes(swimmer_id):
                 lane l ON b.lane_number = l.lane_number AND b.pool_id = l.pool_id
             WHERE
                 sch.class_id IS NULL
+                AND b.status = 'READY'  -- Filter classes with READY status
                 AND (SELECT COUNT(*) FROM schedules sch WHERE sch.class_id = c.class_id) < c.capacity
             ORDER BY s.date ASC, s.start_time ASC
             """
-
             params = {'swimmer_id': swimmer_id}
-            print("Executing query:", query)
-            print("With parameters:", params)
             cursor.execute(query, params)
             return cursor.fetchall()
     except Exception as e:
-        print(f"Database query failed: {e}")
         raise Exception(f"Error fetching classes not in cart: {e}")
+
+
+def fetch_ready_classes():
+    conn = get_db()
+    try:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            query = """
+            SELECT 
+                c.class_id, 
+                c.name AS class_name, 
+                c.level, 
+                c.age_req, 
+                c.gender_req, 
+                c.capacity, 
+                c.price,
+                c.enroll_deadline,
+                p.name AS pool_name,
+                u.name AS coach_name,
+                DATE_FORMAT(s.date, '%%a, %%d %%b %%Y') AS session_date, -- Format date to a readable format
+                CONCAT(TIME_FORMAT(s.start_time, '%%H:%%i'), ' - ', TIME_FORMAT(s.end_time, '%%H:%%i')) AS session_time, -- Format time
+                l.lane_number AS lane_number,
+                b.status
+            FROM
+                class c
+            JOIN
+                booking b ON c.class_id = b.booking_id
+            JOIN
+                session s ON b.session_id = s.session_id
+            JOIN
+                pool p ON b.pool_id = p.pool_id
+            JOIN
+                user u ON c.coach_id = u.user_id
+            LEFT JOIN
+                lane l ON b.lane_number = l.lane_number AND b.pool_id = l.pool_id
+            WHERE
+                b.status = 'READY'
+            ORDER BY s.date ASC, s.start_time ASC
+            """
+            cursor.execute(query)
+            return cursor.fetchall()
+    except Exception as e:
+        print(f"Error fetching ready classes: {e}")
+        raise Exception("Error fetching ready classes")
+
+
+
+def cancel_class(class_id):
+    conn = get_db()
+    try:
+        with conn.cursor() as cursor:
+            query = """
+                UPDATE booking
+                SET status = 'CANCELLED'
+                WHERE booking_id = %s
+            """
+            print(f"Executing query for class_id: {class_id}")
+            cursor.execute(query, (class_id,))
+            conn.commit()
+    except Exception as e:
+        print(f"Error in cancel_class: {str(e)}")
+        conn.rollback()
+        raise Exception(f"Error cancelling class: {e}")

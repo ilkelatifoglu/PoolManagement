@@ -1,24 +1,25 @@
-import "./button.css";
+import React from "react";
+import PropTypes from "prop-types";
+import "./Button.css";
 
-const Button = ({
-  children,
-  type = "button",
-  isLoading = false,
-  fullWidth = false,
-  onClick,
-  ...props
-}) => {
+const Button = ({ children, onClick, disabled, variant = "primary", size = "medium" }) => {
   return (
     <button
-      type={type}
-      className={`custom-button ${fullWidth ? "full-width" : ""}`}
       onClick={onClick}
-      disabled={isLoading}
-      {...props}
+      className={`btn btn-${variant} btn-${size}`}
+      disabled={disabled}
     >
-      {isLoading ? <span className="loading-spinner"></span> : children}
+      {children}
     </button>
   );
+};
+
+Button.propTypes = {
+  children: PropTypes.node.isRequired,
+  onClick: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+  variant: PropTypes.oneOf(["primary", "secondary", "danger", "success"]),
+  size: PropTypes.oneOf(["small", "medium", "large"]),
 };
 
 export default Button;

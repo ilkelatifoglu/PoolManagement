@@ -32,3 +32,33 @@ export const addToCart = async (classData) => {
         throw error.response?.data || error;
     }
 };
+
+export const cancelClass = async (classData) => {
+    try {
+        const response = await axios.post(
+            `${API_URL}/cancel-class`,
+            classData,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+};
+
+export const fetchReadyClasses = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/ready-classes`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+};
