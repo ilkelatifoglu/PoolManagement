@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
 import { createClass } from "../../services/class.service";
-import { fetchPools } from "../../services/pool.service";
+import { fetchPools, fetchCoachPools } from "../../services/pool.service";
 import "./CreateClass.css";
 
 const CreateClass = () => {
@@ -28,10 +28,26 @@ const CreateClass = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
+    // Check if user is coach
+    const role = localStorage.getItem("role");
+    if (role !== "coach") {
+      setErrorMessage("Unauthorized: Only coaches can create classes");
+      return;
+    }
+
     const fetchPoolsData = async () => {
       try {
-        const poolData = await fetchPools();
+        const user = JSON.parse(localStorage.getItem("user"));
+        const coachId = user.user_id;
+        console.log(coachId);
+        const poolData = await fetchCoachPools(coachId);
         setPools(poolData);
+
+        // Pre-fill coach_id in form
+        setFormData((prev) => ({
+          ...prev,
+          coach_id: coachId,
+        }));
       } catch (error) {
         setErrorMessage("Failed to load pools.");
       }

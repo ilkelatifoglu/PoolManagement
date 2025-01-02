@@ -1,10 +1,13 @@
-from database.queries.pool_queries import fetch_pools
+from database.queries.pool_queries import fetch_pools, fetch_pools_by_coach
 from database.connection import get_cursor
 from database.queries.pool_queries import GET_POOLS_WITH_AVAILABLE_SESSIONS
 from database.queries.session_queries import GET_AVAILABLE_SESSIONS
 
 def get_all_pools():
     return fetch_pools()
+
+def get_pools_by_coach(coach_id):
+    return fetch_pools_by_coach(coach_id)
 
 class PoolService:
     

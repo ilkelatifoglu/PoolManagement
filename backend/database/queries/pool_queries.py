@@ -11,6 +11,21 @@ def fetch_pools():
     except Exception as e:
         raise Exception(f"Error fetching pools: {e}")
 
+def fetch_pools_by_coach(coach_id):
+    query = """
+    SELECT DISTINCT p.pool_id, p.name 
+    FROM pool p 
+    JOIN coach c ON p.pool_id = c.pool_id 
+    WHERE c.coach_id = %s
+    """
+    conn = get_db()
+    try:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute(query, (coach_id,))
+            return cursor.fetchall()
+    except Exception as e:
+        raise Exception(f"Error fetching pools for coach: {e}")
+
 GET_POOLS_WITH_AVAILABLE_SESSIONS = """
 SELECT DISTINCT p.pool_id, p.name
 FROM pool p
