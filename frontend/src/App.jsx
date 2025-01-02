@@ -21,6 +21,7 @@ import CreateClass from "./pages/classes/CreateClass"; // Corrected path
 import AddClass from "./pages/classes/ClassList"; // Corrected path
 import MyActivities from "./pages/my_activities/MyActivities";
 import EvaluationPage from "./pages/evaluation/EvaluationPage";
+import TrainingPage from "./pages/training/TrainingPage";
 import CreateEvent from "./pages/eventts/CreateEvent";
 import CancelClass from "./pages/classes/CancelClass";
 import AttendEvent from "./pages/eventts/EventList";
@@ -97,12 +98,12 @@ function App() {
                     <EvaluationPage />
                   </ProtectedRoute>
                 }
-              />
+               />
               <Route
-                path="/add-money"
+                path="/training"
                 element={
                   <ProtectedRoute>
-                    <AddMoneyPage />
+                    <TrainingPage />
                   </ProtectedRoute>
                 }
               />

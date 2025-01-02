@@ -19,13 +19,13 @@ export const AuthProvider = ({ children }) => {
             setUser(response.user);
           } else {
             console.error("Token validation response missing 'user'");
-            localStorage.removeItem("token");
+            localStorage.clear();
           }
         })
         .catch((err) => {
           console.error("Token validation failed:", err);
           setUser(null);
-          localStorage.removeItem("token");
+          localStorage.clear();
         })
         .finally(() => {
           setLoading(false);
