@@ -4,6 +4,7 @@ from database.connection import mysql, init_app
 from routes.auth_routes import auth_bp
 from routes.cart_routes import cart_bp
 from routes.activity_routes import activities_bp
+from routes.evaluation_routes import evaluation_bp
 from dotenv import load_dotenv
 import os
 from routes.class_routes import class_routes  # Import your class routes
@@ -38,8 +39,9 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(cart_bp, url_prefix='/cart')
     app.register_blueprint(activities_bp, url_prefix='/activities')
-    app.register_blueprint(class_routes, url_prefix='/api') 
-    app.register_blueprint(event_routes, url_prefix='/api') 
+    app.register_blueprint(class_routes, url_prefix='/api')  # This registers the `/api` prefix
+    app.register_blueprint(evaluation_bp, url_prefix='/eval')
+    app.register_blueprint(event_routes, url_prefix='/api')  # Register the new blueprint
     app.register_blueprint(pool_routes, url_prefix='/api')
 
     @app.after_request

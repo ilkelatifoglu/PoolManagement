@@ -1,23 +1,11 @@
-/* General Styles */
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-  }
-  
+
   /* Container for the page */
   .training-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
   }
-  
-  /* Header Styles */
-  h1, h3 {
-    text-align: center;
-    color: #333;
-  }
-  
+
   /* Form Styles */
   .training-form {
     display: flex;

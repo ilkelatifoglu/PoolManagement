@@ -55,6 +55,12 @@ const Sidebar = ({ isVisible, toggleSidebar }) => {
           </Link>
         </li>
         <li>
+          <Link to="/evaluation" onClick={toggleSidebar}>
+            Evaluation
+          </Link>
+        </li>
+        
+        <li>
           <Link to="/create-class" onClick={toggleSidebar}>
             Create Class
           </Link>

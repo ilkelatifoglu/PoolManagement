@@ -20,9 +20,11 @@ import ShoppingPage from "./pages/cart/ShoppingPage";
 import CreateClass from "./pages/classes/CreateClass"; // Corrected path
 import AddClass from "./pages/classes/ClassList"; // Corrected path
 import MyActivities from "./pages/my_activities/MyActivities";
+import EvaluationPage from "./pages/evaluation/EvaluationPage";
 import CreateEvent from "./pages/eventts/CreateEvent";
 import CancelClass from "./pages/classes/CancelClass";
 import AttendEvent from "./pages/eventts/EventList";
+import AddMoneyPage from "./pages/addMoney/AddMoneyPage";
 
 
 function App() {
@@ -82,6 +84,20 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/evaluation" 
+                element={
+                  <ProtectedRoute>
+                    <EvaluationPage />
+                  </ProtectedRoute>
+                }
+               />
+              <Route path="/add-money" 
+                element={
+                  <ProtectedRoute>
+                    <AddMoneyPage />
+                  </ProtectedRoute>
+                }
+               />
             </Routes>
           </div>
         </div>
@@ -98,6 +114,7 @@ function App() {
           theme="colored"
         />
       </Router>
+
     </AuthProvider>
   );
 }
