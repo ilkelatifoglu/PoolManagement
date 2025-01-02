@@ -7,8 +7,9 @@ import bellIconPrimary from "../../../assets/icons/bell-icon-primary.png";
 import bellIconSecondary from "../../../assets/icons/bell-icon-secondary.png";
 import cartIconPrimary from "../../../assets/icons/cart-icon-primary.png";
 import cartIconSecondary from "../../../assets/icons/cart-icon-secondary.png";
+import Button from "../../../components/common/Button/Button";
 
-const Navbar = ({ toggleSidebar }) => {
+const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthenticated = authService.isAuthenticated();
@@ -24,62 +25,13 @@ const Navbar = ({ toggleSidebar }) => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {isAuthenticated && (
-          <button className="sidebar-toggle" onClick={toggleSidebar}>
-            ☰
-          </button>
-        )}
-        <div className="navbar-brand">
+        <Link to="/dashboard" className="navbar-brand">
           <img src={poolIcon} alt="Pool Icon" />
           <span>Pool Management</span>
-        </div>
+        </Link>
 
         {isAuthenticated ? (
           <div className="navbar-links">
-            <Link
-              to="/dashboard"
-              className={`nav-link ${isActive("/dashboard") ? "active" : ""}`}
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/sessions"
-              className={`nav-link ${isActive("/sessions") ? "active" : ""}`}
-            >
-              Sessions
-            </Link>
-            <Link
-              to="/membership"
-              className={`nav-link ${isActive("/membership") ? "active" : ""}`}
-            >
-              Membership
-            </Link>
-            <Link
-              to="/reports"
-              className={`nav-link ${isActive("/reports") ? "active" : ""}`}
-            >
-              Reports
-            </Link>
-            <Link
-              to="/events"
-              className={`nav-link ${isActive("/events") ? "active" : ""}`}
-            >
-              Events
-            </Link>
-            <Link
-              to="/my-activities"
-              className={`nav-link ${
-                isActive("/my-activities") ? "active" : ""
-              }`}
-            >
-              My Activities
-            </Link>
-            <Link
-              to="/profile"
-              className={`nav-link ${isActive("/profile") ? "active" : ""}`}
-            >
-              Profile
-            </Link>
             <Link
               to="/notifications"
               className={`nav-link icon-link ${
@@ -108,9 +60,9 @@ const Navbar = ({ toggleSidebar }) => {
                 className="nav-icon"
               />
             </Link>
-            <button onClick={handleLogout} className="logout">
+            <Button onClick={handleLogout} variant="primary" size="medium">
               Logout
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="navbar-links">

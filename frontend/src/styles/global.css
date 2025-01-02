@@ -11,4 +11,22 @@ body {
   font-family: "Lexend Deca", sans-serif;
   background-color: var(--background);
   color: var(--text-primary);
+  padding-top: calc(70px + 32px); /* Account for navbar height + margin */
+}
+
+/* Main content container styles */
+.main-content {
+  padding: var(--spacing-lg);
+  margin-left: 232px; /* sidebar width (200px) + margin (32px) */
+  transition: margin-left 0.3s ease;
+}
+
+.main-content.no-sidebar {
+  margin-left: 16px; /* Just the basic margin when no sidebar */
+}
+
+/* App container to help with layout */
+.app-container {
+  min-height: 100vh;
+  position: relative;
 }
