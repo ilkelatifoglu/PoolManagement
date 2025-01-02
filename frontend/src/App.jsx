@@ -59,7 +59,8 @@ function App() {
               <Route
                 path="/reset-password/:token"
                 element={<ResetPassword />}
-              />              <Route path="/system-reports" element={<SystemReport />} />
+              />
+              <Route path="/system-reports" element={<SystemReport />} />
               <Route path="/manager-page" element={<ManagerPage />} />
 
 
