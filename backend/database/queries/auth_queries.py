@@ -35,3 +35,6 @@ REGISTER_SWIMMER = """
 INSERT INTO swimmer (swimmer_id, swim_level)
 VALUES (LAST_INSERT_ID(), %s)
 """
+
+CHECK_EMAIL = "SELECT user_id, email FROM user WHERE email = %s"
+UPDATE_PASSWORD = "UPDATE user SET password = %s WHERE user_id = %s"

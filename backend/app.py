@@ -10,8 +10,11 @@ import os
 from routes.class_routes import class_routes  # Import your class routes
 from routes.event_routes import event_routes  # Import the new routes
 from routes.pool_routes import pool_routes
+from flask_mail import Mail
 
 load_dotenv()
+
+mail = Mail()
 
 def create_app():
     app = Flask(__name__)
@@ -31,6 +34,18 @@ def create_app():
     
     # Configure JWT Secret Key
     app.config['SECRET_KEY'] = os.getenv('JWT_SECRET')
+    
+    # Mail configuration
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+    app.config['MAIL_DEFAULT_SENDER'] = ('Pool Management', os.getenv('MAIL_USERNAME'))
+    app.config['FRONTEND_URL'] = os.getenv('FRONTEND_URL')
+
+    mail.init_app(app)
+    app.mail = mail  # Add mail to app context
     
     # Initialize extensions
     init_app(app)

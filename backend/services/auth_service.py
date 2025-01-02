@@ -2,6 +2,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from database.connection import get_cursor, commit_db
 from database.queries.auth_queries import *
 from utils.jwt_util import generate_token
+from utils.email import send_password_reset_email
+from flask import current_app
+import datetime
+import jwt
 
 class AuthService:
     @staticmethod
@@ -45,4 +49,49 @@ class AuthService:
             return cursor.lastrowid
         except Exception as e:
             print(f"Registration error: {e}")
+            raise
+
+    @staticmethod
+    def initiate_password_reset(email):
+        cursor = get_cursor()
+        cursor.execute(CHECK_EMAIL, (email,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return False
+
+        # Generate password reset token
+        token = jwt.encode({
+            'user_id': user['user_id'],
+            'email': user['email'],
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+        }, current_app.config['SECRET_KEY'], algorithm='HS256')
+
+        try:
+            # Use the email utility function to send the reset email
+            send_password_reset_email(email, token)
+            return True
+        except Exception as e:
+            print(f"Email sending error: {e}")
+            raise
+
+    @staticmethod
+    def reset_password(token, new_password):
+        try:
+            # Verify token
+            payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+            user_id = payload['user_id']
+            
+            # Update password
+            cursor = get_cursor()
+            hashed_password = generate_password_hash(new_password)
+            cursor.execute(UPDATE_PASSWORD, (hashed_password, user_id))
+            commit_db()
+            return True
+        except jwt.ExpiredSignatureError:
+            raise Exception("Password reset link has expired")
+        except jwt.InvalidTokenError:
+            raise Exception("Invalid reset token")
+        except Exception as e:
+            print(f"Password reset error: {e}")
             raise
