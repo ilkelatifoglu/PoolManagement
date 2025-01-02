@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button/Button";
@@ -13,6 +13,12 @@ const Login = () => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    console.log("Login component mounted, clearing localStorage");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+  }, []);
 
   const handleChange = (e) => {
     setFormData({

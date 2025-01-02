@@ -13,6 +13,7 @@ const ProtectedRoute = ({ children }) => {
 
   if (!user) {
     console.log("Redirecting to login because user is null");
+    localStorage.clear();
     return <Navigate to="/login" />;
   }
 

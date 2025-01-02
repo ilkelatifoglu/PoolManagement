@@ -10,6 +10,9 @@ import os
 from routes.class_routes import class_routes  # Import your class routes
 from routes.event_routes import event_routes  # Import the new routes
 from routes.pool_routes import pool_routes
+from routes.training_routes import training_bp
+from routes.session_routes import session_routes
+from routes.lane_routes import lane_bp
 
 load_dotenv()
 
@@ -43,6 +46,10 @@ def create_app():
     app.register_blueprint(evaluation_bp, url_prefix='/eval')
     app.register_blueprint(event_routes, url_prefix='/api')  # Register the new blueprint
     app.register_blueprint(pool_routes, url_prefix='/api')
+    app.register_blueprint(training_bp, url_prefix='/api') 
+    app.register_blueprint(session_routes, url_prefix='/api')
+    app.register_blueprint(lane_bp, url_prefix="/api")
+
 
     @app.after_request
     def after_request(response):

@@ -21,6 +21,7 @@ import CreateClass from "./pages/classes/CreateClass"; // Corrected path
 import AddClass from "./pages/classes/ClassList"; // Corrected path
 import MyActivities from "./pages/my_activities/MyActivities";
 import EvaluationPage from "./pages/evaluation/EvaluationPage";
+import TrainingPage from "./pages/training/TrainingPage";
 import CreateEvent from "./pages/eventts/CreateEvent";
 
 function App() {
@@ -61,16 +62,16 @@ function App() {
                   <ProtectedRoute>
                     <Profile />
                   </ProtectedRoute>
-            }
-          />
-          <Route
-          path="/cart"
-          element={
-            <ProtectedRoute>
-              <ShoppingPage />
-            </ProtectedRoute>
               }
-            />
+              />
+              <Route
+              path="/cart"
+              element={
+                <ProtectedRoute>
+                  <ShoppingPage />
+                </ProtectedRoute>
+                }
+              />
               <Route
                 path="/my-activities"
                 element={
@@ -86,6 +87,14 @@ function App() {
                   </ProtectedRoute>
                 }
                />
+              <Route
+                path="/training"
+                element={
+                  <ProtectedRoute>
+                    <TrainingPage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </div>
         </div>
