@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { createClass } from "../../services/class.service";
-import { fetchPools } from "../../services/pool.service"; // Import fetchPools service
 import Input from "../../components/common/Input/Input";
+import Button from "../../components/common/Button/Button";
+import { createClass } from "../../services/class.service";
+import { fetchPools } from "../../services/pool.service";
 import "./CreateClass.css";
 
 const CreateClass = () => {
@@ -12,7 +13,6 @@ const CreateClass = () => {
     age_req: "",
     gender_req: "",
     capacity: "",
-    avg_rating: 0,
     course_content: "",
     enroll_deadline: "",
     session_date: "",
@@ -23,22 +23,20 @@ const CreateClass = () => {
     price: "",
   });
 
-  const [pools, setPools] = useState([]); // Store pool options
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [pools, setPools] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    // Fetch pool data on component mount
-    const fetchPoolData = async () => {
+    const fetchPoolsData = async () => {
       try {
-        const response = await fetchPools();
-        setPools(response);
+        const poolData = await fetchPools();
+        setPools(poolData);
       } catch (error) {
-        console.error("Error fetching pools:", error);
+        setErrorMessage("Failed to load pools.");
       }
     };
-
-    fetchPoolData();
+    fetchPoolsData();
   }, []);
 
   const handleInputChange = (e) => {
@@ -49,15 +47,14 @@ const CreateClass = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.start_time >= formData.end_time) {
-      setError("Start time must be earlier than end time.");
+      setErrorMessage("Start time must be earlier than end time.");
       return;
     }
-    setError("");
-    setSuccess("");
+
     try {
-      const payload = { ...formData };
-      await createClass(payload);
-      setSuccess("Class created successfully!");
+      await createClass(formData);
+      setSuccessMessage("Class created successfully!");
+      setErrorMessage("");
       setFormData({
         name: "",
         coach_id: "",
@@ -65,7 +62,6 @@ const CreateClass = () => {
         age_req: "",
         gender_req: "",
         capacity: "",
-        avg_rating: 0,
         course_content: "",
         enroll_deadline: "",
         session_date: "",
@@ -76,36 +72,25 @@ const CreateClass = () => {
         price: "",
       });
     } catch (error) {
-      setError(
-        "Error creating class: " + (error.response?.data?.error || error.message)
-      );
+      setErrorMessage("Failed to create class. Please check the inputs.");
     }
   };
 
-  // Restrict time options between 6:00 and 20:00
   const hourOptions = Array.from({ length: 15 }, (_, i) => {
-    const hour = 6 + i; // Generate hours from 6 to 20
-    return {
-      value: `${hour.toString().padStart(2, "0")}:00`,
-      label: `${hour.toString().padStart(2, "0")}:00`,
-    };
+    const hour = 6 + i;
+    return `${hour.toString().padStart(2, "0")}:00`;
   });
-
-  const poolOptions = pools.map((pool) => ({
-    value: pool.pool_id,
-    label: pool.name,
-  }));
 
   return (
     <div className="create-class-container">
       <h2>Create a New Class</h2>
-      {error && <p className="error">{error}</p>}
-      {success && <p className="success">{success}</p>}
-      <form onSubmit={handleSubmit}>
+      {successMessage && <p className="success-message">{successMessage}</p>}
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
+
+      <form onSubmit={handleSubmit} className="class-form">
         <Input
           label="Class Name"
           name="name"
-          placeholder="Enter class name"
           value={formData.name}
           onChange={handleInputChange}
           required
@@ -114,7 +99,6 @@ const CreateClass = () => {
           label="Coach ID"
           name="coach_id"
           type="number"
-          placeholder="Enter coach ID"
           value={formData.coach_id}
           onChange={handleInputChange}
           required
@@ -123,7 +107,6 @@ const CreateClass = () => {
           label="Level"
           name="level"
           type="number"
-          placeholder="Enter level"
           value={formData.level}
           onChange={handleInputChange}
           required
@@ -132,7 +115,6 @@ const CreateClass = () => {
           label="Age Requirement"
           name="age_req"
           type="number"
-          placeholder="Enter age requirement"
           value={formData.age_req}
           onChange={handleInputChange}
         />
@@ -152,7 +134,6 @@ const CreateClass = () => {
           label="Capacity"
           name="capacity"
           type="number"
-          placeholder="Enter capacity"
           value={formData.capacity}
           onChange={handleInputChange}
           required
@@ -161,7 +142,6 @@ const CreateClass = () => {
           label="Course Content"
           name="course_content"
           type="textarea"
-          placeholder="Enter course content"
           value={formData.course_content}
           onChange={handleInputChange}
         />
@@ -172,7 +152,6 @@ const CreateClass = () => {
           value={formData.enroll_deadline}
           onChange={handleInputChange}
         />
-        <h4>Session Details</h4>
         <Input
           label="Session Date"
           name="session_date"
@@ -185,7 +164,7 @@ const CreateClass = () => {
           label="Start Time"
           name="start_time"
           isSelect
-          options={hourOptions}
+          options={hourOptions.map((time) => ({ value: time, label: time }))}
           value={formData.start_time}
           onChange={handleInputChange}
           required
@@ -194,7 +173,7 @@ const CreateClass = () => {
           label="End Time"
           name="end_time"
           isSelect
-          options={hourOptions}
+          options={hourOptions.map((time) => ({ value: time, label: time }))}
           value={formData.end_time}
           onChange={handleInputChange}
           required
@@ -203,16 +182,18 @@ const CreateClass = () => {
           label="Lane Number"
           name="lane_number"
           type="number"
-          placeholder="Enter lane number"
           value={formData.lane_number}
           onChange={handleInputChange}
           required
         />
         <Input
-          label="Pool"
+          label="Select Pool"
           name="pool_id"
           isSelect
-          options={poolOptions}
+          options={pools.map((pool) => ({
+            value: pool.pool_id,
+            label: pool.name,
+          }))}
           value={formData.pool_id}
           onChange={handleInputChange}
           required
@@ -221,17 +202,11 @@ const CreateClass = () => {
           label="Price"
           name="price"
           type="number"
-          step="0.01" // Allow decimal values
-          placeholder="Enter price"
           value={formData.price}
           onChange={handleInputChange}
           required
         />
-
-
-        <button type="submit" className="btn btn-primary">
-          Create Class
-        </button>
+        <Button type="submit">Create Class</Button>
       </form>
     </div>
   );

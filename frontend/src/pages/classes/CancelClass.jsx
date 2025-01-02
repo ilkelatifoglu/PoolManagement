@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { fetchReadyClasses, cancelClass } from "../../services/class.service";
-import Table from "../../components/common/Table/Table";
 import Button from "../../components/common/Button/Button";
 import "./CancelClass.css";
 
@@ -24,7 +23,6 @@ const CancelClass = () => {
           month: "short",
           day: "numeric",
         }),
-        session_time: cls.session_time,
       }));
       setClasses(formattedClasses);
     } catch (error) {
@@ -37,34 +35,62 @@ const CancelClass = () => {
       await cancelClass({ class_id: classId });
       setSuccessMessage("Class cancelled successfully.");
       setClasses(classes.filter((cls) => cls.class_id !== classId));
+      setErrorMessage("");
     } catch (error) {
       setErrorMessage("Failed to cancel class.");
     }
   };
 
-  const columns = [
-    { header: "Class Name", accessor: "class_name" },
-    { header: "Coach", accessor: "coach_name" },
-    { header: "Pool", accessor: "pool_name" },
-    { header: "Date", accessor: "session_date" },
-    { header: "Time", accessor: "session_time" },
-    { header: "Capacity", accessor: "capacity" },
-    { header: "Price", accessor: "price" },
-    {
-      header: "Actions",
-      accessor: "actions",
-      render: (row) => (
-        <Button onClick={() => handleCancelClass(row.class_id)}>Cancel</Button>
-      ),
-    },
-  ];
-
   return (
     <div className="cancel-class-container">
-      <h2>Cancel Classes</h2>
+      <h2 className="cancel-class-title">Cancel Classes</h2>
       {successMessage && <p className="success-message">{successMessage}</p>}
       {errorMessage && <p className="error-message">{errorMessage}</p>}
-      <Table columns={columns} data={classes} />
+      <div className="table-wrapper">
+        <table className="cancel-class-table">
+          <thead>
+            <tr>
+              <th>Class Name</th>
+              <th>Coach</th>
+              <th>Pool</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Capacity</th>
+              <th>Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {classes.length > 0 ? (
+              classes.map((cls) => (
+                <tr key={cls.class_id}>
+                  <td>{cls.class_name}</td>
+                  <td>{cls.coach_name}</td>
+                  <td>{cls.pool_name}</td>
+                  <td>{cls.session_date}</td>
+                  <td>{cls.session_time}</td>
+                  <td>{cls.capacity}</td>
+                  <td>${cls.price}</td>
+                  <td>
+                    <Button
+                      className="cancel-button"
+                      onClick={() => handleCancelClass(cls.class_id)}
+                    >
+                      Cancel
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" className="no-classes-message">
+                  No classes available to cancel.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

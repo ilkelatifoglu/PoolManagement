@@ -58,7 +58,6 @@ const EventList = () => {
                         <th>Event Name</th>
                         <th>Event Type</th>
                         <th>Capacity</th>
-                        <th>Status</th>
                         <th>Pool</th>
                         <th>Action</th>
                     </tr>
@@ -69,7 +68,6 @@ const EventList = () => {
                             <td>{event.event_name}</td>
                             <td>{event.event_type}</td>
                             <td>{event.capacity}</td>
-                            <td>{event.status}</td>
                             <td>{event.pool_name}</td>
                             <td>
                                 <button onClick={() => handleAttend(event.event_id)}>

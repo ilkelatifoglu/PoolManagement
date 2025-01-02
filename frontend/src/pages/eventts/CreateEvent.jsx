@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
-import { createEvent } from "../../services/event.service";
-import { fetchPools } from "../../services/pool.service"; // Import fetchPools function
+import { createEvent, fetchEventTypes } from "../../services/event.service";
+import { fetchPools } from "../../services/pool.service";
 import "./CreateEvent.css";
 
 const CreateEvent = () => {
@@ -16,26 +16,24 @@ const CreateEvent = () => {
     end_time: "",
     pool_id: "",
   });
-  const [pools, setPools] = useState([]); // State for pools
+  const [pools, setPools] = useState([]);
+  const [eventTypes, setEventTypes] = useState([]); // State for event types
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const hourlyOptions = Array.from({ length: 15 }, (_, i) => {
-    const hour = 6 + i; // Generate hours from 6 to 20
-    return hour < 10 ? `0${hour}:00` : `${hour}:00`;
-  });
-
   useEffect(() => {
-    // Fetch pools on component load
-    const fetchPoolsData = async () => {
+    // Fetch pools and event types on component load
+    const fetchData = async () => {
       try {
         const poolData = await fetchPools();
+        const eventTypeData = await fetchEventTypes();
         setPools(poolData);
+        setEventTypes(eventTypeData);
       } catch (error) {
-        setErrorMessage("Failed to load pools.");
+        setErrorMessage("Failed to load data.");
       }
     };
-    fetchPoolsData();
+    fetchData();
   }, []);
 
   const handleInputChange = (e) => {
@@ -87,12 +85,22 @@ const CreateEvent = () => {
           value={eventData.event_name}
           onChange={handleInputChange}
         />
-        <Input
-          name="event_type"
-          label="Event Type"
-          value={eventData.event_type}
-          onChange={handleInputChange}
-        />
+        <div className="form-group">
+          <label htmlFor="event_type">Event Type</label>
+          <select
+            name="event_type"
+            value={eventData.event_type}
+            onChange={handleInputChange}
+            className="form-control"
+          >
+            <option value="">Select Event Type</option>
+            {eventTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
         <Input
           name="capacity"
           label="Capacity"
@@ -116,7 +124,10 @@ const CreateEvent = () => {
             className="form-control"
           >
             <option value="">Select Start Time</option>
-            {hourlyOptions.map((time) => (
+            {Array.from({ length: 15 }, (_, i) => {
+              const hour = 6 + i;
+              return `${hour < 10 ? `0${hour}` : hour}:00`;
+            }).map((time) => (
               <option key={time} value={time}>
                 {time}
               </option>
@@ -132,7 +143,10 @@ const CreateEvent = () => {
             className="form-control"
           >
             <option value="">Select End Time</option>
-            {hourlyOptions.map((time) => (
+            {Array.from({ length: 15 }, (_, i) => {
+              const hour = 6 + i;
+              return `${hour < 10 ? `0${hour}` : hour}:00`;
+            }).map((time) => (
               <option key={time} value={time}>
                 {time}
               </option>
@@ -159,9 +173,7 @@ const CreateEvent = () => {
             )}
           </select>
         </div>
-        <Button type="submit">
-          Create Event
-        </Button>
+        <Button type="submit">Create Event</Button>
       </form>
     </div>
   );

@@ -17,6 +17,8 @@ from flask_mail import Mail
 from routes.user_routes import user_bp
 from flask_apscheduler import APScheduler
 from scheduler.tasks import update_session_status
+from routes.report_routes import report_bp  # Import report routes
+from routes.manager_routes import manager_bp  # Import report routes
 
 load_dotenv()
 
@@ -74,6 +76,8 @@ def create_app():
     app.register_blueprint(cart_bp, url_prefix='/cart')
     app.register_blueprint(activities_bp, url_prefix='/activities')
     app.register_blueprint(class_routes, url_prefix='/api')  # This registers the `/api` prefix
+    app.register_blueprint(report_bp, url_prefix='/report')  # Register report routes with `/report` prefix
+    app.register_blueprint(manager_bp, url_prefix='/manager')  # Register report routes with `/report` prefix
     app.register_blueprint(evaluation_bp, url_prefix='/eval')
     app.register_blueprint(event_routes, url_prefix='/api')  # Register the new blueprint
     app.register_blueprint(pool_routes, url_prefix='/api')

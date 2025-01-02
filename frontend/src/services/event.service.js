@@ -47,3 +47,38 @@ export const attendEvent = async (swimmerId, eventId) => {
         throw error.response?.data || error;
     }
 };
+
+export const cancelEvent = async (eventData) => {
+    try {
+        const response = await axios.post(
+            `${API_URL}/cancel-event`,
+            eventData,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+};
+
+export const fetchAllReadyEvents = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/all-ready-events`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+};
+
+export const fetchEventTypes = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/event-types`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+};

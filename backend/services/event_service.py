@@ -1,5 +1,6 @@
 from database.queries.event_queries import create_event
-from database.queries.event_queries import fetch_ready_events, add_attendance
+from database.queries.event_queries import fetch_ready_events, add_attendance, cancel_event
+from database.queries.event_queries import fetch_all_ready_events, fetch_event_types
 
 def create_new_event(event_data):
     try:
@@ -21,3 +22,18 @@ def register_to_event(swimmer_id, event_id):
         add_attendance(swimmer_id, event_id)
     except Exception as e:
         raise Exception(f"Error in service while adding attendance: {e}")
+    
+def cancel_event_by_id(event_id):
+    cancel_event(event_id)
+
+def get_all_ready_events():
+    try:
+        return fetch_all_ready_events()
+    except Exception as e:
+        raise Exception(f"Error in service while fetching all ready events: {e}")
+
+def get_event_types():
+    try:
+        return fetch_event_types()
+    except Exception as e:
+        raise Exception(f"Error in service while fetching event types: {e}")
