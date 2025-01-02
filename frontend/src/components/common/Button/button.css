@@ -1,47 +1,48 @@
 .btn {
   border: none;
-  padding: 10px 20px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: "Lexend Deca", sans-serif;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 500;
   cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.3s ease;
+  border-radius: var(--border-radius);
+  transition: all 0.2s ease;
 }
 
 .btn-primary {
-  background-color: #007bff;
+  background-color: var(--primary);
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-dark);
 }
 
 .btn-secondary {
-  background-color: #6c757d;
+  background-color: var(--text-secondary);
   color: white;
 }
 
 .btn-secondary:hover {
-  background-color: #5a6268;
+  background-color: #4b5563;
 }
 
 .btn-danger {
-  background-color: #dc3545;
+  background-color: var(--error);
   color: white;
 }
 
 .btn-danger:hover {
-  background-color: #bd2130;
+  background-color: #dc2626;
 }
 
 .btn-success {
-  background-color: #28a745;
+  background-color: #22c55e;
   color: white;
 }
 
 .btn-success:hover {
-  background-color: #218838;
+  background-color: #16a34a;
 }
 
 .btn-small {
@@ -60,6 +61,7 @@
 }
 
 .btn:disabled {
-  background-color: #ccc;
+  background-color: var(--text-secondary);
+  opacity: 0.5;
   cursor: not-allowed;
 }

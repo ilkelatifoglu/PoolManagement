@@ -1,8 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
-import "./Button.css";
+import "./button.css";
 
-const Button = ({ children, onClick, disabled, variant = "primary", size = "medium" }) => {
+const Button = ({
+  children,
+  onClick,
+  disabled,
+  variant = "primary",
+  size = "medium",
+}) => {
   return (
     <button
       onClick={onClick}
