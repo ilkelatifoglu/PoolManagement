@@ -25,6 +25,7 @@ import CreateEvent from "./pages/eventts/CreateEvent";
 import CancelClass from "./pages/classes/CancelClass";
 import AttendEvent from "./pages/eventts/EventList";
 import AddMoneyPage from "./pages/addMoney/AddMoneyPage";
+import CancelEvent from "./pages/eventts/CancelEvent";
 
 
 function App() {
@@ -51,6 +52,8 @@ function App() {
               <Route path="/create-event" element={<CreateEvent />} />
               <Route path="/cancel-class" element={<CancelClass />} />
               <Route path="/attend-event" element={<AttendEvent />} />
+              <Route path="/cancel-event" element={<CancelEvent />} />
+
               {/* Protected Routes */}
               <Route
                 path="/dashboard"
