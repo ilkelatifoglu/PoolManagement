@@ -1,5 +1,6 @@
 from database.connection import get_cursor, commit_db
 from database.queries.user_queries import *
+import datetime
 
 class UserService:
     @staticmethod
@@ -70,4 +71,45 @@ class UserService:
             return self.get_balance(user_id)
         except Exception as e:
             print(f"Error updating balance: {e}")
+            raise
+
+    @staticmethod
+    def get_schedule(user_id):
+        try:
+            cursor = get_cursor()
+            cursor.execute(GET_USER_SCHEDULE, (user_id,))
+            schedule = cursor.fetchall()
+            
+            formatted_schedule = {}
+            for slot in schedule:
+                day = slot['day_of_week']
+                if day not in formatted_schedule:
+                    formatted_schedule[day] = {}
+                
+                time_str = slot['time_slot'].strftime('%H:00') if hasattr(slot['time_slot'], 'strftime') else f"{slot['time_slot']}:00"
+                formatted_schedule[day][time_str] = slot['is_available']
+                
+            return formatted_schedule
+        except Exception as e:
+            raise
+
+    @staticmethod
+    def update_schedule(user_id, schedule_data):
+        try:
+            cursor = get_cursor()
+            cursor.execute(DELETE_USER_SCHEDULE, (user_id,))
+            
+            for day, times in schedule_data.items():
+                for time_slot, is_available in times.items():
+                    if is_available:
+                        cursor.execute(UPDATE_USER_SCHEDULE, (
+                            user_id,
+                            day,
+                            time_slot,
+                            is_available
+                        ))
+            
+            commit_db()
+            return True
+        except Exception as e:
             raise

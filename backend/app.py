@@ -11,6 +11,7 @@ from routes.class_routes import class_routes  # Import your class routes
 from routes.event_routes import event_routes  # Import the new routes
 from routes.pool_routes import pool_routes
 from flask_mail import Mail
+from routes.user_routes import user_bp
 
 load_dotenv()
 
@@ -19,12 +20,24 @@ mail = Mail()
 def create_app():
     app = Flask(__name__)
     
-    # Configure CORS with specific settings
-    CORS(app,
-         supports_credentials=True,
+    # Simplified CORS configuration
+    CORS(app, 
          origins=["http://localhost:3000"],
          allow_headers=["Content-Type", "Authorization"],
-         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+         supports_credentials=True)
+
+    @app.after_request
+    def after_request(response):
+        # Ensure OPTIONS requests are handled properly
+        if request.method == 'OPTIONS':
+            response.status_code = 200
+            response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
+        
+        return response
 
     # Configure MySQL
     app.config['MYSQL_DATABASE_HOST'] = os.getenv('MYSQL_HOST')
@@ -58,20 +71,11 @@ def create_app():
     app.register_blueprint(evaluation_bp, url_prefix='/eval')
     app.register_blueprint(event_routes, url_prefix='/api')  # Register the new blueprint
     app.register_blueprint(pool_routes, url_prefix='/api')
+    app.register_blueprint(user_bp, url_prefix='/api/user')  # Note the prefix if you're using one
 
-    @app.after_request
-    def after_request(response):
-        origin = request.headers.get('Origin')
-        if origin == 'http://localhost:3000':
-            response.headers.add('Access-Control-Allow-Origin', origin)
-            response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-            response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-            response.headers.add('Access-Control-Allow-Credentials', 'true')
-        return response
-    
     return app
 
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(debug=True, port=3001)
+    app.run(port=3001, debug=True)
