@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     console.log("Initializing AuthContext");
     const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
 
     if (token) {
       authService
@@ -32,6 +33,14 @@ export const AuthProvider = ({ children }) => {
           console.log("AuthContext loading complete");
         });
     } else {
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (e) {
+          console.error("Error parsing stored user:", e);
+          localStorage.clear();
+        }
+      }
       setLoading(false);
       console.log("No token found, setting loading to false");
     }
@@ -46,9 +55,11 @@ export const AuthProvider = ({ children }) => {
       }
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("role", response.data.user.user_type);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       setUser(response.data.user);
     } catch (error) {
       console.error("Login error:", error);
+      throw error;
     } finally {
       setLoading(false);
     }
