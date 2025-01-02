@@ -15,10 +15,13 @@ from routes.session_routes import session_routes
 from routes.lane_routes import lane_bp
 from flask_mail import Mail
 from routes.user_routes import user_bp
+from flask_apscheduler import APScheduler
+from scheduler.tasks import update_session_status
 
 load_dotenv()
 
 mail = Mail()
+scheduler = APScheduler()
 
 def create_app():
     app = Flask(__name__)
@@ -79,10 +82,29 @@ def create_app():
     app.register_blueprint(session_routes, url_prefix='/api')
     app.register_blueprint(lane_bp, url_prefix="/api")
 
+    # Configure APScheduler
+    app.config['SCHEDULER_API_ENABLED'] = True
+    scheduler.init_app(app)
+    
+    # Add scheduled job to run daily at 00:01 AM
+    scheduler.add_job(
+        id='update_session_status',
+        func=update_session_status,
+        trigger='cron',
+        hour=0,
+        minute=1
+    )
+    
+    scheduler.start()
 
     return app
 
 app = create_app()
+
+@app.route('/api/maintenance/update-sessions', methods=['POST'])
+def manual_update_sessions():
+    update_session_status()
+    return jsonify({'message': 'Session status update triggered successfully'})
 
 if __name__ == '__main__':
     app.run(port=3001, debug=True)
