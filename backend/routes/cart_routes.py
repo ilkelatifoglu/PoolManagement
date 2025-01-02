@@ -48,3 +48,18 @@ def confirm_purchase(current_user):
     CartService.confirm_purchase(booking_id, reservation_type, current_user['user_id'], total_price)
     return jsonify({"message": "Purchase confirmed successfully"})
 
+@cart_bp.route('/add-money', methods=['POST'])
+@token_required
+def add_money_to_balance(current_user):
+    data = request.json
+    amount = abs(data.get("amount"))  # Ensure positive value
+
+    if not amount or amount <= 0:
+        return jsonify({"error": "Invalid amount"}), 400
+
+    try:
+        CartService.add_money_to_balance(current_user['user_id'], amount)
+        return jsonify({"message": "Money added successfully!"})
+    except Exception as e:
+        print(f"Error adding money: {e}")
+        return jsonify({"error": "Failed to add money"}), 500

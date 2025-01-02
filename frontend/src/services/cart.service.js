@@ -42,4 +42,14 @@ export const cartService = {
       throw error.response?.data || error;
     }
   },
+
+  addMoneyToBalance: async (amount) => {
+    try {
+      const response = await api.post("/cart/add-money", { amount });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  
 };

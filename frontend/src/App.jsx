@@ -22,6 +22,7 @@ import AddClass from "./pages/classes/ClassList"; // Corrected path
 import MyActivities from "./pages/my_activities/MyActivities";
 import EvaluationPage from "./pages/evaluation/EvaluationPage";
 import CreateEvent from "./pages/eventts/CreateEvent";
+import AddMoneyPage from "./pages/addMoney/AddMoneyPage";
 
 function App() {
   const [apiStatus, setApiStatus] = useState({ status: "loading" });
@@ -83,6 +84,13 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <EvaluationPage />
+                  </ProtectedRoute>
+                }
+               />
+              <Route path="/add-money" 
+                element={
+                  <ProtectedRoute>
+                    <AddMoneyPage />
                   </ProtectedRoute>
                 }
                />
