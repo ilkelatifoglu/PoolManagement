@@ -1,11 +1,9 @@
 /* Container for the entire shopping page */
 .shopping-page-container {
     padding: 20px;
-    font-family: Arial, sans-serif;
   }
 
   .mycart-header{
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 26px;
     margin-bottom: 10px;
   }
@@ -78,7 +76,6 @@
   }
   
   .p-balance{
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 18px;
     margin-bottom: 10px;
   }

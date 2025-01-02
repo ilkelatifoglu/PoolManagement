@@ -158,3 +158,20 @@ SELECT report_count
 FROM administrator 
 WHERE user_id = %s
 """
+
+GET_USER_SCHEDULE = """
+SELECT day_of_week, time_slot, is_available 
+FROM user_schedule 
+WHERE user_id = %s
+"""
+
+UPDATE_USER_SCHEDULE = """
+INSERT INTO user_schedule (user_id, day_of_week, time_slot, is_available)
+VALUES (%s, %s, %s, %s)
+ON DUPLICATE KEY UPDATE is_available = VALUES(is_available)
+"""
+
+DELETE_USER_SCHEDULE = """
+DELETE FROM user_schedule 
+WHERE user_id = %s
+"""

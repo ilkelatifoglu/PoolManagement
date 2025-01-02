@@ -21,12 +21,16 @@ import CreateClass from "./pages/classes/CreateClass"; // Corrected path
 import AddClass from "./pages/classes/ClassList"; // Corrected path
 import MyActivities from "./pages/my_activities/MyActivities";
 import EvaluationPage from "./pages/evaluation/EvaluationPage";
+import TrainingPage from "./pages/training/TrainingPage";
 import CreateEvent from "./pages/eventts/CreateEvent";
 import CancelClass from "./pages/classes/CancelClass";
 import AttendEvent from "./pages/eventts/EventList";
 import AddMoneyPage from "./pages/addMoney/AddMoneyPage";
 import CancelEvent from "./pages/eventts/CancelEvent";
-
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import SystemReport from "./pages/system-report/SystemReport"; // Corrected path
+import ManagerPage from "./pages/manager/ManagerPage"; // Corrected path
 
 function App() {
   const [apiStatus, setApiStatus] = useState({ status: "loading" });
@@ -39,7 +43,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-      <div style={{ display: "flex" }}>
+        <div style={{ display: "flex" }}>
           <Sidebar isVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
           <div style={{ flex: 1 }}>
             <Navbar toggleSidebar={toggleSidebar} />
@@ -53,7 +57,14 @@ function App() {
               <Route path="/cancel-class" element={<CancelClass />} />
               <Route path="/attend-event" element={<AttendEvent />} />
               <Route path="/cancel-event" element={<CancelEvent />} />
-
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route
+                path="/reset-password/:token"
+                element={<ResetPassword />}
+              />
+              <Route path="/system-reports" element={<SystemReport />} />
+              <Route path="/manager-page" element={<ManagerPage />} />
+                
               {/* Protected Routes */}
               <Route
                 path="/dashboard"
@@ -69,16 +80,16 @@ function App() {
                   <ProtectedRoute>
                     <Profile />
                   </ProtectedRoute>
-            }
-          />
-          <Route
-          path="/cart"
-          element={
-            <ProtectedRoute>
-              <ShoppingPage />
-            </ProtectedRoute>
-              }
-            />
+                }
+              />
+              <Route
+                path="/cart"
+                element={
+                  <ProtectedRoute>
+                    <ShoppingPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/my-activities"
                 element={
@@ -87,20 +98,22 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/evaluation" 
+              <Route
+                path="/evaluation"
                 element={
                   <ProtectedRoute>
                     <EvaluationPage />
                   </ProtectedRoute>
                 }
                />
-              <Route path="/add-money" 
+              <Route
+                path="/training"
                 element={
                   <ProtectedRoute>
-                    <AddMoneyPage />
+                    <TrainingPage />
                   </ProtectedRoute>
                 }
-               />
+              />
             </Routes>
           </div>
         </div>
@@ -117,7 +130,6 @@ function App() {
           theme="colored"
         />
       </Router>
-
     </AuthProvider>
   );
 }
