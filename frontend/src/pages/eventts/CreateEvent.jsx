@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
-import { createEvent, fetchEventTypes } from "../../services/event.service";
-import { fetchPools } from "../../services/pool.service";
+import {
+  createEvent,
+  fetchManagerPools,
+  fetchEventTypes,
+} from "../../services/event.service";
 import "./CreateEvent.css";
+import { useAuth } from "../../context/AuthContext";
 
 const CreateEvent = () => {
+  const { user, loading } = useAuth();
+  console.log("User in CreateEvent:", user);
   const [eventData, setEventData] = useState({
-    manager_id: "",
     event_name: "",
     event_type: "",
     capacity: "",
@@ -17,24 +22,27 @@ const CreateEvent = () => {
     pool_id: "",
   });
   const [pools, setPools] = useState([]);
-  const [eventTypes, setEventTypes] = useState([]); // State for event types
+  const [eventTypes, setEventTypes] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    // Fetch pools and event types on component load
-    const fetchData = async () => {
-      try {
-        const poolData = await fetchPools();
-        const eventTypeData = await fetchEventTypes();
-        setPools(poolData);
-        setEventTypes(eventTypeData);
-      } catch (error) {
-        setErrorMessage("Failed to load data.");
-      }
-    };
-    fetchData();
-  }, []);
+    // Only proceed with fetching if we have a valid user
+    if (user && user.user_type === "manager") {
+      const fetchData = async () => {
+        try {
+          const poolData = await fetchManagerPools();
+          const eventTypeData = await fetchEventTypes();
+          setPools(poolData);
+          setEventTypes(eventTypeData);
+        } catch (error) {
+          setErrorMessage("Failed to load data. Please try again.");
+        }
+      };
+
+      fetchData();
+    }
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -43,16 +51,17 @@ const CreateEvent = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (eventData.start_time >= eventData.end_time) {
       setErrorMessage("Start time must be earlier than end time.");
       return;
     }
+
     try {
       await createEvent(eventData);
       setSuccessMessage("Event created successfully!");
       setErrorMessage("");
       setEventData({
-        manager_id: "",
         event_name: "",
         event_type: "",
         capacity: "",
@@ -62,10 +71,23 @@ const CreateEvent = () => {
         pool_id: "",
       });
     } catch (error) {
-      setErrorMessage("Failed to create event. Please check the inputs.");
+      if (error?.message === "Unauthorized") {
+        setErrorMessage("Your session has expired. Please log in again.");
+        // Optionally redirect to login page
+      } else {
+        setErrorMessage("Failed to create event. Please check the inputs.");
+      }
       setSuccessMessage("");
     }
   };
+
+  if (!user || !user.user_type) {
+    return (
+      <p className="error-message">
+        User information is missing. Please log in again.
+      </p>
+    );
+  }
 
   return (
     <div className="create-event-container">
@@ -73,12 +95,6 @@ const CreateEvent = () => {
       {successMessage && <p className="success-message">{successMessage}</p>}
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       <form onSubmit={handleSubmit} className="event-form">
-        <Input
-          name="manager_id"
-          label="Manager ID"
-          value={eventData.manager_id}
-          onChange={handleInputChange}
-        />
         <Input
           name="event_name"
           label="Event Name"
@@ -162,15 +178,11 @@ const CreateEvent = () => {
             className="form-control"
           >
             <option value="">Select a Pool</option>
-            {pools.length > 0 ? (
-              pools.map((pool) => (
-                <option key={pool.pool_id} value={pool.pool_id}>
-                  {pool.name}
-                </option>
-              ))
-            ) : (
-              <option disabled>Loading pools...</option>
-            )}
+            {pools.map((pool) => (
+              <option key={pool.pool_id} value={pool.pool_id}>
+                {pool.name}
+              </option>
+            ))}
           </select>
         </div>
         <Button type="submit">Create Event</Button>

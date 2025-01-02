@@ -1,14 +1,22 @@
 from database.connection import get_db
 import pymysql
-from datetime import datetime, timedelta
+from datetime import datetime
 
-def create_event(event_data):
+def create_event(event_data, manager_id):
     conn = get_db()
     try:
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            print(f"Received event data: {event_data}")  # Debugging log
-            
-            # Step 1: Check if the session already exists
+            # Verify pool belongs to the manager
+            pool_query = """
+            SELECT pool_id FROM pool WHERE pool_id = %(pool_id)s AND manager_id = %(manager_id)s
+            """
+            cursor.execute(pool_query, {"pool_id": event_data["pool_id"], "manager_id": manager_id})
+            pool = cursor.fetchone()
+
+            if not pool:
+                raise Exception("You are not authorized to create events for this pool.")
+
+            # Check if session already exists
             session_query = """
             SELECT session_id FROM session 
             WHERE date = %(date)s AND start_time = %(start_time)s AND end_time = %(end_time)s
@@ -17,26 +25,26 @@ def create_event(event_data):
             session = cursor.fetchone()
 
             if session:
-                session_id = session['session_id']
+                session_id = session["session_id"]
             else:
-                # Step 2: Insert a new session
+                # Create a new session
                 new_session_query = """
                 INSERT INTO session (date, start_time, end_time) 
                 VALUES (%(date)s, %(start_time)s, %(end_time)s)
                 """
                 cursor.execute(new_session_query, event_data)
-                session_id = cursor.lastrowid  # Fetch last inserted session ID
+                session_id = cursor.lastrowid
 
-            # Step 3: Insert the event entry
+            # Insert the event
             event_query = """
             INSERT INTO event (manager_id, event_name, event_type, capacity)
             VALUES (%(manager_id)s, %(event_name)s, %(event_type)s, %(capacity)s)
             """
-            print(f"Executing event query with data: {event_data}")  # Debugging log
+            event_data["manager_id"] = manager_id
             cursor.execute(event_query, event_data)
-            event_id = cursor.lastrowid  # Fetch last inserted event ID
+            event_id = cursor.lastrowid
 
-            # Step 4: Map event to session
+            # Link event to session and pool
             event_session_query = """
             INSERT INTO event_session (event_id, session_id, pool_id)
             VALUES (%(event_id)s, %(session_id)s, %(pool_id)s)
@@ -50,9 +58,21 @@ def create_event(event_data):
             conn.commit()
     except Exception as e:
         conn.rollback()
-        print(f"Error creating event: {str(e)}")  # Debugging log
         raise Exception(f"Error creating event: {e}")
 
+
+def fetch_manager_pools(manager_id):
+    conn = get_db()
+    try:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            query = """
+            SELECT pool_id, name FROM pool WHERE manager_id = %s
+            """
+            cursor.execute(query, (manager_id,))
+            pools = cursor.fetchall()
+            return pools
+    except Exception as e:
+        raise Exception(f"Error fetching pools: {e}")
 
 
 

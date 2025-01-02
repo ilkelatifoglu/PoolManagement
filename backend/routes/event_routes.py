@@ -1,26 +1,45 @@
 from flask import Blueprint, request, jsonify
-from services.event_service import create_new_event
+from services.event_service import create_new_event, get_manager_pools
 from services.event_service import create_new_event, get_ready_events, register_to_event, cancel_event_by_id, get_all_ready_events, fetch_event_types
 from utils.jwt_util import token_required
 
 event_routes = Blueprint('event_routes', __name__)
 
 @event_routes.route('/events', methods=['POST'])
-def create_event_route():
+@token_required
+def create_event_route(user_data):
     try:
+        # Ensure the user is a manager
+        if user_data["user_type"] != "manager":
+            return jsonify({"error": "Only managers can create events."}), 403
+
         event_data = request.json
-        required_fields = ['manager_id', 'event_name', 'event_type', 'capacity', 'date', 'start_time', 'end_time', 'pool_id']
+        required_fields = ['event_name', 'event_type', 'capacity', 'date', 'start_time', 'end_time', 'pool_id']
         missing_fields = [field for field in required_fields if field not in event_data]
 
         if missing_fields:
             return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400
 
-        create_new_event(event_data)
+        create_new_event(event_data, user_data["user_id"])
         return jsonify({"message": "Event created successfully"}), 201
     except Exception as e:
-        print(f"Error in create_event_route: {str(e)}")
-        return jsonify({"error": f"Failed to create event. Details: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
 
+
+@event_routes.route('/manager-pools', methods=['GET'])
+@token_required
+def get_pools_route(user_data):
+    try:
+        # Ensure the user is a manager
+        if user_data["user_type"] != "manager":
+            return jsonify({"error": "Only managers can access this resource."}), 403
+
+        pools = get_manager_pools(user_data["user_id"])
+        return jsonify(pools), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    
 
 @event_routes.route('/events-ready', methods=['GET'], endpoint="get_ready_events")
 def get_ready_events_route():
