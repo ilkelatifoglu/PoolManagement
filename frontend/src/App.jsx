@@ -18,6 +18,7 @@ import CreateClass from "./pages/classes/CreateClass"; // Corrected path
 import AddClass from "./pages/classes/ClassList"; // Corrected path
 import MyActivities from "./pages/my_activities/MyActivities";
 import SystemReport from "./pages/system-report/SystemReport"; // Corrected path
+import ManagerPage from "./pages/manager/ManagerPage"; // Corrected path
 
 function App() {
   const [apiStatus, setApiStatus] = useState({ status: "loading" });
@@ -41,6 +42,8 @@ function App() {
               <Route path="/create-class" element={<CreateClass />} />
               <Route path="/add-class" element={<AddClass />} />
               <Route path="/system-reports" element={<SystemReport />} />
+              <Route path="/manager-page" element={<ManagerPage />} />
+
 
               {/* Protected Routes */}
               <Route

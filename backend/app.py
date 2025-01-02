@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import os
 from routes.class_routes import class_routes  # Import your class routes
 from routes.report_routes import report_bp  # Import report routes
+from routes.manager_routes import manager_bp  # Import report routes
 
 load_dotenv()
 
@@ -37,6 +38,7 @@ def create_app():
     app.register_blueprint(activities_bp, url_prefix='/activities')
     app.register_blueprint(class_routes, url_prefix='/api')  # This registers the `/api` prefix
     app.register_blueprint(report_bp, url_prefix='/report')  # Register report routes with `/report` prefix
+    app.register_blueprint(manager_bp, url_prefix='/manager')  # Register report routes with `/report` prefix
 
     @app.after_request
     def after_request(response):
