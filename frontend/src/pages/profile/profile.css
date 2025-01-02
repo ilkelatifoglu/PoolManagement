@@ -159,6 +159,7 @@
 }
 
 .schedule-cell {
+  width: 100px;
   height: 40px;
   border-bottom: 1px solid #e5e7eb;
   border-right: 1px solid #e5e7eb;
@@ -193,4 +194,24 @@
     height: 35px;
     font-size: 0.75rem;
   }
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+}
+.schedule-cell {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e0e0e0;
+}
+
+.schedule-cell.selected {
+  background-color: #6366f1;
+}
+
+/* Only add hover effect to cells in update modal */
+[role="checkbox"].schedule-cell:hover {
+  cursor: pointer;
+  background-color: #818cf8;
 }

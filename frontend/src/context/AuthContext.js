@@ -5,14 +5,13 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     console.log("Initializing AuthContext");
     const token = localStorage.getItem("token");
 
     if (token) {
-      setLoading(true);
       authService
         .validateToken(token)
         .then((response) => {
@@ -20,13 +19,13 @@ export const AuthProvider = ({ children }) => {
             setUser(response.user);
           } else {
             console.error("Token validation response missing 'user'");
-            localStorage.removeItem("token");
+            localStorage.clear();
           }
         })
         .catch((err) => {
           console.error("Token validation failed:", err);
           setUser(null);
-          localStorage.removeItem("token");
+          localStorage.clear();
         })
         .finally(() => {
           setLoading(false);

@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app, url_for
+from flask_cors import CORS
 from services.auth_service import AuthService
 from utils.jwt_util import verify_token
 
@@ -16,8 +17,11 @@ def login():
         })
     return jsonify({'message': 'Invalid credentials'}), 401
 
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/register', methods=['POST', 'OPTIONS'])
 def register():
+    if request.method == 'OPTIONS':
+        # Respond to preflight request
+        return '', 200
     try:
         user_data = request.json
         
@@ -49,4 +53,32 @@ def validate_token():
         return jsonify({"user": decoded}), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 401
+
+@auth_bp.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    try:
+        email = request.json.get('email')
+        if not email:
+            return jsonify({'message': 'Email is required'}), 400
+
+        result = AuthService.initiate_password_reset(email)
+        if result:
+            return jsonify({'message': 'Password reset link has been sent to your email'}), 200
+        return jsonify({'message': 'Email not found'}), 404
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+@auth_bp.route('/reset-password/<token>', methods=['POST'])
+def reset_password(token):
+    try:
+        new_password = request.json.get('password')
+        if not new_password:
+            return jsonify({'message': 'New password is required'}), 400
+
+        result = AuthService.reset_password(token, new_password)
+        if result:
+            return jsonify({'message': 'Password has been reset successfully'}), 200
+        return jsonify({'message': 'Invalid or expired token'}), 400
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 

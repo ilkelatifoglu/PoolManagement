@@ -54,6 +54,32 @@ const Sidebar = ({ isVisible, toggleSidebar }) => {
             Cart
           </Link>
         </li>
+        <li>
+          <Link to="/evaluation" onClick={toggleSidebar}>
+            Evaluation
+          </Link>
+        </li>
+        
+        <li>
+          <Link to="/create-class" onClick={toggleSidebar}>
+            Create Class
+          </Link>
+        </li>
+        <li>
+          <Link to="/add-class" onClick={toggleSidebar}>
+            Add Class
+          </Link>
+        </li>
+        <li>
+          <Link to="/create-event" onClick={toggleSidebar}>
+            Create Event
+          </Link>
+        </li>
+        <li>
+          <Link to="/cancel-class" onClick={toggleSidebar}>
+            Cancel Class
+          </Link>
+        </li>
       </ul>
     </div>
   );

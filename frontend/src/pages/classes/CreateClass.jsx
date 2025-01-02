@@ -20,7 +20,7 @@ const CreateClass = () => {
     end_time: "",
     lane_number: "",
     pool_id: "",
-    price: "", // Add this line
+    price: "",
   });
 
   const [pools, setPools] = useState([]); // Store pool options
@@ -48,6 +48,10 @@ const CreateClass = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.start_time >= formData.end_time) {
+      setError("Start time must be earlier than end time.");
+      return;
+    }
     setError("");
     setSuccess("");
     try {
@@ -69,8 +73,7 @@ const CreateClass = () => {
         end_time: "",
         lane_number: "",
         pool_id: "",
-        price: "", // Add this line
-
+        price: "",
       });
     } catch (error) {
       setError(
@@ -79,10 +82,14 @@ const CreateClass = () => {
     }
   };
 
-  const hourOptions = Array.from({ length: 24 }, (_, i) => ({
-    value: `${i.toString().padStart(2, "0")}:00`,
-    label: `${i.toString().padStart(2, "0")}:00`,
-  }));
+  // Restrict time options between 6:00 and 20:00
+  const hourOptions = Array.from({ length: 15 }, (_, i) => {
+    const hour = 6 + i; // Generate hours from 6 to 20
+    return {
+      value: `${hour.toString().padStart(2, "0")}:00`,
+      label: `${hour.toString().padStart(2, "0")}:00`,
+    };
+  });
 
   const poolOptions = pools.map((pool) => ({
     value: pool.pool_id,
@@ -211,14 +218,16 @@ const CreateClass = () => {
           required
         />
         <Input
-            label="Price"
-            name="price"
-            type="number"
-            placeholder="Enter price"
-            value={formData.price}
-            onChange={handleInputChange}
-            required
+          label="Price"
+          name="price"
+          type="number"
+          step="0.01" // Allow decimal values
+          placeholder="Enter price"
+          value={formData.price}
+          onChange={handleInputChange}
+          required
         />
+
 
         <button type="submit" className="btn btn-primary">
           Create Class

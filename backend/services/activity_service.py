@@ -6,7 +6,7 @@ class ActivityService:
     def get_swimmer_activities(swimmer_id):
         try:
             cursor = get_cursor()
-            cursor.execute(GET_SWIMMER_ACTIVITIES, (swimmer_id,))
+            cursor.execute(GET_SWIMMER_ACTIVITIES, (swimmer_id, swimmer_id, swimmer_id))
             activities = cursor.fetchall()
             print("Swimmer activities:", activities)
 
@@ -19,7 +19,7 @@ class ActivityService:
                     "start_time": str(activity["start_time"]),  # Format timedelta to string
                     "end_time": str(activity["end_time"]),      # Format timedelta to string
                     "pool_name": activity["pool_name"],
-                    "instructor_name": activity["instructor_name"]
+                    "instructor_name": activity["instructor_name"] or "N/A"
                 })
 
             return serialized_activities
