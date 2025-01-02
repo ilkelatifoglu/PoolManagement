@@ -6,7 +6,7 @@ import "./login.css";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -15,10 +15,10 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    console.log("Login component mounted, clearing localStorage");
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-  }, []);
+    if (isAuthenticated()) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     setFormData({

@@ -1,41 +1,51 @@
-.table-container {
-    margin: 1rem 0;
+/* Scoped to EventList.jsx */
+.event-list-container {
+    overflow-x: auto;
   }
   
-  table {
+  .event-list-container table {
     width: 100%;
     border-collapse: collapse;
-  }
-  
-  thead {
-    background-color: #f4f4f4;
-  }
-  
-  th,
-  td {
-    border: 1px solid #ddd;
+    margin: 20px 0;
+    font-size: 16px;
     text-align: left;
-    padding: 8px;
   }
   
-  th {
-    font-weight: bold;
+  .event-list-container table thead tr {
+    background-color: #007bff;
+    color: white;
   }
   
-  tr:nth-child(even) {
+  .event-list-container table thead th {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .event-list-container table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
   }
   
-  button {
-    padding: 0.5rem 1rem;
+  .event-list-container table tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .event-list-container table tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .event-list-container .action-button {
     background-color: #007bff;
     color: white;
     border: none;
+    padding: 8px 12px;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
   }
   
-  button:hover {
+  .event-list-container .action-button:hover {
     background-color: #0056b3;
   }
   

@@ -1,0 +1,110 @@
+/* EventList.css */
+
+/* Scope all styles under .event-list-container */
+.event-list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.event-list-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Styling for messages (success or error) */
+.event-list-container .message {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.event-list-container .message.success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.event-list-container .message.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+/* Table styling */
+.event-list-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.event-list-container table thead th {
+    background-color: #007bff;
+    color: #fff;
+    text-align: left;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.event-list-container table tbody td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.event-list-container table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Button styling */
+.event-list-container table tbody td button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.event-list-container table tbody td button:hover {
+    background-color: #0056b3;
+}
+
+.event-list-container table tbody td button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .event-list-container {
+        padding: 10px;
+    }
+
+    .event-list-container table {
+        font-size: 12px;
+    }
+
+    .event-list-container table thead th,
+    .event-list-container table tbody td {
+        padding: 8px;
+    }
+
+    .event-list-container table tbody td button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}

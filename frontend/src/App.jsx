@@ -23,6 +23,11 @@ import MyActivities from "./pages/my_activities/MyActivities";
 import EvaluationPage from "./pages/evaluation/EvaluationPage";
 import TrainingPage from "./pages/training/TrainingPage";
 import CreateEvent from "./pages/eventts/CreateEvent";
+import CancelClass from "./pages/classes/CancelClass";
+import AttendEvent from "./pages/eventts/EventList";
+import AddMoneyPage from "./pages/addMoney/AddMoneyPage";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 function App() {
   const [apiStatus, setApiStatus] = useState({ status: "loading" });
@@ -35,7 +40,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-      <div style={{ display: "flex" }}>
+        <div style={{ display: "flex" }}>
           <Sidebar isVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
           <div style={{ flex: 1 }}>
             <Navbar toggleSidebar={toggleSidebar} />
@@ -46,7 +51,13 @@ function App() {
               <Route path="/create-class" element={<CreateClass />} />
               <Route path="/add-class" element={<AddClass />} />
               <Route path="/create-event" element={<CreateEvent />} />
-
+              <Route path="/cancel-class" element={<CancelClass />} />
+              <Route path="/attend-event" element={<AttendEvent />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route
+                path="/reset-password/:token"
+                element={<ResetPassword />}
+              />
               {/* Protected Routes */}
               <Route
                 path="/dashboard"
@@ -62,14 +73,14 @@ function App() {
                   <ProtectedRoute>
                     <Profile />
                   </ProtectedRoute>
-              }
+                }
               />
               <Route
-              path="/cart"
-              element={
-                <ProtectedRoute>
-                  <ShoppingPage />
-                </ProtectedRoute>
+                path="/cart"
+                element={
+                  <ProtectedRoute>
+                    <ShoppingPage />
+                  </ProtectedRoute>
                 }
               />
               <Route
@@ -80,7 +91,8 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/evaluation" 
+              <Route
+                path="/evaluation"
                 element={
                   <ProtectedRoute>
                     <EvaluationPage />
@@ -111,7 +123,6 @@ function App() {
           theme="colored"
         />
       </Router>
-
     </AuthProvider>
   );
 }

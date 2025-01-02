@@ -72,4 +72,18 @@ UPDATE swimmer
 SET balance = balance - %(amount)s
 WHERE swimmer_id = %(swimmer_id)s;
 """
+INSERT_PAYMENT_ENTRY = """
+INSERT INTO payment (swimmer_id, amount, date, class_id, training_id, self_training_id)
+VALUES (%(swimmer_id)s, %(amount)s, %(date)s, %(class_id)s, %(training_id)s, %(self_training_id)s);
+"""
 
+INSERT_PAYMENT_ENTRY = """
+INSERT INTO payment (swimmer_id, amount, date, class_id, training_id, self_training_id)
+VALUES (%(swimmer_id)s, %(amount)s, %(date)s, NULL, NULL, NULL);
+"""
+
+UPDATE_BALANCE = """
+UPDATE swimmer
+SET balance = balance + %(amount)s
+WHERE swimmer_id = %(swimmer_id)s;
+"""

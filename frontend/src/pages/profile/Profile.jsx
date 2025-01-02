@@ -28,7 +28,6 @@ const Profile = () => {
           <h1>My Profile</h1>
           <p className="user-name">{user?.name}</p>
         </div>
-        <span className="role-badge">{user?.role}</span>
       </div>
 
       {/* Cards Grid */}

@@ -221,11 +221,13 @@ const CreateClass = () => {
           label="Price"
           name="price"
           type="number"
+          step="0.01" // Allow decimal values
           placeholder="Enter price"
           value={formData.price}
           onChange={handleInputChange}
           required
         />
+
 
         <button type="submit" className="btn btn-primary">
           Create Class

@@ -5,6 +5,8 @@ from services.class_service import get_filtered_classes, add_class_to_cart
 from services.class_service import create_new_class, get_filtered_classes, add_class_to_cart
 from utils.jwt_util import token_required
 from services.class_service import fetch_classes_not_in_cart
+from services.class_service import cancel_class_by_id, get_ready_classes
+
 
 class_routes = Blueprint('class_routes', __name__)
 
@@ -61,4 +63,29 @@ def get_pools_route():
         pools = get_all_pools()
         return jsonify(pools), 200
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@class_routes.route('/ready-classes', methods=['GET'])
+@token_required
+def get_ready_classes_route(user_data):
+    try:
+        ready_classes = get_ready_classes()
+        return jsonify(ready_classes), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+ 
+@class_routes.route('/cancel-class', methods=['POST'])
+@token_required
+def cancel_class_route(user_data):
+    try:
+        data = request.json
+        if 'class_id' not in data:
+            return jsonify({"error": "Missing class_id"}), 400
+        
+        print(f"Received class_id for cancellation: {data['class_id']}")
+        cancel_class_by_id(data['class_id'])
+        return jsonify({"message": "Class cancelled successfully"}), 200
+    except Exception as e:
+        print(f"Error in cancel_class_route: {str(e)}")
         return jsonify({"error": str(e)}), 500
