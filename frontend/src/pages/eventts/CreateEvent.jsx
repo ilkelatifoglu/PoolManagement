@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
-import { createEvent, fetchManagerPools, fetchEventTypes } from "../../services/event.service";
+import {
+  createEvent,
+  fetchManagerPools,
+  fetchEventTypes,
+} from "../../services/event.service";
 import "./CreateEvent.css";
 import { useAuth } from "../../context/AuthContext";
 
 const CreateEvent = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  console.log("User in CreateEvent:", user);
   const [eventData, setEventData] = useState({
     event_name: "",
     event_type: "",
@@ -22,31 +27,21 @@ const CreateEvent = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    // Check if user exists and has a valid user_type
-    if (!user || !user.user_type) {
-      setErrorMessage("User role is missing. Please try logging in again.");
-      return;
+    // Only proceed with fetching if we have a valid user
+    if (user && user.user_type === "manager") {
+      const fetchData = async () => {
+        try {
+          const poolData = await fetchManagerPools();
+          const eventTypeData = await fetchEventTypes();
+          setPools(poolData);
+          setEventTypes(eventTypeData);
+        } catch (error) {
+          setErrorMessage("Failed to load data. Please try again.");
+        }
+      };
+
+      fetchData();
     }
-
-    // Ensure the user is a manager
-    if (user.user_type !== "manager") {
-      setErrorMessage("Unauthorized access. Only managers can create events.");
-      return;
-    }
-
-    // Fetch pools and event types on component load
-    const fetchData = async () => {
-      try {
-        const poolData = await fetchManagerPools(); // Fetch pools for the manager
-        const eventTypeData = await fetchEventTypes();
-        setPools(poolData);
-        setEventTypes(eventTypeData);
-      } catch (error) {
-        setErrorMessage("Failed to load data. Please try again.");
-      }
-    };
-
-    fetchData();
   }, [user]);
 
   const handleInputChange = (e) => {
@@ -58,37 +53,40 @@ const CreateEvent = () => {
     e.preventDefault();
 
     if (eventData.start_time >= eventData.end_time) {
-        setErrorMessage("Start time must be earlier than end time.");
-        return;
+      setErrorMessage("Start time must be earlier than end time.");
+      return;
     }
 
     try {
-        await createEvent(eventData);
-        setSuccessMessage("Event created successfully!");
-        setErrorMessage("");
-        setEventData({
-            event_name: "",
-            event_type: "",
-            capacity: "",
-            date: "",
-            start_time: "",
-            end_time: "",
-            pool_id: "",
-        });
+      await createEvent(eventData);
+      setSuccessMessage("Event created successfully!");
+      setErrorMessage("");
+      setEventData({
+        event_name: "",
+        event_type: "",
+        capacity: "",
+        date: "",
+        start_time: "",
+        end_time: "",
+        pool_id: "",
+      });
     } catch (error) {
-        if (error?.message === 'Unauthorized') {
-            setErrorMessage("Your session has expired. Please log in again.");
-            // Optionally redirect to login page
-        } else {
-            setErrorMessage("Failed to create event. Please check the inputs.");
-        }
-        setSuccessMessage("");
+      if (error?.message === "Unauthorized") {
+        setErrorMessage("Your session has expired. Please log in again.");
+        // Optionally redirect to login page
+      } else {
+        setErrorMessage("Failed to create event. Please check the inputs.");
+      }
+      setSuccessMessage("");
     }
-};
-
+  };
 
   if (!user || !user.user_type) {
-    return <p className="error-message">User information is missing. Please log in again.</p>;
+    return (
+      <p className="error-message">
+        User information is missing. Please log in again.
+      </p>
+    );
   }
 
   return (
