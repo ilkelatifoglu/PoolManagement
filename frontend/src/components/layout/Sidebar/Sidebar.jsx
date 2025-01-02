@@ -71,13 +71,23 @@ const Sidebar = ({ isVisible, toggleSidebar }) => {
           </Link>
         </li>
         <li>
+          <Link to="/cancel-class" onClick={toggleSidebar}>
+            Cancel Class
+          </Link>
+        </li>
+        <li>
           <Link to="/create-event" onClick={toggleSidebar}>
             Create Event
           </Link>
         </li>
         <li>
-          <Link to="/cancel-class" onClick={toggleSidebar}>
-            Cancel Class
+          <Link to="/attend-event" onClick={toggleSidebar}>
+            Attend Event
+          </Link>
+        </li>
+        <li>
+          <Link to="/cancel-event" onClick={toggleSidebar}>
+            Cancel Event
           </Link>
         </li>
       </ul>

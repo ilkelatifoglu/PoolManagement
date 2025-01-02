@@ -26,6 +26,7 @@ import CreateEvent from "./pages/eventts/CreateEvent";
 import CancelClass from "./pages/classes/CancelClass";
 import AttendEvent from "./pages/eventts/EventList";
 import AddMoneyPage from "./pages/addMoney/AddMoneyPage";
+import CancelEvent from "./pages/eventts/CancelEvent";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import SystemReport from "./pages/system-report/SystemReport"; // Corrected path
@@ -55,6 +56,7 @@ function App() {
               <Route path="/create-event" element={<CreateEvent />} />
               <Route path="/cancel-class" element={<CancelClass />} />
               <Route path="/attend-event" element={<AttendEvent />} />
+              <Route path="/cancel-event" element={<CancelEvent />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route
                 path="/reset-password/:token"
@@ -62,8 +64,7 @@ function App() {
               />
               <Route path="/system-reports" element={<SystemReport />} />
               <Route path="/manager-page" element={<ManagerPage />} />
-
-
+                
               {/* Protected Routes */}
               <Route
                 path="/dashboard"

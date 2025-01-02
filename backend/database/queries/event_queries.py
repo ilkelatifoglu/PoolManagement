@@ -6,6 +6,8 @@ def create_event(event_data):
     conn = get_db()
     try:
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            print(f"Received event data: {event_data}")  # Debugging log
+            
             # Step 1: Check if the session already exists
             session_query = """
             SELECT session_id FROM session 
@@ -30,6 +32,7 @@ def create_event(event_data):
             INSERT INTO event (manager_id, event_name, event_type, capacity)
             VALUES (%(manager_id)s, %(event_name)s, %(event_type)s, %(capacity)s)
             """
+            print(f"Executing event query with data: {event_data}")  # Debugging log
             cursor.execute(event_query, event_data)
             event_id = cursor.lastrowid  # Fetch last inserted event ID
 
@@ -47,7 +50,9 @@ def create_event(event_data):
             conn.commit()
     except Exception as e:
         conn.rollback()
+        print(f"Error creating event: {str(e)}")  # Debugging log
         raise Exception(f"Error creating event: {e}")
+
 
 
 
@@ -108,3 +113,70 @@ def add_attendance(swimmer_id, event_id):
         conn.rollback()
         raise Exception(f"Error adding attendance: {e}")
 
+def cancel_event(event_id):
+    conn = get_db()
+    try:
+        with conn.cursor() as cursor:
+            query = """
+                UPDATE event
+                SET status = 'CANCELLED'
+                WHERE event_id = %s
+            """
+            print(f"Executing query for event_id: {event_id}")
+            cursor.execute(query, (event_id,))
+            conn.commit()
+    except Exception as e:
+        print(f"Error in cancel_class: {str(e)}")
+        conn.rollback()
+        raise Exception(f"Error cancelling class: {e}")
+
+def fetch_all_ready_events():
+    conn = get_db()
+    try:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            query = """
+            SELECT 
+                e.event_id, 
+                e.event_name, 
+                e.event_type, 
+                e.capacity, 
+                e.status,
+                s.date AS session_date, 
+                CONCAT(TIME_FORMAT(s.start_time, '%%H:%%i'), ' - ', TIME_FORMAT(s.end_time, '%%H:%%i')) AS session_time, 
+                p.name AS pool_name
+            FROM event e
+            JOIN event_session es ON e.event_id = es.event_id
+            JOIN session s ON es.session_id = s.session_id
+            JOIN pool p ON es.pool_id = p.pool_id
+            WHERE e.status = 'READY'
+            """
+            cursor.execute(query)
+            results = cursor.fetchall()
+            return results
+    except Exception as e:
+        raise Exception(f"Error fetching all ready events: {e}")
+
+def fetch_event_types():
+    conn = get_db()
+    try:
+        with conn.cursor() as cursor:
+            query = """
+            SELECT COLUMN_TYPE 
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'event' AND COLUMN_NAME = 'event_type'
+            """
+            cursor.execute(query)
+            result = cursor.fetchone()
+            if result:
+                enum_values = (
+                    result[0]
+                    .replace("enum(", "")
+                    .replace(")", "")
+                    .replace("'", "")
+                    .split(",")
+                )
+                return enum_values
+            else:
+                raise Exception("No enum values found for event_type.")
+    except Exception as e:
+        raise Exception(f"Error fetching event types: {e}")

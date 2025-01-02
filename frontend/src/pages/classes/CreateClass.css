@@ -1,11 +1,32 @@
 .create-class-container {
     max-width: 600px;
-    margin: 0 auto;
+    margin: 50px auto;
     padding: 20px;
-}
-
-form input, form textarea, form select, form button {
-    display: block;
-    width: 100%;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .create-class-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .success-message {
+    color: #28a745;
+    text-align: center;
     margin-bottom: 10px;
-}
+  }
+  
+  .error-message {
+    color: #dc3545;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .class-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
