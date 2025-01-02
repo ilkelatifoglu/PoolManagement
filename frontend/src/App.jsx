@@ -28,6 +28,8 @@ import AttendEvent from "./pages/eventts/EventList";
 import AddMoneyPage from "./pages/addMoney/AddMoneyPage";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
+import SystemReport from "./pages/system-report/SystemReport"; // Corrected path
+import ManagerPage from "./pages/manager/ManagerPage"; // Corrected path
 
 function App() {
   const [apiStatus, setApiStatus] = useState({ status: "loading" });
@@ -58,6 +60,10 @@ function App() {
                 path="/reset-password/:token"
                 element={<ResetPassword />}
               />
+              <Route path="/system-reports" element={<SystemReport />} />
+              <Route path="/manager-page" element={<ManagerPage />} />
+
+
               {/* Protected Routes */}
               <Route
                 path="/dashboard"
