@@ -38,18 +38,24 @@ const CreateClass = () => {
     const fetchPoolsData = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
+        if (!user || !user.user_id) {
+          setErrorMessage("Coach information not found. Please log in again.");
+          return;
+        }
         const coachId = user.user_id;
-        console.log(coachId);
+        console.log("Coach ID:", coachId); // Debug log
+
         const poolData = await fetchCoachPools(coachId);
+        console.log("Pool Data:", poolData); // Debug log
         setPools(poolData);
 
-        // Pre-fill coach_id in form
         setFormData((prev) => ({
           ...prev,
           coach_id: coachId,
         }));
       } catch (error) {
-        setErrorMessage("Failed to load pools.");
+        console.error("Pool fetching error:", error);
+        setErrorMessage(`Failed to load pools: ${error.message}`);
       }
     };
     fetchPoolsData();
@@ -88,7 +94,12 @@ const CreateClass = () => {
         price: "",
       });
     } catch (error) {
-      setErrorMessage("Failed to create class. Please check the inputs.");
+      console.error("Class creation error:", error.response?.data || error);
+      setErrorMessage(
+        `Failed to create class: ${
+          error.response?.data?.error || error.message
+        }`
+      );
     }
   };
 

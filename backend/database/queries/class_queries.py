@@ -37,10 +37,18 @@ def create_class(class_data):
             cursor.execute(booking_query, class_data)
             booking_id = cursor.lastrowid
 
-            # Step 4: Insert the class entry
+            # Step 4: Insert the class entry - Remove avg_rating or set default
             class_query = """
-            INSERT INTO class (class_id, name, coach_id, level, age_req, gender_req, capacity, avg_rating, course_content, enroll_deadline, price)
-            VALUES (%(booking_id)s, %(name)s, %(coach_id)s, %(level)s, %(age_req)s, %(gender_req)s, %(capacity)s, %(avg_rating)s, %(course_content)s, %(enroll_deadline)s, %(price)s)
+            INSERT INTO class (
+                class_id, name, coach_id, level, age_req, 
+                gender_req, capacity, course_content, 
+                enroll_deadline, price
+            )
+            VALUES (
+                %(booking_id)s, %(name)s, %(coach_id)s, %(level)s, 
+                %(age_req)s, %(gender_req)s, %(capacity)s, 
+                %(course_content)s, %(enroll_deadline)s, %(price)s
+            )
             """
             print(f"Inserting class with price: {class_data['price']}")  # Debug statement
             class_data['booking_id'] = booking_id
