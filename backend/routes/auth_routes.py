@@ -4,7 +4,6 @@ from services.auth_service import AuthService
 from utils.jwt_util import verify_token
 
 auth_bp = Blueprint('auth', __name__)
-CORS(auth_bp, origins=["http://localhost:3000"], supports_credentials=True)
 
 @auth_bp.route('/login', methods=['POST'])
 def login():

@@ -69,7 +69,11 @@ const Sidebar = ({ isVisible, toggleSidebar }) => {
             Create Event
           </Link>
         </li>
-        
+        <li>
+          <Link to="/cancel-class" onClick={toggleSidebar}>
+            Cancel Class
+          </Link>
+        </li>
       </ul>
     </div>
   );

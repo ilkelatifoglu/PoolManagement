@@ -21,6 +21,9 @@ import CreateClass from "./pages/classes/CreateClass"; // Corrected path
 import AddClass from "./pages/classes/ClassList"; // Corrected path
 import MyActivities from "./pages/my_activities/MyActivities";
 import CreateEvent from "./pages/eventts/CreateEvent";
+import CancelClass from "./pages/classes/CancelClass";
+import AttendEvent from "./pages/eventts/EventList";
+
 
 function App() {
   const [apiStatus, setApiStatus] = useState({ status: "loading" });
@@ -44,7 +47,8 @@ function App() {
               <Route path="/create-class" element={<CreateClass />} />
               <Route path="/add-class" element={<AddClass />} />
               <Route path="/create-event" element={<CreateEvent />} />
-
+              <Route path="/cancel-class" element={<CancelClass />} />
+              <Route path="/attend-event" element={<AttendEvent />} />
               {/* Protected Routes */}
               <Route
                 path="/dashboard"

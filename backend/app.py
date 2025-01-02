@@ -38,8 +38,8 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(cart_bp, url_prefix='/cart')
     app.register_blueprint(activities_bp, url_prefix='/activities')
-    app.register_blueprint(class_routes, url_prefix='/api')  # This registers the `/api` prefix
-    app.register_blueprint(event_routes, url_prefix='/api')  # Register the new blueprint
+    app.register_blueprint(class_routes, url_prefix='/api') 
+    app.register_blueprint(event_routes, url_prefix='/api') 
     app.register_blueprint(pool_routes, url_prefix='/api')
 
     @app.after_request
