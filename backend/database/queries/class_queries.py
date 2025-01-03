@@ -159,8 +159,8 @@ def add_class_to_cart_query(data):
     conn = get_db()
     try:
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            # First check if the enrollment deadline hasn't passed
-            validation_query = """
+            # First get the session details of the class being added
+            class_session_query = """
                 SELECT 
                     c.class_id,
                     c.gender_req,
@@ -168,17 +168,17 @@ def add_class_to_cart_query(data):
                     c.capacity,
                     u.gender,
                     u.birth_date,
-                    (SELECT COUNT(*) FROM schedules WHERE class_id = c.class_id) as enrolled_count,
                     s.date as session_date,
                     s.start_time,
-                    s.end_time
+                    s.end_time,
+                    (SELECT COUNT(*) FROM schedules WHERE class_id = c.class_id) as enrolled_count
                 FROM class c
                 JOIN user u ON u.user_id = %(swimmer_id)s
                 JOIN booking b ON c.class_id = b.booking_id
                 JOIN session s ON b.session_id = s.session_id
                 WHERE c.class_id = %(class_id)s
             """
-            cursor.execute(validation_query, data)
+            cursor.execute(class_session_query, data)
             class_info = cursor.fetchone()
             
             if not class_info:
@@ -200,18 +200,22 @@ def add_class_to_cart_query(data):
             if class_info['enrolled_count'] >= class_info['capacity']:
                 raise Exception("Class is already full")
 
-            # Check for time conflicts
+            # Check for time conflicts with existing schedules
             conflict_query = """
-                SELECT c2.class_id 
-                FROM schedules s2
-                JOIN class c2 ON s2.class_id = c2.class_id
+                SELECT 
+                    c2.name as conflicting_class,
+                    DATE_FORMAT(s2.date, '%%Y-%%m-%%d') as conflict_date,
+                    TIME_FORMAT(s2.start_time, '%%H:%%i') as conflict_start,
+                    TIME_FORMAT(s2.end_time, '%%H:%%i') as conflict_end
+                FROM schedules sch
+                JOIN class c2 ON sch.class_id = c2.class_id
                 JOIN booking b2 ON c2.class_id = b2.booking_id
-                JOIN session ss2 ON b2.session_id = ss2.session_id
-                WHERE s2.swimmer_id = %(swimmer_id)s
-                AND ss2.date = %(session_date)s
+                JOIN session s2 ON b2.session_id = s2.session_id
+                WHERE sch.swimmer_id = %(swimmer_id)s
+                AND s2.date = %(session_date)s
                 AND (
-                    (ss2.start_time < %(end_time)s AND ss2.end_time > %(start_time)s)
-                    OR (ss2.start_time = %(start_time)s AND ss2.end_time = %(end_time)s)
+                    (s2.start_time < %(end_time)s AND s2.end_time > %(start_time)s)
+                    OR (s2.start_time = %(start_time)s AND s2.end_time = %(end_time)s)
                 )
             """
             cursor.execute(conflict_query, {
@@ -221,8 +225,12 @@ def add_class_to_cart_query(data):
                 'end_time': class_info['end_time']
             })
             
-            if cursor.fetchone():
-                raise Exception("You have another class scheduled at this time")
+            conflict = cursor.fetchone()
+            if conflict:
+                raise Exception(
+                    f"Schedule conflict with {conflict['conflicting_class']} on "
+                    f"{conflict['conflict_date']} at {conflict['conflict_start']}-{conflict['conflict_end']}"
+                )
 
             # If all validations pass, proceed with insertion
             insert_query = """
@@ -343,3 +351,4 @@ def cancel_class(class_id):
         print(f"Error in cancel_class: {str(e)}")
         conn.rollback()
         raise Exception(f"Error cancelling class: {e}")
+    
