@@ -27,8 +27,6 @@ const EventList = () => {
             console.error("Error fetching events:", err);
         }
     };
-    
-    
 
     useEffect(() => {
         loadEvents();
@@ -59,6 +57,7 @@ const EventList = () => {
                         <th>Event Type</th>
                         <th>Capacity</th>
                         <th>Pool</th>
+                        <th>Time</th> {/* Add Time column */}
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -69,6 +68,7 @@ const EventList = () => {
                             <td>{event.event_type}</td>
                             <td>{event.capacity}</td>
                             <td>{event.pool_name}</td>
+                            <td>{event.session_time}</td> {/* Map session_time */}
                             <td>
                                 <button onClick={() => handleAttend(event.event_id)}>
                                     Attend

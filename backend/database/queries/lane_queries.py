@@ -1,5 +1,5 @@
 GET_AVAILABLE_LANES = """
-SELECT l.lane_number, l.type
+SELECT l.lane_number
 FROM lane l
 LEFT JOIN booking b 
     ON l.pool_id = b.pool_id 

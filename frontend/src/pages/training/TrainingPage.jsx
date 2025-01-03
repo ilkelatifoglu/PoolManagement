@@ -68,31 +68,61 @@ const TrainingPage = () => {
     }
 };    
 
-  // Handle pool and session selection
-  const handlePoolOrSessionChange = async (poolId, sessionId) => {
-    try {
-      if (poolId !== selectedPool) {
-        setSelectedPool(poolId);
-        setSelectedSession(""); // Reset session when pool changes
-        setSessions([]);
-        setLanes([]);
-        if (poolId) {
-          const availableSessions = await fetchSessionsWithAvailableLanes(poolId);
-          setSessions(availableSessions);
+const handlePoolOrSessionChange = async (poolId, sessionId) => {
+  try {
+    // Reset error state
+    setError(null);
+
+    // Handle pool change
+    if (poolId !== selectedPool) {
+      // Reset session and related data when pool changes
+      setSelectedPool(poolId);
+      setSelectedSession("");
+      setSessions([]);
+      setLanes([]);
+
+      if (poolId) {
+        console.log(`Fetching sessions for poolId: ${poolId}`);
+        const availableSessions = await fetchSessionsWithAvailableLanes(poolId);
+
+        // Handle no sessions case
+        if (availableSessions.length === 0) {
+          setError("No available sessions for the selected pool.");
+          return;
         }
-      } else if (sessionId !== selectedSession) {
-        setSelectedSession(sessionId);
-        setLanes([]);
-        if (poolId && sessionId) {
-          const availableLanes = await fetchAvailableLanes(poolId, sessionId);
-          setLanes(availableLanes);
-        }
+
+        setSessions(availableSessions);
       }
-    } catch (err) {
-      console.error("Error in handlePoolOrSessionChange:", err);
-      setError("Failed to fetch available lanes or sessions.");
+    } 
+
+    // Handle session change within the same pool
+    else if (sessionId !== selectedSession) {
+      setSelectedSession(sessionId);
+      setLanes([]);
+
+      if (poolId && sessionId) {
+        console.log(`Fetching lanes for poolId: ${poolId}, sessionId: ${sessionId}`);
+        const availableLanes = await fetchAvailableLanes(poolId, sessionId);
+
+        // Handle no lanes case
+        if (availableLanes.length === 0) {
+          setError("No available lanes for the selected session.");
+          return;
+        }
+
+        setLanes(availableLanes);
+      }
     }
-  };
+  } catch (err) {
+    console.error("Error in handlePoolOrSessionChange:", err);
+
+    // Set user-friendly error message
+    setError(
+      "Failed to fetch available lanes or sessions. Please check your network or try again later."
+    );
+  }
+};
+
 
   // Handle creation of self-training
   const handleCreateSelfTraining = async (goal, poolId, sessionId, laneNumber) => {
@@ -246,7 +276,7 @@ console.log("Fetched lanes:", lanes);
                 <option value="">Select Lane</option>
                 {lanes.map((lane) => (
                 <option key={lane.lane_number} value={lane.lane_number}>
-                    Lane {lane.lane_number} ({lane.type})
+                    Lane {lane.lane_number}
                 </option>
                 ))}
             </select>

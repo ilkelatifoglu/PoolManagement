@@ -13,9 +13,9 @@ class SessionService:
             
             # Serialize datetime and timedelta objects
             for session in sessions:
-                session['date'] = session['date'].strftime('%Y-%m-%d')  # Convert datetime to string
-                session['start_time'] = str(session['start_time'])  # Convert timedelta to string
-                session['end_time'] = str(session['end_time'])  # Convert timedelta to string
+                session['date'] = session['date']
+                session['start_time'] = session['start_time']
+                session['end_time'] = session['end_time']
             
             print(f"Sessions fetched: {sessions}")
             return [dict(session) for session in sessions]

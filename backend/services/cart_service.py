@@ -1,16 +1,21 @@
 from datetime import datetime
 from database.connection import get_cursor, commit_db
 from database.queries.cart_queries import (
+    GET_AVAILABLE_MEMBERSHIPS,
     GET_CART_ITEMS,
     DELETE_CART_ITEM,
     GET_BALANCE,
     DELETE_FROM_SCHEDULES,
+    GET_MEMBERSHIP_PRICE,
+    INSERT_MEMBERSHIP,
+    INSERT_PAYMENT_BALANCE,
+    INSERT_PAYMENT_BOOKING,
+    INSERT_PAYMENT_MEMBERSHIP,
     UPDATE_BALANCE,
     UPDATE_TRAINING_IS_PAID,
     UPDATE_SELF_TRAINING_IS_PAID,
     UPDATE_SCHEDULES_IS_PAID,
     UPDATE_BALANCE_ON_PURCHASE,
-    INSERT_PAYMENT_ENTRY,
 )
 
 class CartService:
@@ -81,7 +86,7 @@ class CartService:
                 "training_id": booking_id if reservation_type == "Training" else None,
                 "self_training_id": booking_id if reservation_type == "Personal Use" else None,
             }
-            cursor.execute(INSERT_PAYMENT_ENTRY, payment_entry)
+            cursor.execute(INSERT_PAYMENT_BOOKING, payment_entry)
 
             # Update reservation-specific payment status
             if reservation_type == "Training":
@@ -113,10 +118,58 @@ class CartService:
                 "training_id": None,
                 "self_training_id": None,
             }
-            cursor.execute(INSERT_PAYMENT_ENTRY, payment_entry)
+            cursor.execute(INSERT_PAYMENT_BALANCE, payment_entry)
             
             # Commit transaction
             commit_db()
         except Exception as e:
             print(f"Error adding money to balance: {e}")
             raise
+
+    @staticmethod
+    def become_member(swimmer_id, membership_id):
+        cursor = get_cursor()
+        try:
+            # Check membership price and duration
+            cursor.execute(
+                "SELECT duration, price FROM membership WHERE membership_id = %(membership_id)s",
+                {"membership_id": membership_id},
+            )
+            membership = cursor.fetchone()
+            if not membership:
+                raise ValueError("Invalid membership ID")
+
+            duration = membership["duration"]
+            price = membership["price"]
+
+            # Check swimmer's balance
+            balance = CartService.get_balance(swimmer_id)
+            if balance < price:
+                raise ValueError("Insufficient balance")
+
+            # Deduct balance
+            cursor.execute(UPDATE_BALANCE_ON_PURCHASE, {"amount": price, "swimmer_id": swimmer_id})
+
+            # Insert membership
+            cursor.execute(
+                INSERT_MEMBERSHIP,
+                {"swimmer_id": swimmer_id, "membership_id": membership_id, "duration": duration},
+            )
+
+            # Insert payment record
+            cursor.execute(
+                INSERT_PAYMENT_MEMBERSHIP,
+                {"swimmer_id": swimmer_id, "amount": price, "membership_id": membership_id},
+            )
+
+            # Commit transaction
+            commit_db()
+        except Exception as e:
+            print(f"Error in become_member: {e}")
+            raise
+
+    @staticmethod
+    def get_available_memberships(swimmer_id):
+        cursor = get_cursor()
+        cursor.execute(GET_AVAILABLE_MEMBERSHIPS, {"swimmer_id": swimmer_id})
+        return cursor.fetchall()

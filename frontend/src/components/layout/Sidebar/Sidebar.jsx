@@ -64,6 +64,14 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
+            to="/events"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Events
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
             to="/attend-event"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
@@ -90,7 +98,7 @@ const Sidebar = () => {
             </li>
           </>
         )}
-        {user?.user_type === "admin" && (
+        {user?.user_type === "administrator" && (
           <li>
             <NavLink
               to="/reports"
@@ -100,6 +108,62 @@ const Sidebar = () => {
             </NavLink>
           </li>
         )}
+        <li>
+          <NavLink
+            to="/cancel-event"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Cancel Event
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/sessions"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Sessions
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/membership"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Membership
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/become-member"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Be Member
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/cart"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Cart
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/evaluation"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Evaluate
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/viewrate"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Coach/Class Evaluations
+          </NavLink>
+        </li>
         <li>
           <NavLink
             to="/profile"

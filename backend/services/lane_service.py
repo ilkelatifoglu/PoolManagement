@@ -21,7 +21,7 @@ class LaneService:
             lanes = cursor.fetchall()
 
             # Return the results
-            return jsonify([{"lane_number": lane["lane_number"], "type": lane["type"]} for lane in lanes]), 200
+            return jsonify([{"lane_number": lane["lane_number"]} for lane in lanes]), 200
         except Exception as e:
             print(f"Error fetching available lanes: {e}")
             return jsonify({"error": str(e)}), 500

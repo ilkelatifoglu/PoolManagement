@@ -175,3 +175,17 @@ class UserService:
         except Exception as e:
             print(f"Error updating password: {e}")
             raise
+
+    @staticmethod
+    def get_swimmer_memberships(swimmer_id):
+        """
+        Fetch memberships for a specific swimmer.
+        """
+        cursor = get_cursor()
+        try:
+            cursor.execute(GET_SWIMMER_MEMBERSHIPS, (swimmer_id,))
+            memberships = cursor.fetchall()
+            return memberships
+        except Exception as e:
+            print(f"Error fetching memberships for swimmer_id={swimmer_id}: {e}")
+            raise
