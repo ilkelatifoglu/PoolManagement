@@ -182,3 +182,14 @@ FROM user u
 LEFT JOIN user_phone up ON u.user_id = up.user_id 
 WHERE u.user_id = %s
 """
+
+GET_SWIMMER_MEMBERSHIPS = """
+SELECT 
+    p.name,
+    h.end_date
+FROM swimmer s
+JOIN has h ON h.swimmer_id = s.swimmer_id
+JOIN membership m ON m.membership_id = h.membership_id
+JOIN pool p ON p.pool_id = m.pool_id
+WHERE s.swimmer_id = %s
+"""
