@@ -1,6 +1,5 @@
 .viewrate-page {
   padding: 20px;
-  font-family: Arial, sans-serif;
 }
 
 .viewrate-table {
@@ -39,8 +38,7 @@
 }
 
 .coach-rating-title{
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 26px;
+  font-size: 24px;
   margin-bottom: 20px;
   color: #000000;
   text-align: center;

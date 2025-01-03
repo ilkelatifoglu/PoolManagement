@@ -142,9 +142,12 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li>
-          <Link to="/viewrate" onClick={toggleSidebar}>
+          <NavLink
+            to="/viewrate"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Coach/Class Evaluations
-          </Link>
+          </NavLink>
         </li>
       </ul>
     </div>

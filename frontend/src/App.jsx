@@ -31,6 +31,9 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import SystemReport from "./pages/system-report/SystemReport";
 import ManagerPage from "./pages/manager/ManagerPage";
+import ViewRatePage from "./pages/viewrate/ViewRatePage"; // Corrected path
+import CoachEvaluationPage from "./pages/evalcoach/CoachEvaluationPage";
+import ViewClassEvaluationsPage from "./pages/viewclasseval/ViewClassEvaluationPage";
 
 const Layout = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -45,9 +48,6 @@ const Layout = ({ children }) => {
     </div>
   );
 };
-import ViewRatePage from "./pages/viewrate/ViewRatePage"; // Corrected path
-import CoachEvaluationPage from "./pages/evalcoach/CoachEvaluationPage";
-import ViewClassEvaluationsPage from "./pages/viewclasseval/ViewClassEvaluationPage";
 
 function App() {
   const [apiStatus, setApiStatus] = useState({ status: "loading" });
@@ -67,8 +67,8 @@ function App() {
             <Route path="/attend-event" element={<AttendEvent />} />
             <Route path="/cancel-event" element={<CancelEvent />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/coach-evaluations/:coachId" element={<CoachEvaluationPage />} />
-              <Route path="/class-evaluations/:coachId" element={<ViewClassEvaluationsPage />} />
+            <Route path="/coach-evaluations/:coachId" element={<CoachEvaluationPage />} />
+            <Route path="/class-evaluations/:coachId" element={<ViewClassEvaluationsPage />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/system-reports" element={<SystemReport />} />
             <Route path="/manager-page" element={<ManagerPage />} />
