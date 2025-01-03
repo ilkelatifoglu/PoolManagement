@@ -5,6 +5,7 @@ import ManageMembership from "../../components/manager/ManageMembership";
 import SetPricesForm from "../../components/manager/SetPricesForm";
 import ManageStaff from "../../components/manager/ManageStaff";
 import ManagePools from "../../components/manager/ManagePools"; // Import ManagePools
+import Button from "../../components/common/Button/Button";
 import './manager-page.css';
 
 const ManagerDashboard = () => {
@@ -62,18 +63,18 @@ const ManagerDashboard = () => {
 
       {/* Navigation Bar */}
       <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
-        <button onClick={() => setActiveTab("membership")} style={activeTab === "membership" ? { fontWeight: "bold" } : {}}>
+        <Button onClick={() => setActiveTab("membership")} style={activeTab === "membership" ? { fontWeight: "bold" } : {}}>
           Manage Membership
-        </button>
-        <button onClick={() => setActiveTab("prices")} style={activeTab === "prices" ? { fontWeight: "bold" } : {}}>
+        </Button>
+        <Button onClick={() => setActiveTab("prices")} style={activeTab === "prices" ? { fontWeight: "bold" } : {}}>
           Set Prices
-        </button>
-        <button onClick={() => setActiveTab("staff")} style={activeTab === "staff" ? { fontWeight: "bold" } : {}}>
+        </Button>
+        <Button onClick={() => setActiveTab("staff")} style={activeTab === "staff" ? { fontWeight: "bold" } : {}}>
           Manage Staffs
-        </button>
-        <button onClick={() => setActiveTab("pools")} style={activeTab === "pools" ? { fontWeight: "bold" } : {}}>
+        </Button>
+        <Button onClick={() => setActiveTab("pools")} style={activeTab === "pools" ? { fontWeight: "bold" } : {}}>
           Manage Pools
-        </button>
+        </Button>
       </div>
 
       {/* Render Components Based on Active Tab */}

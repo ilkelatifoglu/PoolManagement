@@ -16,9 +16,10 @@ from routes.lane_routes import lane_bp
 from flask_mail import Mail
 from routes.user_routes import user_bp
 from flask_apscheduler import APScheduler
-from scheduler.tasks import update_session_status
+from scheduler.tasks import update_session_status, check_membership_expiration
 from routes.report_routes import report_bp  # Import report routes
 from routes.manager_routes import manager_bp  # Import report routes
+import logging
 
 load_dotenv()
 
@@ -90,7 +91,7 @@ def create_app():
     app.config['SCHEDULER_API_ENABLED'] = True
     scheduler.init_app(app)
     
-    # Add scheduled job to run daily at 00:01 AM
+    # Add scheduled jobs to run daily at 00:01 AM
     scheduler.add_job(
         id='update_session_status',
         func=update_session_status,
@@ -99,7 +100,24 @@ def create_app():
         minute=1
     )
     
+    # For testing, run every minute instead of daily
+    scheduler.add_job(
+        id='check_membership_expiration',
+        func=check_membership_expiration,
+        trigger='interval',
+        minutes=1  # Run every minute
+    )
+    
     scheduler.start()
+    
+    # Print all scheduled jobs
+    jobs = scheduler.get_jobs()
+    print("\nScheduled jobs:")
+    for job in jobs:
+        print(f"Job ID: {job.id}")
+        print(f"Next run time: {job.next_run_time}")
+        print(f"Trigger: {job.trigger}")
+        print("---")
 
     return app
 
@@ -109,6 +127,11 @@ app = create_app()
 def manual_update_sessions():
     update_session_status()
     return jsonify({'message': 'Session status update triggered successfully'})
+
+@app.route('/api/maintenance/check-memberships', methods=['POST'])
+def manual_check_memberships():
+    check_membership_expiration()
+    return jsonify({'message': 'Membership status update triggered successfully'})
 
 if __name__ == '__main__':
     app.run(port=3001, debug=True)

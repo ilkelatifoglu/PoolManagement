@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ManagerService from "../../services/manager.service";
+import Button from "../common/Button/Button";
 
 const ManageStaff = ({ pools, managerId }) => {
   const [staff, setStaff] = useState([]);
@@ -151,7 +152,7 @@ const ManageStaff = ({ pools, managerId }) => {
           <option value="O+">O+</option>
           <option value="O-">O-</option>
         </select>
-        <button type="submit">Create Staff</button>
+        <Button type="submit">Create Staff</Button>
       </form>
 
       {/* Staff List */}
@@ -192,12 +193,12 @@ const ManageStaff = ({ pools, managerId }) => {
                 <td>{member.role}</td>
                 <td>{pools.find((pool) => pool.pool_id === member.pool_id)?.name || "Unknown Pool"}</td>
                 <td>
-                  <button
+                  <Button
                     onClick={() => handleDeleteStaff(member.user_id, member.role)}
                     style={{ color: "red", cursor: "pointer" }}
                   >
                     Delete
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))

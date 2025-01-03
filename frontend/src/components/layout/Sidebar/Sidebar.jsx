@@ -135,7 +135,7 @@ const Sidebar = () => {
               to="/viewrate"
               className={({ isActive }) => (isActive ? "active" : "")}
             >
-              Coach/Class Evaluations
+              Coach/Class Evals.
             </NavLink>
           </li>
           <li>

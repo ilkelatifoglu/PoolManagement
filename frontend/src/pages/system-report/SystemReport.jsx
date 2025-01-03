@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import ReportService from "../../services/report.service";
+import Button from "../../components/common/Button/Button";
+
 
 const SystemReport = () => {
   const { user } = useAuth(); // Access the logged-in user's information
@@ -96,7 +98,7 @@ const SystemReport = () => {
                 <td>{report.report_id}</td>
                 <td>{report.date}</td>
                 <td>
-                  <button
+                  <Button
                     onClick={() => showDetails(report)}
                     style={{
                       border: "none",
@@ -107,9 +109,9 @@ const SystemReport = () => {
                       marginRight: "10px",
                     }}
                   >
-                    🛈 {/* Icon for details */}
-                  </button>
-                  <button
+                    Details {/* Icon for details */}
+                  </Button>
+                  <Button
                     onClick={() => deleteReport(report.report_id)}
                     style={{
                       border: "none",
@@ -119,8 +121,8 @@ const SystemReport = () => {
                       color: "#dc3545", // Red color for delete button
                     }}
                   >
-                    ❌ {/* Icon for delete */}
-                  </button>
+                    Delete {/* Icon for delete */}
+                  </Button>
                 </td>
               </tr>
             ))
@@ -131,13 +133,13 @@ const SystemReport = () => {
           )}
         </tbody>
       </table>
-      <button
+      <Button
         onClick={generateReport}
         disabled={loading}
         style={{ padding: "30px 50px", marginBottom: "20px", marginTop: "20px" }}
       >
         {loading ? "Generating..." : "Generate Today's Report"}
-      </button>
+      </Button>
 
       {/* Popup for displaying details */}
       {selectedReport && (
@@ -167,7 +169,7 @@ const SystemReport = () => {
 <p><strong>Daily Class Count:</strong> {selectedReport.daily_class_count}</p>
 <p><strong>Avg Event Attendance Rate:</strong> {Number(selectedReport.avg_event_attendance_rate || 0).toFixed(2)}%</p>
 
-          <button
+          <Button
             onClick={closePopup}
             style={{
               padding: "10px 20px",
@@ -180,7 +182,7 @@ const SystemReport = () => {
             }}
           >
             Close
-          </button>
+          </Button>
         </div>
       )}
       {/* Overlay for the popup */}
