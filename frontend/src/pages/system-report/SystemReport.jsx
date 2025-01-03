@@ -156,16 +156,17 @@ const SystemReport = () => {
         >
           <h2>Report Details</h2>
           <p><strong>Report ID:</strong> {selectedReport.report_id}</p>
-          <p><strong>Date:</strong> {selectedReport.date}</p>
-          <p><strong>Daily Peak Hours:</strong> {selectedReport.daily_peak_hours}</p>
-          <p><strong>Avg Cancellation Rate:</strong> {Number(selectedReport.avg_cancellation_rate || 0).toFixed(2)}</p>
-          <p><strong>Daily Revenue:</strong> {Number(selectedReport.daily_revenue || 0).toFixed(2)}</p>
-          <p><strong>Total Swimmer Count:</strong> {selectedReport.total_swimmer_count}</p>
-          <p><strong>Total Member Count:</strong> {selectedReport.total_member_count}</p>
-          <p><strong>Daily Self Training Count:</strong> {selectedReport.daily_self_training_count}</p>
-          <p><strong>Daily Training Count:</strong> {selectedReport.daily_training_count}</p>
-          <p><strong>Daily Class Count:</strong> {selectedReport.daily_class_count}</p>
-          <p><strong>Avg Event Attendance Rate:</strong> {Number(selectedReport.avg_event_attendance_rate || 0).toFixed(2)}</p>
+<p><strong>Date:</strong> {selectedReport.date}</p>
+<p><strong>Daily Peak Hours:</strong> {selectedReport.daily_peak_hours}</p>
+<p><strong>Avg Cancellation Rate:</strong> {Number(selectedReport.avg_cancellation_rate || 0).toFixed(2)}%</p>
+<p><strong>Daily Revenue:</strong> {Number(selectedReport.daily_revenue || 0).toFixed(2)}</p>
+<p><strong>Total Swimmer Count:</strong> {selectedReport.total_swimmer_count}</p>
+<p><strong>Total Member Count:</strong> {selectedReport.total_member_count}</p>
+<p><strong>Daily Self Training Count:</strong> {selectedReport.daily_self_training_count}</p>
+<p><strong>Daily Training Count:</strong> {selectedReport.daily_training_count}</p>
+<p><strong>Daily Class Count:</strong> {selectedReport.daily_class_count}</p>
+<p><strong>Avg Event Attendance Rate:</strong> {Number(selectedReport.avg_event_attendance_rate || 0).toFixed(2)}%</p>
+
           <button
             onClick={closePopup}
             style={{
