@@ -72,11 +72,11 @@ const Login = () => {
           </div>
 
           {error && <div className="error-message">{error}</div>}
-
-          <Button type="submit" isLoading={isLoading} fullWidth>
-            Log In
-          </Button>
-
+          <div className="middle-align-container-login">
+            <Button type="submit" isLoading={isLoading}>
+              Log In
+            </Button>
+          </div>
           <div className="form-footer">
             <Link to="/forgot-password" className="forgot-password">
               Forgot password?

@@ -34,15 +34,19 @@ MYSQL_PASSWORD=your_rds_password
 MYSQL_PORT=your_rds_port
 MYSQL_DATABASE=pool_management
 JWT_SECRET=your_jwt_secret
+MAIL_USERNAME=your_gmail_address
+MAIL_PASSWORD=your_gmail_app_password
+MAIL_DEFAULT_SENDER=Pool Management <your_gmail_address>
+FRONTEND_URL=http://localhost:3000
 ```
 
 4. Run Flask server:
 
 ```bash
-flask run
+flask run --debug -p 3001
 ```
 
-Server will run on http://localhost:5000 as default
+Server will run on http://localhost:3001
 
 ### Frontend Setup
 
@@ -56,7 +60,7 @@ npm install
 2. Create .env file in frontend directory including the following variables:
 
 ```env
-REACT_APP_API_URL=http://localhost:5000/
+REACT_APP_API_URL=http://localhost:3001/
 ```
 
 3. Start development server:
@@ -65,7 +69,7 @@ REACT_APP_API_URL=http://localhost:5000/
 npm start
 ```
 
-Frontend will run on http://localhost:3000 as default
+Frontend will run on http://localhost:3000
 
 ### Project Structure
 

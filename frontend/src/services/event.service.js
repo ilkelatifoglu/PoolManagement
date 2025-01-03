@@ -4,7 +4,29 @@ const API_URL = "http://localhost:3001/api";
 
 export const createEvent = async (eventData) => {
     try {
-        const response = await axios.post(`${API_URL}/events`, eventData);
+        const response = await axios.post(
+            `${API_URL}/events`,
+            eventData,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+};
+
+
+export const fetchManagerPools = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/manager-pools`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
         return response.data;
     } catch (error) {
         throw error.response?.data || error;
