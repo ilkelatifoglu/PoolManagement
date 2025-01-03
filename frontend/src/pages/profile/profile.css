@@ -110,52 +110,26 @@
 
 /* Schedule Grid Styles */
 .schedule-grid-container {
-  max-width: 900px;
   overflow-x: auto;
   padding: 1rem;
 }
 
 .schedule-grid {
-  display: flex;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: white;
+  display: grid;
+  grid-template-columns: 80px repeat(7, 100px);
+  min-width: min-content;
+  border-top: 1px solid #e5e7eb;
+  border-left: 1px solid #e5e7eb;
 }
 
 .time-labels {
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid #e5e7eb;
-  background: #f9fafb;
-}
-
-.time-slot {
-  height: 40px;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 0.875rem;
-  color: #6b7280;
-  min-width: 70px;
+  display: grid;
+  grid-auto-rows: 40px;
 }
 
 .day-column {
-  flex: 1;
-  min-width: 100px;
-}
-
-.day-header {
-  height: 40px;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-  font-weight: 600;
-  color: #374151;
+  display: grid;
+  grid-auto-rows: 40px;
 }
 
 .schedule-cell {
@@ -165,14 +139,29 @@
   border-right: 1px solid #e5e7eb;
   cursor: pointer;
   transition: background-color 0.2s;
+  min-width: 100px;
+  min-height: 40px;
+}
+
+.empty-header,
+.day-header {
+  height: 40px;
+  padding: 8px;
+  font-weight: 600;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+}
+
+.schedule-cell.selected {
+  background-color: #3b82f6;
 }
 
 .schedule-cell:hover {
-  background-color: #f3f4f6;
-}
-
-.schedule-cell[aria-selected="true"] {
-  background-color: #6366f1;
+  background-color: #93c5fd;
 }
 
 .modal-actions {
@@ -214,4 +203,15 @@
 [role="checkbox"].schedule-cell:hover {
   cursor: pointer;
   background-color: #818cf8;
+}
+
+.time-slot {
+  height: 40px;
+  padding: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  min-width: 60px;
+  justify-content: flex-end;
+  padding-right: 16px;
 }

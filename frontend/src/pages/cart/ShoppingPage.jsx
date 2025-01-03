@@ -122,9 +122,9 @@ const ShoppingPage = () => {
         <p className="p-balance">Current Balance: ${balance}</p>
         <p className="p-balance">Total Price: ${totalPrice}</p>
         <p className="p-balance">Remaining Balance: ${remainingBalance}</p>
-        <Button onClick={handleConfirm}>
-          Confirm
-        </Button>
+        <div className="right-align-container">
+            <Button onClick={handleConfirm}>Confirm</Button>
+        </div>
         <div className="shopping-page-links">
           <a href="/add-money" className="shopping-page-link">Add Money to Your Balance</a>
         </div>

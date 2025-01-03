@@ -80,3 +80,8 @@
 .register-link:hover {
   color: #4f46e5;
 }
+
+.middle-align-container-login {
+  display: flex;
+  justify-content: center; /* Align children to the center horizontally */
+}

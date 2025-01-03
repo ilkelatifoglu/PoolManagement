@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
 import { createClass } from "../../services/class.service";
-import { fetchPools } from "../../services/pool.service";
+import { fetchPools, fetchCoachPools } from "../../services/pool.service";
 import { useAuth } from "../../context/AuthContext";
 import "./CreateClass.css";
 
@@ -29,18 +29,34 @@ const CreateClass = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    // Ensure the user is a coach
-    if (!user || user.user_type !== "coach") {
-      setErrorMessage("Unauthorized access. Only coaches can create classes.");
+    // Check if user is coach
+    const role = localStorage.getItem("role");
+    if (role !== "coach") {
+      setErrorMessage("Unauthorized: Only coaches can create classes");
       return;
     }
 
     const fetchPoolsData = async () => {
       try {
-        const poolData = await fetchPools(); // Fetch pools specific to the coach
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user || !user.user_id) {
+          setErrorMessage("Coach information not found. Please log in again.");
+          return;
+        }
+        const coachId = user.user_id;
+        console.log("Coach ID:", coachId); // Debug log
+
+        const poolData = await fetchCoachPools(coachId);
+        console.log("Pool Data:", poolData); // Debug log
         setPools(poolData);
+
+        setFormData((prev) => ({
+          ...prev,
+          coach_id: coachId,
+        }));
       } catch (error) {
-        setErrorMessage("Failed to load pools. Please try again.");
+        console.error("Pool fetching error:", error);
+        setErrorMessage(`Failed to load pools: ${error.message}`);
       }
     };
 
@@ -80,13 +96,12 @@ const CreateClass = () => {
         price: "",
       });
     } catch (error) {
-      if (error?.message === "Unauthorized") {
-        setErrorMessage("Your session has expired. Please log in again.");
-        // Optionally redirect to login page
-      } else {
-        setErrorMessage("Failed to create class. Please check the inputs.");
-      }
-      setSuccessMessage("");
+      console.error("Class creation error:", error.response?.data || error);
+      setErrorMessage(
+        `Failed to create class: ${
+          error.response?.data?.error || error.message
+        }`
+      );
     }
   };
 

@@ -10,3 +10,12 @@ def get_evaluations(current_user):
         return '', 200
     evaluations = EvaluationService.get_eval_items(current_user['user_id'])
     return jsonify(evaluations)
+
+@evaluation_bp.route('/submit-evaluation', methods=['POST'])
+@token_required
+def submit_evaluation(current_user):
+    data = request.json
+    swimmer_id = current_user["user_id"]
+    EvaluationService.save_evaluation(data, swimmer_id)
+    return jsonify({"message": "Evaluation submitted successfully"}), 200
+

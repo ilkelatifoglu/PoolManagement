@@ -2,12 +2,20 @@
   background: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   padding: 1rem 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  margin: 16px;
+  border-radius: 12px;
+  height: 70px;
 }
 
 .navbar-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,6 +27,14 @@
   gap: 0.75rem;
   font-weight: 600;
   font-size: 1.25rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.navbar-brand:hover {
+  text-decoration: none;
+  color: var(--text-primary);
 }
 
 .navbar-brand img {
@@ -88,4 +104,14 @@
 
 .sidebar-toggle:hover {
   color: var(--primary);
+}
+
+.main-content {
+  padding-top: calc(70px + 32px);
+  padding-left: calc(200px + 32px);
+  transition: padding-left 0.3s ease;
+}
+
+.main-content.no-sidebar {
+  padding-left: var(--spacing-lg);
 }

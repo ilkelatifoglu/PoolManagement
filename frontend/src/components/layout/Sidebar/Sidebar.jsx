@@ -1,94 +1,145 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 import "./sidebar.css";
 
-const Sidebar = ({ isVisible, toggleSidebar }) => {
+const Sidebar = () => {
+  const { isAuthenticated } = useAuth();
+  if (!localStorage.getItem("token")) {
+    return null;
+  }
+
   return (
-    <div className={`sidebar ${isVisible ? "visible" : ""}`}>
-      <button className="sidebar-close" onClick={toggleSidebar}>
-        &times;
-      </button>
+    <div className="sidebar">
       <ul>
         <li>
-          <Link to="/dashboard" onClick={toggleSidebar}>
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Dashboard
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/sessions" onClick={toggleSidebar}>
+          <NavLink
+            to="/sessions"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Sessions
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/membership" onClick={toggleSidebar}>
+          <NavLink
+            to="/membership"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Membership
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/reports" onClick={toggleSidebar}>
+          <NavLink
+            to="/reports"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Reports
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/events" onClick={toggleSidebar}>
+          <NavLink
+            to="/events"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Events
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/my-activities" onClick={toggleSidebar}>
+          <NavLink
+            to="/my-activities"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             My Activities
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/training" onClick={toggleSidebar}>
+          <NavLink
+            to="/training"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Training
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/profile" onClick={toggleSidebar}>
+          <NavLink
+            to="/profile"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Profile
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/cart" onClick={toggleSidebar}>
+          <NavLink
+            to="/cart"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Cart
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/evaluation" onClick={toggleSidebar}>
+          <NavLink
+            to="/evaluation"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Evaluation
-          </Link>
+          </NavLink>
         </li>
-        
+
         <li>
-          <Link to="/create-class" onClick={toggleSidebar}>
+          <NavLink
+            to="/create-class"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Create Class
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/add-class" onClick={toggleSidebar}>
+          <NavLink
+            to="/add-class"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Add Class
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/cancel-class" onClick={toggleSidebar}>
+          <NavLink
+            to="/cancel-class"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Cancel Class
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/create-event" onClick={toggleSidebar}>
+          <NavLink
+            to="/create-event"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Create Event
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/attend-event" onClick={toggleSidebar}>
+          <NavLink
+            to="/attend-event"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Attend Event
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/cancel-event" onClick={toggleSidebar}>
+          <NavLink
+            to="/cancel-event"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Cancel Event
-          </Link>
+          </NavLink>
         </li>
       </ul>
     </div>
