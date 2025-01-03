@@ -1,0 +1,62 @@
+.schedule-grid {
+  display: flex;
+  overflow-x: auto;
+  margin: 1rem 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+}
+
+.time-labels {
+  display: flex;
+  flex-direction: column;
+  min-width: 80px;
+  border-right: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+}
+
+.day-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 80px;
+}
+
+.time-slot,
+.day-header {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.75rem;
+  padding: 0 0.5rem;
+}
+
+.day-header {
+  background-color: #f8fafc;
+  font-weight: 500;
+}
+
+.empty-header {
+  border-bottom: none;
+  background-color: #f8fafc;
+}
+
+.schedule-cell {
+  height: 40px;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.schedule-cell:last-child {
+  border-bottom: none;
+}
+
+.day-column:last-child .schedule-cell {
+  border-right: none;
+}
+
+.schedule-cell.selected {
+  background-color: #10b981;
+}

@@ -34,18 +34,21 @@ h2 {
 
 .table-section {
   margin-top: 20px;
+  overflow-x: auto;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.875rem;
 }
 
 table th,
 table td {
   border: 1px solid #dee2e6;
-  padding: 12px;
+  padding: 8px;
   text-align: center;
+  white-space: nowrap;
 }
 
 table th {
@@ -58,12 +61,30 @@ table th {
 .error {
   text-align: center;
   font-size: 1rem;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
 
 .success {
+  background-color: #e7f7e7;
   color: #28a745;
 }
 
 .error {
+  background-color: #ffebee;
   color: #dc3545;
+}
+
+/* Add styles for the table cell containing the button */
+table td:last-child {
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+/* Ensure buttons in table cells are properly sized */
+table td .btn {
+  margin: 0;
+  padding: 4px 8px;
+  font-size: 0.75rem;
 }
