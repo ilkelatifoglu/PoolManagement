@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ManagerService from "../../services/manager.service";
+import Button from "../common/Button/Button";
 
 const ManageMembership = ({ pools, onMembershipChange, managerId }) => {
   const [memberships, setMemberships] = useState([]);
@@ -89,7 +90,7 @@ const ManageMembership = ({ pools, onMembershipChange, managerId }) => {
           }
           required
         />
-        <button type="submit">Add Membership</button>
+        <Button type="submit">Add Membership</Button>
       </form>
 
       <h3>Current Memberships</h3>
@@ -117,14 +118,14 @@ const ManageMembership = ({ pools, onMembershipChange, managerId }) => {
                 <td>{membership.duration}</td>
                 <td>${membership.price}</td>
                 <td>
-                  <button
+                  <Button
                     onClick={() =>
                       handleDeleteMembership(membership.membership_id)
                     }
                     style={{ color: "red", cursor: "pointer" }}
                   >
                     Delete
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))

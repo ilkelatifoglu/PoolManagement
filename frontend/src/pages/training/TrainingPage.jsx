@@ -6,8 +6,6 @@ import {
   fetchSessionsWithAvailableLanes,
   fetchAvailableLanes,
   createSelfTraining,
-  cancelTraining,
-  cancelSelfTraining,
   signUpForTraining,
 } from "../../services/training.service";
 import Modal from "../../components/common/Modal/Modal";

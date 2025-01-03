@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Button from "../common/Button/Button";
 
 const SetPricesForm = ({ pools, onSubmit }) => {
   const [prices, setPrices] = useState({ pool_id: "", type: "", price: "" });
@@ -47,7 +48,7 @@ const SetPricesForm = ({ pools, onSubmit }) => {
         required
       />
 
-      <button type="submit">Set Price</button>
+      <Button type="submit">Set Price</Button>
     </form>
   );
 };

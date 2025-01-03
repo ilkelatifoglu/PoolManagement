@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ManagerService from "../../services/manager.service";
+import Button from "../common/Button/Button";
 
 const ManagePools = ({ pools, onPoolsUpdated, managerId }) => {
   const [newPool, setNewPool] = useState({
@@ -82,7 +83,7 @@ const ManagePools = ({ pools, onPoolsUpdated, managerId }) => {
           }
           required
         />
-        <button type="submit">Create Pool</button>
+        <Button type="submit">Create Pool</Button>
       </form>
 
       {/* List of Pools */}
@@ -113,12 +114,12 @@ const ManagePools = ({ pools, onPoolsUpdated, managerId }) => {
           <td>{pool.training_price}</td>
           <td>{pool.number_of_lanes || "N/A"}</td>
           <td>
-            <button
+            <Button
               onClick={() => handleDeletePool(pool.pool_id)}
               style={{ color: "red", cursor: "pointer" }}
             >
               Delete
-            </button>
+            </Button>
           </td>
         </tr>
       ))
