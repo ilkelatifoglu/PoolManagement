@@ -48,6 +48,17 @@ class UserService {
       throw error;
     }
   }
+
+  static async getSwimmerMemberships(swimmerId) {
+    try {
+      const response = await api.post(`/api/user/swimmer-memberships`, { swimmerId });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
 }
 
 export default UserService;

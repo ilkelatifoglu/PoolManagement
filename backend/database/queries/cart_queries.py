@@ -72,18 +72,53 @@ UPDATE swimmer
 SET balance = balance - %(amount)s
 WHERE swimmer_id = %(swimmer_id)s;
 """
-INSERT_PAYMENT_ENTRY = """
+INSERT_PAYMENT_BOOKING = """
 INSERT INTO payment (swimmer_id, amount, date, class_id, training_id, self_training_id)
 VALUES (%(swimmer_id)s, %(amount)s, %(date)s, %(class_id)s, %(training_id)s, %(self_training_id)s);
 """
 
-INSERT_PAYMENT_ENTRY = """
+INSERT_PAYMENT_BALANCE = """
 INSERT INTO payment (swimmer_id, amount, date, class_id, training_id, self_training_id)
 VALUES (%(swimmer_id)s, %(amount)s, %(date)s, NULL, NULL, NULL);
+"""
+
+INSERT_PAYMENT_MEMBERSHIP = """
+INSERT INTO payment (swimmer_id, amount, date, membership_id)
+VALUES (%(swimmer_id)s, %(amount)s, CURRENT_DATE, %(membership_id)s);
 """
 
 UPDATE_BALANCE = """
 UPDATE swimmer
 SET balance = balance + %(amount)s
 WHERE swimmer_id = %(swimmer_id)s;
+"""
+
+GET_AVAILABLE_MEMBERSHIPS = """
+SELECT
+    p.name AS PoolName,
+    m.duration AS MembershipDuration,
+    m.price AS MembershipPrice,
+    m.membership_id
+FROM
+    membership m
+INNER JOIN
+    pool p ON m.pool_id = p.pool_id
+WHERE
+    p.pool_id NOT IN (
+        SELECT DISTINCT m.pool_id
+        FROM membership m
+        INNER JOIN has h ON m.membership_id = h.membership_id
+        WHERE h.swimmer_id = %(swimmer_id)s
+    );
+"""
+
+GET_MEMBERSHIP_PRICE = """
+SELECT price
+FROM membership
+WHERE membership_id = %(membership_id)s;
+"""
+
+INSERT_MEMBERSHIP = """
+INSERT INTO has (swimmer_id, membership_id, end_date)
+VALUES (%(swimmer_id)s, %(membership_id)s, CURRENT_DATE + INTERVAL %(duration)s MONTH);
 """

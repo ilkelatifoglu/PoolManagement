@@ -88,3 +88,22 @@ def update_password(current_user):
             
     except Exception as e:
         return jsonify({'message': str(e)}), 500
+    
+@user_bp.route('/swimmer-memberships', methods=['POST'])
+def get_swimmer_memberships():
+    """
+    Route to fetch memberships associated with the swimmer.
+    """
+    try:
+        # Parse swimmerId from the request body
+        data = request.json
+        swimmer_id = data.get('swimmerId')
+        
+        if not swimmer_id:
+            return jsonify({'message': 'Missing swimmerId'}), 400
+
+        # Fetch memberships using the swimmerId
+        memberships = UserService.get_swimmer_memberships(swimmer_id)
+        return jsonify({'memberships': memberships}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
