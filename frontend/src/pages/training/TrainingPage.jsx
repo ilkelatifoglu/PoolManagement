@@ -154,32 +154,6 @@ const handlePoolOrSessionChange = async (poolId, sessionId) => {
     }
   };
 
-  // Handle cancel training for swimmers
-  const handleCancelTraining = async (trainingId) => {
-    try {
-      await cancelTraining(trainingId);
-      setTrainings((prev) =>
-        prev.filter((training) => training.training_id !== trainingId)
-      );
-    } catch (err) {
-      console.error("Error in handleCancelTraining:", err);
-      setError("Failed to cancel training. Please try again.");
-    }
-  };
-
-  // Handle cancel self-training
-  const handleCancelSelfTraining = async (selfTrainingId) => {
-    try {
-      await cancelSelfTraining(selfTrainingId);
-      setSelfTrainings((prev) =>
-        prev.filter((selfTraining) => selfTraining.self_training_id !== selfTrainingId)
-      );
-    } catch (err) {
-      console.error("Error in handleCancelSelfTraining:", err);
-      setError("Failed to cancel self-training. Please try again.");
-    }
-  };
-
   const selfTrainingColumns = [
     { header: "Goal", accessor: "goal" },
     { header: "Date", accessor: "date" },
@@ -299,7 +273,6 @@ console.log("Fetched lanes:", lanes);
               {selfTrainingColumns.map((col) => (
                 <th key={col.header}>{col.header}</th>
               ))}
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -308,16 +281,6 @@ console.log("Fetched lanes:", lanes);
                 {selfTrainingColumns.map((col) => (
                   <td key={col.accessor}>{selfTraining[col.accessor]}</td>
                 ))}
-                <td>
-                  <button
-                    className="training-page-button"
-                    onClick={() =>
-                      handleCancelSelfTraining(selfTraining.self_training_id)
-                    }
-                  >
-                    Cancel
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>
@@ -391,7 +354,7 @@ console.log("Fetched lanes:", lanes);
                 <option value="">Select Lane</option>
                 {lanes.map((lane) => (
                   <option key={lane.lane_number} value={lane.lane_number}>
-                    Lane {lane.lane_number} ({lane.type})
+                    Lane {lane.lane_number} 
                   </option>
                 ))}
               </select>
