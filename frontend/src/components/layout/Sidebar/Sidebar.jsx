@@ -20,6 +20,7 @@ const Sidebar = () => {
             Dashboard
           </NavLink>
         </li>
+        {(localStorage.getItem("role") === "swimmer" || localStorage.getItem("role") === "coach") && (
         <li>
           <NavLink
             to="/my-activities"
@@ -27,7 +28,7 @@ const Sidebar = () => {
           >
             My Activities
           </NavLink>
-        </li>
+        </li>)}
         <li>
           <NavLink
             to="/training"
