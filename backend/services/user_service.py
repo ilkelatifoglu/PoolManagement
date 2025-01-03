@@ -1,54 +1,93 @@
 from database.connection import get_cursor, commit_db
 from database.queries.user_queries import *
 import datetime
+from werkzeug.security import check_password_hash, generate_password_hash
 
 class UserService:
     @staticmethod
     def get_profile(user_id):
         try:
             cursor = get_cursor()
-            cursor.execute(GET_USER_PROFILE, (user_id,))
+            
+            # Get basic user info
+            cursor.execute("""
+                SELECT u.*, up.phone_number 
+                FROM user u 
+                LEFT JOIN user_phone up ON u.user_id = up.user_id 
+                WHERE u.user_id = %s
+            """, (user_id,))
+            
             profile = cursor.fetchone()
             
             if not profile:
                 raise ValueError("User not found")
                 
-            return profile
+            # Convert to dict and remove sensitive info
+            profile_dict = dict(profile)
+            profile_dict.pop('password', None)  # Remove password hash
+            
+            return profile_dict
+            
         except Exception as e:
-            print(f"Error fetching profile: {e}")
+            print(f"Error in get_profile: {e}")
             raise
 
     @staticmethod
     def update_profile(user_id, data):
         try:
             cursor = get_cursor()
+            print(f"Updating profile for user_id: {user_id}")  # Debug log
+            print(f"Update data received: {data}")  # Debug log
             
             # Update basic user info
-            cursor.execute(UPDATE_USER_PROFILE, (
+            update_user_query = """
+                UPDATE user 
+                SET name = %s
+                WHERE user_id = %s
+            """
+            cursor.execute(update_user_query, (
                 data.get('name'),
-                data.get('gender'),
-                data.get('blood_type'),
                 user_id
             ))
+            print(f"Basic user info updated. Rows affected: {cursor.rowcount}")  # Debug log
 
             # Update phone if provided
             if 'phone_number' in data:
-                cursor.execute(UPDATE_USER_PHONE, (
-                    user_id,
-                    data['phone_number']
-                ))
-
-            # Update role-specific info
-            if 'swim_level' in data:
-                cursor.execute(UPDATE_SWIMMER_PROFILE, (
-                    data['swim_level'],
-                    user_id
-                ))
+                print(f"Updating phone number to: {data['phone_number']}")  # Debug log
+                
+                # First check if phone number exists
+                check_phone_query = """
+                    SELECT * FROM user_phone 
+                    WHERE user_id = %s
+                """
+                cursor.execute(check_phone_query, (user_id,))
+                exists = cursor.fetchone()
+                
+                if exists:
+                    # Update existing phone
+                    update_phone_query = """
+                        UPDATE user_phone 
+                        SET phone_number = %s 
+                        WHERE user_id = %s
+                    """
+                    cursor.execute(update_phone_query, (data['phone_number'], user_id))
+                    print("Phone number updated")  # Debug log
+                else:
+                    # Insert new phone
+                    insert_phone_query = """
+                        INSERT INTO user_phone (user_id, phone_number)
+                        VALUES (%s, %s)
+                    """
+                    cursor.execute(insert_phone_query, (user_id, data['phone_number']))
+                    print("Phone number inserted")  # Debug log
 
             commit_db()
-            return self.get_profile(user_id)
+            return True
+            
         except Exception as e:
-            print(f"Error updating profile: {e}")
+            print(f"Error in update_profile: {str(e)}")  # Debug log
+            import traceback
+            print(traceback.format_exc())  # Print full stack trace
             raise
 
     @staticmethod
@@ -112,4 +151,27 @@ class UserService:
             commit_db()
             return True
         except Exception as e:
+            raise
+
+    @staticmethod
+    def update_password(user_id, current_password, new_password):
+        try:
+            cursor = get_cursor()
+            
+            # First verify current password
+            cursor.execute("SELECT password FROM user WHERE user_id = %s", (user_id,))
+            user = cursor.fetchone()
+            
+            if not user or not check_password_hash(user['password'], current_password):
+                return False
+            
+            # Update to new password
+            hashed_password = generate_password_hash(new_password)
+            cursor.execute("UPDATE user SET password = %s WHERE user_id = %s", 
+                          (hashed_password, user_id))
+            commit_db()
+            return True
+            
+        except Exception as e:
+            print(f"Error updating password: {e}")
             raise
