@@ -33,7 +33,53 @@ const Sidebar = () => {
               Dashboard
             </NavLink>
           </li>
-          {!isLifeguard && (
+          {(localStorage.getItem("role") === "swimmer" ||
+            localStorage.getItem("role") === "coach") && (
+            <li>
+              <NavLink
+                to="/my-activities"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                My Activities
+              </NavLink>
+            </li>
+          )}
+          <li>
+            <NavLink
+              to="/training"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Training
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/add-class"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Enroll to Class
+            </NavLink>
+          </li>
+          {user?.user_type === "coach" && (
+            <li>
+              <NavLink
+                to="/create-class"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Create Class
+              </NavLink>
+            </li>
+          )}
+
+          <li>
+            <NavLink
+              to="/attend-event"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Attend Event
+            </NavLink>
+          </li>
+          {user?.user_type === "manager" && (
             <>
               {user?.user_type !== "manager" && (
                 <li>
@@ -154,6 +200,50 @@ const Sidebar = () => {
               </li>
             </>
           )}
+          {user?.user_type === "administrator" && (
+            <li>
+              <NavLink
+                to="/system-reports"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                System Reports
+              </NavLink>
+            </li>
+          )}
+          <li>
+            <NavLink
+              to="/cancel-event"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Cancel Event
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="/become-member"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Be Member
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="/evaluation"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Evaluate
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/viewrate"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Coach/Class Evals.
+            </NavLink>
+          </li>
           <li>
             <NavLink
               to="/profile"

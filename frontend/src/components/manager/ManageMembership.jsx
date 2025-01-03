@@ -19,6 +19,7 @@ const ManageMembership = ({ pools, onMembershipChange, managerId }) => {
   const fetchMemberships = async (managerId) => {
     try {
       const data = await ManagerService.getMemberships(managerId); // Assumes this API exists
+      console.log(data);
       setMemberships(data.memberships || []);
     } catch (error) {
       console.error("Failed to fetch memberships:", error);
@@ -29,7 +30,8 @@ const ManageMembership = ({ pools, onMembershipChange, managerId }) => {
     e.preventDefault();
     try {
       const response = await ManagerService.createMembership(newMembership);
-      setMemberships([...memberships, response.membership]);
+      //setMemberships([...memberships, response.membership]);
+      fetchMemberships();
       setNewMembership({ price: "", duration: "", pool_id: "" });
       onMembershipChange("Membership created successfully!");
     } catch (error) {

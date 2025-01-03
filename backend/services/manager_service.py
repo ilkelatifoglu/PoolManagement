@@ -1,6 +1,7 @@
 from database.connection import get_cursor, commit_db
 from database.queries.manager_queries import *  # Assuming manager-related queries are stored here
 from werkzeug.security import generate_password_hash
+from utils.email import send_account_email
 
 class ManagerService:
 
@@ -163,7 +164,10 @@ class ManagerService:
         """
         Create a new staff account (Coach or Lifeguard) and associate it with the specified pool.
         If a staff member with the same name and email already exists and their pool_id is NULL, update their pool_id.
+        Also sends an email with login credentials to the user.
         """
+        print(name, email, password, role, pool_id, gender, birth_date, blood_type)
+        
         cursor = get_cursor()
         try:
             # Check if a staff member with the same name and email exists and has NULL pool_id
@@ -219,6 +223,7 @@ class ManagerService:
 
                     # Commit the transaction
                     commit_db()
+                    send_account_email(email, name, password, role)  # Send email
                     return f"Existing {role} updated with new pool_id."
             
             # If no existing user with NULL pool_id, create a new user
@@ -246,11 +251,13 @@ class ManagerService:
 
             # Commit the transaction
             commit_db()
+
+            # Send email with credentials
+            send_account_email(email, name, password, role)
             return "Staff account created successfully."
         except Exception as e:
             print(f"Error creating staff account: {e}")
             raise
-
 
     @staticmethod
     def delete_staff(staff_id, role):

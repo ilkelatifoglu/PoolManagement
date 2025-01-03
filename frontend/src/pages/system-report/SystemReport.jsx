@@ -38,9 +38,11 @@ const SystemReport = () => {
       }
   
       const now = new Date();
+        const formattedDate = now.toISOString().split("T")[0] + " 00:00:00";
+        console.log(formattedDate);
       const reportData = {
         administrator_id: user.user_id, // Use the logged-in user's ID
-        date: now.toISOString().split("T")[0] + " " + now.toTimeString().split(" ")[0], // Current date and time
+        date: formattedDate, // Current date and time
       };
   
       setLoading(true);
@@ -96,7 +98,7 @@ const SystemReport = () => {
             reports.map((report) => (
               <tr key={report.report_id}>
                 <td>{report.report_id}</td>
-                <td>{report.date}</td>
+                <td>{new Date(report.date).toLocaleDateString()}</td>
                 <td>
                   <Button
                     onClick={() => showDetails(report)}

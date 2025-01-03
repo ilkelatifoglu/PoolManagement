@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Welcome to Our Team!</h1>
+    <p>Dear {{ name }},</p>
+    <p>
+      We are excited to welcome you as a new <strong>{{ role }}</strong> at our
+      organization. Below are your login credentials:
+    </p>
+    <ul>
+      <li><strong>Email:</strong> {{ email }}</li>
+      <li><strong>Password:</strong> {{ password }}</li>
+    </ul>
+    <p>You can log in to your account using the following link:</p>
+    <p>
+      <a href="{{ login_url }}"> Login to Your Account </a>
+    </p>
+    <p>
+      Please keep this information secure and do not share it with others. If
+      you have any issues, feel free to contact support.
+    </p>
+    <p>We look forward to working with you!</p>
+    <p>Best regards,</p>
+    <p>The Team</p>
+  </body>
+</html>
