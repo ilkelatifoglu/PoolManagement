@@ -53,7 +53,7 @@ const ClassList = () => {
     try {
       // Check enrollment deadline before making the API call
       if (isEnrollmentDeadlinePassed(classData.enroll_deadline)) {
-        setError("Cannot add to cart: Enrollment deadline has passed");
+        setError("❌ Cannot add to cart: Enrollment deadline has passed");
         return;
       }
 
@@ -61,12 +61,37 @@ const ClassList = () => {
         swimmer_id: user.user_id,
         class_id: classData.class_id,
       });
-      setSuccess("Class added to cart successfully!");
+      setSuccess("✅ Class added to cart successfully!");
       setFilteredClasses((prev) =>
         prev.filter((cls) => cls.class_id !== classData.class_id)
       );
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to add class to cart");
+      console.log("Error details:", err); // Add this for debugging
+
+      // Get the error message from the response
+      const errorMessage =
+        err.error || err.message || "Failed to add class to cart";
+
+      // Add emoji indicators for different types of errors
+      let formattedError = "❌ ";
+      if (errorMessage.includes("gender")) {
+        formattedError += "Gender Restriction: " + errorMessage;
+      } else if (errorMessage.includes("age")) {
+        formattedError += "Age Restriction: " + errorMessage;
+      } else if (
+        errorMessage.includes("capacity") ||
+        errorMessage.includes("full")
+      ) {
+        formattedError += "Class Full: " + errorMessage;
+      } else if (errorMessage.includes("scheduled")) {
+        formattedError += "Schedule Conflict: " + errorMessage;
+      } else {
+        formattedError += errorMessage;
+      }
+
+      setError(formattedError);
+      setTimeout(() => setError(""), 3000);
     }
   };
 
@@ -142,12 +167,13 @@ const ClassList = () => {
     { header: "Pool", accessor: "pool_name" },
     { header: "Coach", accessor: "coach_name" },
     { header: "Level", accessor: "level" },
-    { header: "Gender Requirement", accessor: "gender_req" },
+    { header: "Age Req.", accessor: "age_req" },
+    { header: "Gender", accessor: "gender_req" },
     { header: "Capacity", accessor: "capacity" },
     { header: "Date", accessor: "session_date" },
     { header: "Start Time", accessor: "start_time" },
     { header: "End Time", accessor: "end_time" },
-    { header: "Duration (hrs)", accessor: "duration" },
+    { header: "Duration", accessor: "duration" },
     { header: "Lane", accessor: "lane_number" },
     { header: "Price", accessor: "price" },
   ];
@@ -162,8 +188,34 @@ const ClassList = () => {
   return (
     <div className="class-list-container">
       <h2>Pool Booking System</h2>
-      {success && <p className="success">{success}</p>}
-      {error && <p className="error">{error}</p>}
+      {success && (
+        <p
+          className="success"
+          style={{
+            backgroundColor: "#e7f7e7",
+            color: "#2e7d32",
+            padding: "10px",
+            borderRadius: "4px",
+            marginBottom: "10px",
+          }}
+        >
+          {success}
+        </p>
+      )}
+      {error && (
+        <p
+          className="error"
+          style={{
+            backgroundColor: "#ffebee",
+            color: "#c62828",
+            padding: "10px",
+            borderRadius: "4px",
+            marginBottom: "10px",
+          }}
+        >
+          {error}
+        </p>
+      )}
 
       <div className="filter-section">
         <Input
