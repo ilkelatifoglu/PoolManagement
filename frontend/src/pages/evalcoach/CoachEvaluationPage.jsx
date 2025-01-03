@@ -10,6 +10,8 @@ Modal.setAppElement("#root");
 const CoachEvaluationsPage = () => {
   const { coachId } = useParams();
   const [evaluations, setEvaluations] = useState([]);
+  const [filteredEvaluations, setFilteredEvaluations] = useState([]);
+  const [poolFilter, setPoolFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentComment, setCurrentComment] = useState("");
 
@@ -18,6 +20,7 @@ const CoachEvaluationsPage = () => {
       try {
         const data = await evaluationService.getCoachEvaluations(coachId);
         setEvaluations(data);
+        setFilteredEvaluations(data);
       } catch (error) {
         console.error("Error fetching evaluations:", error);
       }
@@ -25,6 +28,16 @@ const CoachEvaluationsPage = () => {
 
     fetchEvaluations();
   }, [coachId]);
+
+  const handleFilterChange = (e) => {
+    const value = e.target.value.toLowerCase();
+    setPoolFilter(value);
+    setFilteredEvaluations(
+      evaluations.filter((evalItem) =>
+        evalItem.PoolName.toLowerCase().includes(value)
+      )
+    );
+  };
 
   const openModal = (comment) => {
     setCurrentComment(comment || "No comment available.");
@@ -39,6 +52,22 @@ const CoachEvaluationsPage = () => {
   return (
     <div className="coach-evaluations-page">
       <h1 className="coach-evaluation-title">Evaluations for Coach</h1>
+
+      <div className="filter-container">
+        <label htmlFor="pool-filter" className="filter-label">
+          Filter by Pool Name:
+        </label>
+        <input
+          id="pool-filter"
+          type="text"
+          value={poolFilter}
+          onChange={handleFilterChange}
+          placeholder="Enter pool name"
+          className="filter-input"
+          style={{ width: "35%", marginBottom: "20px" }}
+        />
+      </div>
+
       <table className="evaluation-table">
         <thead>
           <tr>
@@ -52,7 +81,7 @@ const CoachEvaluationsPage = () => {
           </tr>
         </thead>
         <tbody>
-          {evaluations.map((evalItem, index) => (
+          {filteredEvaluations.map((evalItem, index) => (
             <tr key={index}>
               <td>{evalItem.CoachName}</td>
               <td>{evalItem.SessionDate}</td>

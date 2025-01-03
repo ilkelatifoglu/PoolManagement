@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import ReactModal from "react-modal";
+import { toast } from "react-toastify";
 import { evaluationService } from "../../services/evaluation.service";
 import Button from "../../components/common/Button/Button";
+import "react-toastify/dist/ReactToastify.css";
 import "./evaluationpage.css";
 
 const EvaluationPage = () => {
@@ -73,8 +76,11 @@ const EvaluationPage = () => {
               : item
           )
         );
+        toast.success("Evaluation received successfully!");
+
       } catch (error) {
         console.error("Error submitting evaluation:", error);
+        toast.error("Evaluation received successfully!");
       }
 
       setRating(null);

@@ -10,6 +10,9 @@ Modal.setAppElement("#root");
 const ViewClassEvaluationsPage = () => {
   const { coachId } = useParams();
   const [evaluations, setEvaluations] = useState([]);
+  const [filteredEvaluations, setFilteredEvaluations] = useState([]);
+  const [poolFilter, setPoolFilter] = useState("");
+  const [classFilter, setClassFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentComment, setCurrentComment] = useState("");
 
@@ -18,6 +21,7 @@ const ViewClassEvaluationsPage = () => {
       try {
         const data = await evaluationService.getClassEvaluations(coachId);
         setEvaluations(data);
+        setFilteredEvaluations(data);
       } catch (error) {
         console.error("Error fetching class evaluations:", error);
       }
@@ -25,6 +29,23 @@ const ViewClassEvaluationsPage = () => {
 
     fetchEvaluations();
   }, [coachId]);
+
+  const handleFilterChange = () => {
+    const lowerPoolFilter = poolFilter.toLowerCase();
+    const lowerClassFilter = classFilter.toLowerCase();
+
+    setFilteredEvaluations(
+      evaluations.filter(
+        (evalItem) =>
+          evalItem.PoolName.toLowerCase().includes(lowerPoolFilter) &&
+          evalItem.ClassName.toLowerCase().includes(lowerClassFilter)
+      )
+    );
+  };
+
+  useEffect(() => {
+    handleFilterChange();
+  }, [poolFilter, classFilter]);
 
   const openModal = (comment) => {
     setCurrentComment(comment || "No comment available.");
@@ -38,8 +59,41 @@ const ViewClassEvaluationsPage = () => {
 
   return (
     <div className="view-class-evaluations-page">
-        <h1 className="class-evaluation-title">Class Evaluations for Coach</h1>
-        <table className="evaluation-table">
+      <h1 className="class-evaluation-title">Class Evaluations for Coach</h1>
+
+      <div className="filter-container" style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
+        <div>
+          <label htmlFor="pool-filter" className="filter-label">
+            Filter by Pool Name:
+          </label>
+          <input
+            id="pool-filter"
+            type="text"
+            value={poolFilter}
+            onChange={(e) => setPoolFilter(e.target.value)}
+            placeholder="Enter pool name"
+            className="filter-input"
+            style={{ width: "200px" }}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="class-filter" className="filter-label">
+            Filter by Class Name:
+          </label>
+          <input
+            id="class-filter"
+            type="text"
+            value={classFilter}
+            onChange={(e) => setClassFilter(e.target.value)}
+            placeholder="Enter class name"
+            className="filter-input"
+            style={{ width: "200px" }}
+          />
+        </div>
+      </div>
+
+      <table className="evaluation-table">
         <thead>
           <tr>
             <th>Coach Name</th>
@@ -53,7 +107,7 @@ const ViewClassEvaluationsPage = () => {
           </tr>
         </thead>
         <tbody>
-          {evaluations.map((evalItem, index) => (
+          {filteredEvaluations.map((evalItem, index) => (
             <tr key={index}>
               <td>{evalItem.CoachName}</td>
               <td>{evalItem.ClassName}</td>
