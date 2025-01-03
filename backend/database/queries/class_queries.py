@@ -1,10 +1,6 @@
 from database.connection import get_db
 import pymysql
 
-
-from database.connection import get_db
-import pymysql
-
 def create_class(class_data, coach_id):
     conn = get_db()
     try:
