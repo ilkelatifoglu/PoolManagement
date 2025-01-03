@@ -4,12 +4,8 @@ from database.queries.lane_queries import GET_AVAILABLE_LANES
 
 class LaneService:
     @staticmethod
-    def get_available_lanes():
+    def get_available_lanes(pool_id, session_id):
         try:
-            # Extract query parameters
-            pool_id = request.args.get("pool_id")
-            session_id = request.args.get("session_id")
-
             # Validate inputs
             if not pool_id or not session_id:
                 return jsonify({"error": "pool_id and session_id are required"}), 400

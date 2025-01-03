@@ -189,7 +189,7 @@ const handlePoolOrSessionChange = async (poolId, sessionId) => {
                 <td>{coach.start_time}</td>
                 <td>{coach.end_time}</td>
                 <td>
-                <button
+                <Button
                     className="training-page-button"
                     onClick={() => {
                         setSelectedTrainingId(coach.coach_id); // Save the coach_id
@@ -201,8 +201,8 @@ const handlePoolOrSessionChange = async (poolId, sessionId) => {
                         setIsSignUpModalOpen(true);
                     }}
                 >
-                    Sign Up
-                </button>
+                    Add to Cart
+                </Button>
 
 
                 </td>
@@ -256,7 +256,7 @@ console.log("Fetched lanes:", lanes);
             </select>
             </label>
         </div>
-        <Button type="submit">Sign Up</Button>
+        <Button type="submit">Add to Cart</Button>
         </form>
       </Modal>
 
@@ -360,7 +360,7 @@ console.log("Fetched lanes:", lanes);
               </select>
             </label>
           </div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Add to Cart</Button>
         </form>
       </Modal>
     </div>
