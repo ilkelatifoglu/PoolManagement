@@ -2,11 +2,20 @@ from database.connection import get_db
 import pymysql
 
 
-def create_class(class_data):
+def create_class(class_data, coach_id):
     conn = get_db()
     try:
-        print(f"Received class data: {class_data}")  # Debug statement
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # Check if the pool belongs to the coach
+            pool_query = """
+            SELECT pool_id FROM pool WHERE pool_id = %(pool_id)s AND manager_id = %(coach_id)s
+            """
+            cursor.execute(pool_query, {"pool_id": class_data["pool_id"], "coach_id": coach_id})
+            pool = cursor.fetchone()
+
+            if not pool:
+                raise Exception("Unauthorized: You can only create classes in pools you manage.")
+
             # Step 1: Check if the session already exists
             session_query = """
             SELECT session_id FROM session 
@@ -26,15 +35,12 @@ def create_class(class_data):
                 cursor.execute(new_session_query, class_data)
                 session_id = cursor.lastrowid
 
-            # Update session_id in class_data
-            class_data['session_id'] = session_id
-
             # Step 3: Insert a new booking with status as 'READY'
             booking_query = """
             INSERT INTO booking (session_id, lane_number, pool_id, status)
             VALUES (%(session_id)s, %(lane_number)s, %(pool_id)s, 'READY')
             """
-            cursor.execute(booking_query, class_data)
+            cursor.execute(booking_query, {**class_data, "session_id": session_id})
             booking_id = cursor.lastrowid
 
             # Step 4: Insert the class entry - Remove avg_rating or set default
@@ -50,14 +56,13 @@ def create_class(class_data):
                 %(course_content)s, %(enroll_deadline)s, %(price)s
             )
             """
-            print(f"Inserting class with price: {class_data['price']}")  # Debug statement
-            class_data['booking_id'] = booking_id
-            cursor.execute(class_query, class_data)
+            cursor.execute(class_query, {**class_data, "coach_id": coach_id, "booking_id": booking_id})
 
             conn.commit()
     except Exception as e:
         conn.rollback()
         raise Exception(f"Error inserting class: {e}")
+
 
 
 

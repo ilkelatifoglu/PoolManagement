@@ -5,8 +5,8 @@ from database.queries.class_queries import cancel_class
 from database.queries.class_queries import fetch_ready_classes
 
 # Service to handle class creation
-def create_new_class(class_data):
-    create_class(class_data)
+def create_new_class(class_data, coach_id):
+    create_class(class_data, coach_id)
 
 # Service to fetch all available classes
 def get_all_classes():
