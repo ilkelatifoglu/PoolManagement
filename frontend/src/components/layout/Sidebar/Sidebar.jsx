@@ -110,6 +110,14 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
+            to="/become-member"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Be Member
+          </NavLink>
+        </li>  
+        <li>
+          <NavLink
             to="/cart"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
