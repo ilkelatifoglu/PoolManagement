@@ -3,8 +3,20 @@ import axios from 'axios';
 const API_URL = 'http://localhost:3001/api';
 
 export const createClass = async (classData) => {
-  const response = await axios.post(`${API_URL}/classes`, classData);
-  return response.data;
+  try {
+      const response = await axios.post(
+          `${API_URL}/classes`,
+          classData,
+          {
+              headers: {
+                  Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+          }
+      );
+      return response.data;
+  } catch (error) {
+      throw error.response?.data || error;
+  }
 };
 
 export const fetchClasses = async () => {

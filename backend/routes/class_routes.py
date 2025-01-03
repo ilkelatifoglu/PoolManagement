@@ -11,19 +11,27 @@ from services.class_service import cancel_class_by_id, get_ready_classes
 class_routes = Blueprint('class_routes', __name__)
 
 @class_routes.route('/classes', methods=['POST'])
-def create_class_route():
-    class_data = request.json
-    required_fields = ['name', 'coach_id', 'level', 'capacity', 'enroll_deadline', 'session_date', 'start_time', 'end_time', 'lane_number', 'pool_id', 'price']
-    missing_fields = [field for field in required_fields if field not in class_data]
-
-    if missing_fields:
-        return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400
-
+@token_required
+def create_class_route(user_data):
     try:
-        create_new_class(class_data)
+        if user_data["user_type"] != "coach":
+            return jsonify({"error": "Only coaches can create classes."}), 403
+
+        class_data = request.json
+        required_fields = ['name', 'level', 'capacity', 'enroll_deadline', 'session_date', 'start_time', 'end_time', 'lane_number', 'pool_id', 'price']
+        missing_fields = [field for field in required_fields if field not in class_data]
+
+        if missing_fields:
+            return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400
+
+        print("Class Data Received:", class_data)
+        create_new_class(class_data, user_data["user_id"])
         return jsonify({"message": "Class created successfully"}), 201
     except Exception as e:
+        print("Error in create_class_route:", str(e))
         return jsonify({"error": str(e)}), 500
+
+
 
 # Route to fetch all available classes
 @class_routes.route('/fetch-classes', methods=['GET'])

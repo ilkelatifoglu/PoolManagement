@@ -22,38 +22,6 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/sessions"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Sessions
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/membership"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Membership
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/reports"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Reports
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/events"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Events
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
             to="/my-activities"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
@@ -70,43 +38,18 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/profile"
+            to="/add-class"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            Profile
+            Enroll to Class
           </NavLink>
         </li>
-        <li>
-          <NavLink
-            to="/cart"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Cart
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/evaluation"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Evaluation
-          </NavLink>
-        </li>
-
         <li>
           <NavLink
             to="/create-class"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Create Class
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/add-class"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Add Class
           </NavLink>
         </li>
         <li>
@@ -119,10 +62,10 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/create-event"
+            to="/events"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            Create Event
+            Events
           </NavLink>
         </li>
         <li>
@@ -135,10 +78,66 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
+            to="/create-event"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Create Event
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
             to="/cancel-event"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Cancel Event
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/sessions"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Sessions
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/membership"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Membership
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/evaluation"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Evaluate
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/viewrate"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Coach/Class Evaluations
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/reports"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Reports
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/profile"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Profile
           </NavLink>
         </li>
         {/* Conditionally Render Manager Page Link */}

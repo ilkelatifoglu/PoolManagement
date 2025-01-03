@@ -3,15 +3,35 @@ import Button from "../../components/common/Button/Button";
 import Input from "../../components/common/Input/Input";
 import Modal from "../../components/common/Modal/Modal";
 import { useAuth } from "../../context/AuthContext";
-import "./profile.css";
 import UserService from "../../services/user.service";
+import "./profile.css";
+import ScheduleGrid from "../../components/ScheduleGrid/ScheduleGrid";
 
 const Profile = () => {
   const { user } = useAuth();
+  const userRole =
+    localStorage.getItem("role").charAt(0).toUpperCase() +
+    localStorage.getItem("role").slice(1); // Get role from localStorage with first letter uppercase
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedCells, setSelectedCells] = useState({});
   const [currentSchedule, setCurrentSchedule] = useState({});
+  const [profileData, setProfileData] = useState({
+    email: "",
+    name: "",
+    phone_number: "",
+    birth_date: "",
+    blood_type: "",
+    gender: "",
+  });
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const timeSlots = Array.from(
     { length: 15 },
@@ -110,9 +130,76 @@ const Profile = () => {
     }
   };
 
+  // Load profile data
+  const loadProfile = async () => {
+    try {
+      const data = await UserService.getProfile();
+      setProfileData({
+        email: data.email || "",
+        name: data.name || "",
+        phone_number: data.phone_number || "",
+        birth_date: data.birth_date || "",
+        blood_type: data.blood_type || "",
+        gender: data.gender || "",
+      });
+    } catch (error) {
+      console.error("Failed to load profile:", error);
+      setError("Failed to load profile data");
+    }
+  };
+
+  // Handle profile updates
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccessMessage("");
+    try {
+      await UserService.updateProfile(profileData);
+      setSuccessMessage("Profile updated successfully!");
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (error) {
+      setError("Failed to update profile. Please try again.");
+    }
+  };
+
+  // Handle password change
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccessMessage("");
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setError("New passwords do not match");
+      return;
+    }
+
+    try {
+      await UserService.updatePassword(passwordData);
+      setSuccessMessage("Password updated successfully!");
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setIsPasswordModalOpen(false);
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (error) {
+      setError(
+        "Failed to update password. Please check your current password."
+      );
+    }
+  };
+
+  // Load schedule on component mount
+  useEffect(() => {
+    loadSchedule();
+    loadProfile();
+  }, []);
+
   return (
     <div className="profile-container">
-      {/* Header Section */}
       <div className="profile-header">
         <div className="header-info">
           <h1>My Profile</h1>
@@ -120,58 +207,100 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Cards Grid */}
       <div className="profile-grid">
         <div className="profile-card">
           <h2>Membership Status</h2>
           <div className="info-list">
             <div className="info-item">
-              <span className="label">Status</span>
+              <span>Role</span>
+              <span className="value status-active">{userRole}</span>
+            </div>
+            <div className="info-item">
+              <span>Status</span>
               <span className="value status-active">Active</span>
             </div>
             <div className="info-item">
-              <span className="label">Active Until</span>
-              <span className="value">December 31, 2024</span>
+              <span>Birth Date</span>
+              <span className="value">
+                {new Date(profileData.birth_date).toLocaleDateString()}
+              </span>
+            </div>
+            <div className="info-item">
+              <span>Blood Type</span>
+              <span className="value">{profileData.blood_type}</span>
+            </div>
+            <div className="info-item">
+              <span>Gender</span>
+              <span className="value">
+                {profileData.gender === "M" ? "Male" : "Female"}
+              </span>
             </div>
           </div>
         </div>
 
         <div className="profile-card">
           <h2>Account Details</h2>
-          <form className="account-form">
+          <form onSubmit={handleProfileUpdate}>
             <div className="form-group">
               <Input
                 label="Email Address"
                 type="email"
-                value="user@example.com"
-                placeholder="Enter your email"
+                value={profileData.email}
+                disabled
               />
             </div>
             <div className="form-group">
               <Input
                 label="Full Name"
                 type="text"
-                value="John Doe"
-                placeholder="Enter your full name"
+                value={profileData.name}
+                onChange={(e) =>
+                  setProfileData((prev) => ({ ...prev, name: e.target.value }))
+                }
               />
             </div>
             <div className="form-group">
               <Input
                 label="Phone Number"
                 type="tel"
-                value="+1 234 567 8900"
-                placeholder="Enter your phone number"
+                value={profileData.phone_number}
+                onChange={(e) =>
+                  setProfileData((prev) => ({
+                    ...prev,
+                    phone_number: e.target.value,
+                  }))
+                }
               />
             </div>
-            <Button type="submit">Save Changes</Button>
+
+            <div className="message-container">
+              {successMessage && (
+                <div className="success-message">{successMessage}</div>
+              )}
+              {error && <div className="error-message">{error}</div>}
+            </div>
+
+            <div className="button-group">
+              <Button type="submit">Save Changes</Button>
+              <Button
+                type="button"
+                onClick={() => setIsPasswordModalOpen(true)}
+              >
+                Change Password
+              </Button>
+            </div>
           </form>
         </div>
 
         <div className="profile-card">
           <h2>Availability Schedule</h2>
+          <div className="schedule-container">
+            <ScheduleGrid schedule={currentSchedule} readOnly={true} />
+          </div>
           <div className="button-group">
-            <Button onClick={handleViewScheduleClick}>View Schedule</Button>
-            <Button onClick={handleUpdateScheduleClick}>Update Schedule</Button>
+            <Button onClick={handleUpdateScheduleClick}>
+              Upload a New Schedule
+            </Button>
           </div>
         </div>
       </div>
@@ -254,6 +383,68 @@ const Profile = () => {
             <Button onClick={saveSchedule}>Save Schedule</Button>
           </div>
         </div>
+      </Modal>
+
+      {/* Password Change Modal */}
+      <Modal
+        isOpen={isPasswordModalOpen}
+        onClose={() => {
+          setIsPasswordModalOpen(false);
+          setError("");
+        }}
+        title="Change Password"
+      >
+        <form onSubmit={handlePasswordChange} className="password-form">
+          {error && <div className="error-message">{error}</div>}
+          <div className="form-group">
+            <Input
+              label="Current Password"
+              type="password"
+              value={passwordData.currentPassword}
+              onChange={(e) =>
+                setPasswordData((prev) => ({
+                  ...prev,
+                  currentPassword: e.target.value,
+                }))
+              }
+              required
+            />
+          </div>
+          <div className="form-group">
+            <Input
+              label="New Password"
+              type="password"
+              value={passwordData.newPassword}
+              onChange={(e) =>
+                setPasswordData((prev) => ({
+                  ...prev,
+                  newPassword: e.target.value,
+                }))
+              }
+              required
+            />
+          </div>
+          <div className="form-group">
+            <Input
+              label="Confirm New Password"
+              type="password"
+              value={passwordData.confirmPassword}
+              onChange={(e) =>
+                setPasswordData((prev) => ({
+                  ...prev,
+                  confirmPassword: e.target.value,
+                }))
+              }
+              required
+            />
+          </div>
+          <div className="modal-actions">
+            <Button type="button" onClick={() => setIsPasswordModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit">Update Password</Button>
+          </div>
+        </form>
       </Modal>
     </div>
   );

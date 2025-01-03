@@ -47,8 +47,8 @@
 }
 
 .event-list-container table thead th {
-    background-color: #007bff;
-    color: #fff;
+    background-color: #dbdbf8;
+    color: #000000;    ;
     text-align: left;
     padding: 12px;
     font-size: 16px;
@@ -68,7 +68,7 @@
 
 /* Button styling */
 .event-list-container table tbody td button {
-    background-color: #007bff;
+    background-color: #5564f2;
     color: #fff;
     border: none;
     padding: 8px 12px;
@@ -80,7 +80,7 @@
 }
 
 .event-list-container table tbody td button:hover {
-    background-color: #0056b3;
+    background-color: #4453d0;
 }
 
 .event-list-container table tbody td button:disabled {

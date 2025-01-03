@@ -3,12 +3,13 @@ import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
 import { createClass } from "../../services/class.service";
 import { fetchPools, fetchCoachPools } from "../../services/pool.service";
+import { useAuth } from "../../context/AuthContext";
 import "./CreateClass.css";
 
 const CreateClass = () => {
+  const { user, loading } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
-    coach_id: "",
     level: "",
     age_req: "",
     gender_req: "",
@@ -58,8 +59,9 @@ const CreateClass = () => {
         setErrorMessage(`Failed to load pools: ${error.message}`);
       }
     };
+
     fetchPoolsData();
-  }, []);
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -68,6 +70,11 @@ const CreateClass = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (new Date(formData.enroll_deadline) >= new Date(formData.session_date)) {
+      setErrorMessage("Enrollment deadline must be earlier than the session date.");
+      return;
+    }
     if (formData.start_time >= formData.end_time) {
       setErrorMessage("Start time must be earlier than end time.");
       return;
@@ -79,7 +86,6 @@ const CreateClass = () => {
       setErrorMessage("");
       setFormData({
         name: "",
-        coach_id: "",
         level: "",
         age_req: "",
         gender_req: "",
@@ -103,10 +109,13 @@ const CreateClass = () => {
     }
   };
 
-  const hourOptions = Array.from({ length: 15 }, (_, i) => {
-    const hour = 6 + i;
-    return `${hour.toString().padStart(2, "0")}:00`;
-  });
+  if (!user || !user.user_type) {
+    return (
+      <p className="error-message">
+        User information is missing. Please log in again.
+      </p>
+    );
+  }
 
   return (
     <div className="create-class-container">
@@ -119,14 +128,6 @@ const CreateClass = () => {
           label="Class Name"
           name="name"
           value={formData.name}
-          onChange={handleInputChange}
-          required
-        />
-        <Input
-          label="Coach ID"
-          name="coach_id"
-          type="number"
-          value={formData.coach_id}
           onChange={handleInputChange}
           required
         />
@@ -191,7 +192,10 @@ const CreateClass = () => {
           label="Start Time"
           name="start_time"
           isSelect
-          options={hourOptions.map((time) => ({ value: time, label: time }))}
+          options={Array.from({ length: 15 }, (_, i) => {
+            const hour = 6 + i;
+            return { value: `${hour}:00`, label: `${hour}:00` };
+          })}
           value={formData.start_time}
           onChange={handleInputChange}
           required
@@ -200,7 +204,10 @@ const CreateClass = () => {
           label="End Time"
           name="end_time"
           isSelect
-          options={hourOptions.map((time) => ({ value: time, label: time }))}
+          options={Array.from({ length: 15 }, (_, i) => {
+            const hour = 6 + i;
+            return { value: `${hour}:00`, label: `${hour}:00` };
+          })}
           value={formData.end_time}
           onChange={handleInputChange}
           required

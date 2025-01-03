@@ -175,3 +175,10 @@ DELETE_USER_SCHEDULE = """
 DELETE FROM user_schedule 
 WHERE user_id = %s
 """
+
+GET_USER_PROFILE = """
+SELECT u.*, up.phone_number 
+FROM user u 
+LEFT JOIN user_phone up ON u.user_id = up.user_id 
+WHERE u.user_id = %s
+"""

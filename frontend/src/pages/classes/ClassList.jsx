@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
-import Table from "../../components/common/Table/Table"; // Import the Table component
+import Table from "../../components/common/Table/Table";
 import { fetchClasses, addToCart } from "../../services/class.service";
 import "./ClassList.css";
 import { useAuth } from "../../context/AuthContext";
@@ -13,6 +13,18 @@ const ClassList = () => {
   const [filters, setFilters] = useState({});
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+
+  // Generate hourly time options
+  const generateTimeOptions = () => {
+    const options = [];
+    for (let i = 6; i <= 20; i++) {
+      const hour = i.toString().padStart(2, "0");
+      options.push(`${hour}:00`);
+    }
+    return options;
+  };
+
+  const timeOptions = generateTimeOptions();
 
   useEffect(() => {
     loadClasses();
@@ -29,20 +41,46 @@ const ClassList = () => {
     }
   };
 
+  // Add this function to check if enrollment deadline has passed
+  const isEnrollmentDeadlinePassed = (deadline) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    const deadlineDate = new Date(deadline);
+    return deadlineDate < today;
+  };
+
   const handleAddToCart = async (classData) => {
     try {
-      await addToCart({ swimmer_id: user.user_id, class_id: classData.class_id });
+      // Check enrollment deadline before making the API call
+      if (isEnrollmentDeadlinePassed(classData.enroll_deadline)) {
+        setError("Cannot add to cart: Enrollment deadline has passed");
+        return;
+      }
+
+      await addToCart({
+        swimmer_id: user.user_id,
+        class_id: classData.class_id,
+      });
       setSuccess("Class added to cart successfully!");
       setFilteredClasses((prev) =>
         prev.filter((cls) => cls.class_id !== classData.class_id)
       );
     } catch (err) {
-      setError("Failed to add class to cart");
+      setError(err.response?.data?.error || "Failed to add class to cart");
     }
   };
 
   const applyFilters = () => {
     let filtered = classes;
+
+    if (
+      filters.start_time &&
+      filters.end_time &&
+      filters.start_time >= filters.end_time
+    ) {
+      setError("Start Time must be earlier than End Time");
+      return;
+    }
 
     if (filters.pool_name) {
       filtered = filtered.filter((cls) =>
@@ -58,17 +96,36 @@ const ClassList = () => {
       filtered = filtered.filter((cls) => cls.level === Number(filters.level));
     }
     if (filters.gender_req) {
-      filtered = filtered.filter((cls) => cls.gender_req === filters.gender_req);
+      filtered = filtered.filter(
+        (cls) => cls.gender_req === filters.gender_req
+      );
     }
     if (filters.capacity) {
-      filtered = filtered.filter((cls) => cls.capacity >= Number(filters.capacity));
-    }
-    if (filters.age_req) {
-      filtered = filtered.filter((cls) => cls.age_req <= Number(filters.age_req));
+      filtered = filtered.filter(
+        (cls) => cls.capacity >= Number(filters.capacity)
+      );
     }
     if (filters.date) {
       filtered = filtered.filter((cls) =>
         cls.session_date.startsWith(filters.date)
+      );
+    }
+    if (filters.start_time) {
+      filtered = filtered.filter(
+        (cls) => cls.start_time === filters.start_time
+      );
+    }
+    if (filters.end_time) {
+      filtered = filtered.filter((cls) => cls.end_time === filters.end_time);
+    }
+    if (filters.duration) {
+      filtered = filtered.filter(
+        (cls) => cls.duration === Number(filters.duration)
+      );
+    }
+    if (filters.lane_number) {
+      filtered = filtered.filter(
+        (cls) => cls.lane_number === Number(filters.lane_number)
       );
     }
 
@@ -82,11 +139,16 @@ const ClassList = () => {
 
   const columns = [
     { header: "Class Name", accessor: "class_name" },
-    { header: "Coach", accessor: "coach_name" },
     { header: "Pool", accessor: "pool_name" },
-    { header: "Date", accessor: "session_date" },
-    { header: "Time", accessor: "session_time" },
+    { header: "Coach", accessor: "coach_name" },
+    { header: "Level", accessor: "level" },
+    { header: "Gender Requirement", accessor: "gender_req" },
     { header: "Capacity", accessor: "capacity" },
+    { header: "Date", accessor: "session_date" },
+    { header: "Start Time", accessor: "start_time" },
+    { header: "End Time", accessor: "end_time" },
+    { header: "Duration (hrs)", accessor: "duration" },
+    { header: "Lane", accessor: "lane_number" },
     { header: "Price", accessor: "price" },
   ];
 
@@ -107,13 +169,17 @@ const ClassList = () => {
         <Input
           name="pool_name"
           label="Pool Name"
-          onChange={(e) => setFilters({ ...filters, pool_name: e.target.value })}
+          onChange={(e) =>
+            setFilters({ ...filters, pool_name: e.target.value })
+          }
           value={filters.pool_name || ""}
         />
         <Input
           name="coach_name"
           label="Coach Name"
-          onChange={(e) => setFilters({ ...filters, coach_name: e.target.value })}
+          onChange={(e) =>
+            setFilters({ ...filters, coach_name: e.target.value })
+          }
           value={filters.coach_name || ""}
         />
         <Input
@@ -132,7 +198,9 @@ const ClassList = () => {
             { value: "M", label: "Male" },
             { value: "F", label: "Female" },
           ]}
-          onChange={(e) => setFilters({ ...filters, gender_req: e.target.value })}
+          onChange={(e) =>
+            setFilters({ ...filters, gender_req: e.target.value })
+          }
           value={filters.gender_req || ""}
         />
         <Input
@@ -143,25 +211,51 @@ const ClassList = () => {
           value={filters.capacity || ""}
         />
         <Input
-          name="age_req"
-          label="Age Requirement"
-          type="number"
-          onChange={(e) => setFilters({ ...filters, age_req: e.target.value })}
-          value={filters.age_req || ""}
-        />
-        <Input
           name="date"
           label="Date"
           type="date"
           onChange={(e) => setFilters({ ...filters, date: e.target.value })}
           value={filters.date || ""}
         />
+        <Input
+          name="start_time"
+          label="Start Time"
+          isSelect
+          options={timeOptions.map((time) => ({ value: time, label: time }))}
+          onChange={(e) =>
+            setFilters({ ...filters, start_time: e.target.value })
+          }
+          value={filters.start_time || ""}
+        />
+        <Input
+          name="end_time"
+          label="End Time"
+          isSelect
+          options={timeOptions.map((time) => ({ value: time, label: time }))}
+          onChange={(e) => setFilters({ ...filters, end_time: e.target.value })}
+          value={filters.end_time || ""}
+        />
+        <Input
+          name="duration"
+          label="Duration (Hours)"
+          type="number"
+          onChange={(e) => setFilters({ ...filters, duration: e.target.value })}
+          value={filters.duration || ""}
+        />
+        <Input
+          name="lane_number"
+          label="Lane Number"
+          type="number"
+          onChange={(e) =>
+            setFilters({ ...filters, lane_number: e.target.value })
+          }
+          value={filters.lane_number || ""}
+        />
         <div className="button-group">
           <Button onClick={applyFilters}>Search</Button>
           <Button onClick={clearFilters}>Clear Filters</Button>
         </div>
       </div>
-
       <div className="table-section">
         <Table columns={columns} data={filteredClasses} actions={actions} />
       </div>
