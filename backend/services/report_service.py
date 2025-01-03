@@ -1,5 +1,6 @@
 from database.connection import get_cursor, commit_db
 from database.queries.report_queries import *
+from datetime import timedelta
 
 class ReportService:
     @staticmethod
@@ -29,13 +30,19 @@ class ReportService:
 
             cursor.execute(GET_DAILY_PEAK_HOURS, (date,))
             result = cursor.fetchone()
+            print(result)
             if result:
-                peak_start_time = result['start_time']
-                peak_end_time = result['end_time']
+    # Convert timedelta to time strings
+                peak_start_time = str(result['start_time']).zfill(8)  # Ensures format HH:MM:SS
+                peak_end_time = str(result['end_time']).zfill(8)  # Ensures format HH:MM:SS
             else:
                 peak_start_time = None
                 peak_end_time = None
+
+            # Format daily peak hours
             daily_peak_hours = f"{peak_start_time} - {peak_end_time}" if peak_start_time and peak_end_time else "N/A"
+
+            print("Daily Peak Hours:", daily_peak_hours)
 
             cursor.execute(GET_AVERAGE_CANCELLATION_RATE)
             result = cursor.fetchone()

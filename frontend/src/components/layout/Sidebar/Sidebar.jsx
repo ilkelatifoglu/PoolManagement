@@ -97,10 +97,10 @@ const Sidebar = () => {
           {user?.user_type === "administrator" && (
             <li>
               <NavLink
-                to="/reports"
+                to="/system-reports"
                 className={({ isActive }) => (isActive ? "active" : "")}
               >
-                Reports
+                System Reports
               </NavLink>
             </li>
           )}
