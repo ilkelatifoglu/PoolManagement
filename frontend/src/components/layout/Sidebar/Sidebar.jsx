@@ -54,22 +54,7 @@ const Sidebar = () => {
             </NavLink>
           </li>
         )}
-        <li>
-          <NavLink
-            to="/cancel-class"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Cancel Class
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/events"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Events
-          </NavLink>
-        </li>
+        
         <li>
           <NavLink
             to="/attend-event"
@@ -116,22 +101,7 @@ const Sidebar = () => {
             Cancel Event
           </NavLink>
         </li>
-        <li>
-          <NavLink
-            to="/sessions"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Sessions
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/membership"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Membership
-          </NavLink>
-        </li>
+        
         <li>
           <NavLink
             to="/become-member"
@@ -140,14 +110,7 @@ const Sidebar = () => {
             Be Member
           </NavLink>
         </li>  
-        <li>
-          <NavLink
-            to="/cart"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Cart
-          </NavLink>
-        </li>        
+              
         <li>
           <NavLink
             to="/evaluation"
