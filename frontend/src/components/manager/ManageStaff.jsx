@@ -9,6 +9,9 @@ const ManageStaff = ({ pools, managerId }) => {
     password: "",
     role: "coach",
     pool_id: "",
+    gender: "M", // Default value for gender
+    birth_date: "",
+    blood_type: "A+", // Default value for blood type
   });
   const [message, setMessage] = useState("");
 
@@ -21,7 +24,6 @@ const ManageStaff = ({ pools, managerId }) => {
   const fetchStaff = async (managerId) => {
     try {
       const response = await ManagerService.getStaffs(managerId);
-      //console.log(response);
       setStaff(response.staffs || []);
     } catch (error) {
       console.error("Failed to fetch staff:", error);
@@ -30,9 +32,17 @@ const ManageStaff = ({ pools, managerId }) => {
 
   const handleCreateStaff = async (e) => {
     e.preventDefault();
+
+    // Validate birth_date
+    const today = new Date();
+    const selectedDate = new Date(newStaff.birth_date);
+    if (selectedDate > today) {
+      setMessage("Birth date cannot be in the future.");
+      return;
+    }
+
     try {
       const response = await ManagerService.createStaff(newStaff);
-      console.log(newStaff);
       setMessage(response.message || "Staff created successfully!");
       setNewStaff({
         name: "",
@@ -40,6 +50,9 @@ const ManageStaff = ({ pools, managerId }) => {
         password: "",
         role: "coach",
         pool_id: "",
+        gender: "M",
+        birth_date: "",
+        blood_type: "A+",
       });
       fetchStaff(managerId); // Refresh staff after creation
     } catch (error) {
@@ -50,16 +63,14 @@ const ManageStaff = ({ pools, managerId }) => {
 
   const handleDeleteStaff = async (staffId, role) => {
     try {
-        console.log(staffId, role);
-        const response = await ManagerService.deleteStaff(staffId, role);
-        setMessage(response.message || "Staff pool assignment removed successfully!");
-        fetchStaff(managerId);
+      const response = await ManagerService.deleteStaff(staffId, role);
+      setMessage(response.message || "Staff pool assignment removed successfully!");
+      fetchStaff(managerId);
     } catch (error) {
-        console.error("Failed to delete staff:", error);
-        setMessage("Failed to delete staff.");
+      console.error("Failed to delete staff:", error);
+      setMessage("Failed to delete staff.");
     }
-};
-
+  };
 
   return (
     <div>
@@ -110,6 +121,36 @@ const ManageStaff = ({ pools, managerId }) => {
           onChange={(e) => setNewStaff({ ...newStaff, password: e.target.value })}
           required
         />
+        <select
+          value={newStaff.gender}
+          onChange={(e) => setNewStaff({ ...newStaff, gender: e.target.value })}
+          required
+        >
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+          <option value="O">Other</option>
+        </select>
+        <input
+          type="date"
+          placeholder="Birth Date"
+          value={newStaff.birth_date}
+          onChange={(e) => setNewStaff({ ...newStaff, birth_date: e.target.value })}
+          required
+        />
+        <select
+          value={newStaff.blood_type}
+          onChange={(e) => setNewStaff({ ...newStaff, blood_type: e.target.value })}
+          required
+        >
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
         <button type="submit">Create Staff</button>
       </form>
 
@@ -120,6 +161,9 @@ const ManageStaff = ({ pools, managerId }) => {
           <tr>
             <th>Name</th>
             <th>Email</th>
+            <th>Gender</th>
+            <th>Birth Date</th>
+            <th>Blood Type</th>
             <th>Role</th>
             <th>Pool</th>
             <th>Actions</th>
@@ -131,21 +175,35 @@ const ManageStaff = ({ pools, managerId }) => {
               <tr key={member.user_id}>
                 <td>{member.name}</td>
                 <td>{member.email}</td>
+                <td>{member.gender}</td>
+                <td>
+  {member.birth_date
+    ? new Date(member.birth_date).toString() !== "Invalid Date"
+      ? new Date(member.birth_date).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        })
+      : member.birth_date
+    : "N/A"}
+</td>
+
+                <td>{member.blood_type}</td>
                 <td>{member.role}</td>
                 <td>{pools.find((pool) => pool.pool_id === member.pool_id)?.name || "Unknown Pool"}</td>
                 <td>
-                <button
+                  <button
                     onClick={() => handleDeleteStaff(member.user_id, member.role)}
                     style={{ color: "red", cursor: "pointer" }}
-                >
+                  >
                     Delete
-                </button>
+                  </button>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="5">No staff available.</td>
+              <td colSpan="8">No staff available.</td>
             </tr>
           )}
         </tbody>

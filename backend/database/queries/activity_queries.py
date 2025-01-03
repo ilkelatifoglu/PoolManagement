@@ -16,7 +16,7 @@ JOIN session s ON s.session_id = b.session_id
 JOIN coach co ON c.coach_id = co.coach_id
 JOIN pool p ON co.pool_id = p.pool_id
 JOIN user coach_user ON co.coach_id = coach_user.user_id
-WHERE sch.swimmer_id = %s
+WHERE sch.swimmer_id = %s AND sch.is_paid = 1
 
 UNION ALL
 
@@ -33,7 +33,7 @@ FROM self_training st
 JOIN booking b ON st.self_training_id = b.booking_id
 JOIN session s ON b.session_id = s.session_id
 JOIN pool p ON b.pool_id = p.pool_id
-WHERE st.swimmer_id = %s
+WHERE st.swimmer_id = %s AND st.is_paid = 1
 
 UNION ALL
 
@@ -52,11 +52,20 @@ JOIN session s ON b.session_id = s.session_id
 JOIN coach co ON t.coach_id = co.coach_id
 JOIN pool p ON b.pool_id = p.pool_id
 JOIN user coach_user ON co.coach_id = coach_user.user_id
-WHERE t.swimmer_id = %s
+WHERE t.swimmer_id = %s AND t.is_paid = 1
 
-ORDER BY activity_date, start_time
+ORDER BY 
+    CASE 
+        WHEN status = 'READY' THEN 1
+        WHEN status = 'CANCELLED' THEN 2
+        WHEN status = 'DONE' THEN 3
+        ELSE 4
+    END,
+    activity_date, 
+    start_time
 LIMIT 0, 1000;
 """
+
 
 
 # Queries for fetching coach activities

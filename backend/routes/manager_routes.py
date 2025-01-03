@@ -12,14 +12,15 @@ def create_pool():
         data = request.json
         manager_id = data.get('manager_id')
         name = data.get('name')
-        capacity = data.get('capacity')
+        lanes = data.get('lanes')
+        capacity = int(lanes) * 15
         general_price = data.get('general_price')
         training_price = data.get('training_price')
 
-        if not (manager_id and name and capacity and general_price and training_price):
+        if not (manager_id and name and capacity and general_price and training_price and lanes):
             return jsonify({'message': 'Missing required fields'}), 400
 
-        message = ManagerService.create_pool(manager_id, name, capacity, general_price, training_price)
+        message = ManagerService.create_pool(manager_id, name, capacity, general_price, training_price, lanes)
         return jsonify({'message': message}), 201
     except Exception as e:
         return jsonify({'message': str(e)}), 500
@@ -164,13 +165,16 @@ def create_staff():
         password = data.get('password')
         role = data.get('role')  # Should be 'coach' or 'lifeguard'
         pool_id = data.get('pool_id')
+        gender = data.get('gender')
+        birth_date = data.get('birth_date')
+        blood_type = data.get('blood_type')
 
         # Validate required fields
-        if not (name and email and password and role and pool_id):
+        if not (name and email and password and role and pool_id and gender and birth_date and blood_type):
             return jsonify({'message': 'Missing required fields'}), 400
 
         # Call the service to create staff
-        message = ManagerService.create_staff(name, email, password, role, pool_id)
+        message = ManagerService.create_staff(name, email, password, role, pool_id, gender, birth_date, blood_type)
 
         return jsonify({'message': message}), 201
     except Exception as e:

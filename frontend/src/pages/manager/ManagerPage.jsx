@@ -5,6 +5,7 @@ import ManageMembership from "../../components/manager/ManageMembership";
 import SetPricesForm from "../../components/manager/SetPricesForm";
 import ManageStaff from "../../components/manager/ManageStaff";
 import ManagePools from "../../components/manager/ManagePools"; // Import ManagePools
+import './manager-page.css';
 
 const ManagerDashboard = () => {
   const { user } = useAuth();
