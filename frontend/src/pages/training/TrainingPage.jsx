@@ -391,7 +391,7 @@ console.log("Fetched lanes:", lanes);
                 <option value="">Select Lane</option>
                 {lanes.map((lane) => (
                   <option key={lane.lane_number} value={lane.lane_number}>
-                    Lane {lane.lane_number} ({lane.type})
+                    Lane {lane.lane_number} 
                   </option>
                 ))}
               </select>
