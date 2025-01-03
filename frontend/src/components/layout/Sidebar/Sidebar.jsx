@@ -30,14 +30,15 @@ const Sidebar = () => {
               Dashboard
             </NavLink>
           </li>
-          <li>
+          {(localStorage.getItem("role") === "swimmer" || localStorage.getItem("role") === "coach") && (
+            <li>
             <NavLink
               to="/my-activities"
               className={({ isActive }) => (isActive ? "active" : "")}
             >
               My Activities
             </NavLink>
-          </li>
+          </li>)}
           <li>
             <NavLink
               to="/training"
@@ -96,10 +97,10 @@ const Sidebar = () => {
           {user?.user_type === "administrator" && (
             <li>
               <NavLink
-                to="/reports"
+                to="/system-reports"
                 className={({ isActive }) => (isActive ? "active" : "")}
               >
-                Reports
+                System Reports
               </NavLink>
             </li>
           )}

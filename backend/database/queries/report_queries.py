@@ -60,7 +60,7 @@ SELECT
     COALESCE(SUM(amount), 0) AS daily_revenue
 FROM payment
 WHERE date = %s
-  AND (class_id IS NOT NULL OR training_id IS NOT NULL OR self_training_id IS NOT NULL);
+  AND (class_id IS NOT NULL OR training_id IS NOT NULL OR self_training_id IS NOT NULL OR membership_id IS NOT NULL);
 """
 GENERATE_SYSTEM_REPORT = """INSERT INTO system_report (
     administrator_id,

@@ -40,3 +40,29 @@ def send_cancellation_email(recipient_name, recipient_email, cancellation_type, 
                                pool_name=pool_name)
     
     mail.send(msg)
+
+def send_account_email(user_email, name, password, role):
+    """
+    Sends an email with login credentials to the new staff member.
+    """
+    try:
+        msg = Message(
+            f"Welcome to Our Team, {name}!",
+            sender=current_app.config['MAIL_DEFAULT_SENDER'],
+            recipients=[user_email]
+        )
+        
+        # Compose email content
+        msg.html = render_template(
+            'email/welcome_staff.html',
+            name=name,
+            role=role,
+            email=user_email,
+            password=password,
+            login_url=current_app.config['FRONTEND_URL']
+        )
+        
+        mail.send(msg)
+    except Exception as e:
+        print(f"Error sending email to {user_email}: {e}")
+        raise
