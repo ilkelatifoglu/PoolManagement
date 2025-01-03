@@ -1,8 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Button from "../Button/Button";
 import "./Table.css";
 
 const Table = ({ columns, data, actions }) => {
+  // Helper function to format cell content
+  const formatCellContent = (content) => {
+    if (content === null || content === undefined) return "-";
+    if (typeof content === "number") return content.toString();
+    return content;
+  };
+
   return (
     <div className="table-container">
       <table>
@@ -19,19 +27,22 @@ const Table = ({ columns, data, actions }) => {
             <tr key={rowIndex}>
               {columns.map((col) => (
                 <td key={col.accessor || col.header}>
-                  {col.render ? col.render(row) : row[col.accessor]}
+                  {col.render
+                    ? col.render(row)
+                    : formatCellContent(row[col.accessor])}
                 </td>
               ))}
               {actions && actions.length > 0 && (
                 <td>
                   {actions.map((action, actionIndex) => (
-                    <button
+                    <Button
                       key={actionIndex}
                       onClick={() => action.onClick(row)}
-                      className="action-button"
+                      variant="primary"
+                      size="small"
                     >
                       {action.label}
-                    </button>
+                    </Button>
                   ))}
                 </td>
               )}
