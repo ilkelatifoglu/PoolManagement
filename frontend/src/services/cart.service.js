@@ -51,5 +51,23 @@ export const cartService = {
       throw error.response?.data || error;
     }
   },
+
+  getAvailableMemberships: async () => {
+    try {
+      const response = await api.get("/cart/available-memberships");
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  
+  becomeMember: async (membershipId) => {
+    try {
+      const response = await api.post(`/cart/become-member`, { membership_id: membershipId });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },  
   
 };

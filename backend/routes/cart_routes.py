@@ -63,3 +63,28 @@ def add_money_to_balance(current_user):
     except Exception as e:
         print(f"Error adding money: {e}")
         return jsonify({"error": "Failed to add money"}), 500
+    
+@cart_bp.route("/available-memberships", methods=["GET"])
+@token_required
+def get_available_memberships(current_user):
+    try:
+        memberships = CartService.get_available_memberships(current_user["user_id"])
+        return jsonify(memberships)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@cart_bp.route("/become-member", methods=["POST"])
+@token_required
+def become_member(current_user):
+    try:
+        data = request.get_json()
+        membership_id = data.get("membership_id")
+        if not membership_id:
+            return jsonify({"error": "Membership ID is required"}), 400
+
+        CartService.become_member(current_user["user_id"], membership_id)
+        return jsonify({"message": "Membership added successfully!"})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": "An unexpected error occurred"}), 500

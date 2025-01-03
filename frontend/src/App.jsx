@@ -34,6 +34,7 @@ import ManagerPage from "./pages/manager/ManagerPage";
 import ViewRatePage from "./pages/viewrate/ViewRatePage"; // Corrected path
 import CoachEvaluationPage from "./pages/evalcoach/CoachEvaluationPage";
 import ViewClassEvaluationsPage from "./pages/viewclasseval/ViewClassEvaluationPage";
+import BeMemberPage from "./pages/bemember/BeMemberPage";
 
 const Layout = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -138,6 +139,14 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+              path="/become-member"
+              element={
+                <ProtectedRoute>
+                  <BeMemberPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Layout>
         <ToastContainer
