@@ -71,6 +71,10 @@ const CreateClass = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (new Date(formData.enroll_deadline) >= new Date(formData.session_date)) {
+      setErrorMessage("Enrollment deadline must be earlier than the session date.");
+      return;
+    }
     if (formData.start_time >= formData.end_time) {
       setErrorMessage("Start time must be earlier than end time.");
       return;

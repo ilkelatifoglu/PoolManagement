@@ -133,7 +133,6 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li>
-        <li>
           <NavLink
             to="/reports"
             className={({ isActive }) => (isActive ? "active" : "")}
@@ -141,6 +140,7 @@ const Sidebar = () => {
             Reports
           </NavLink>
         </li>
+        <li>
           <NavLink
             to="/profile"
             className={({ isActive }) => (isActive ? "active" : "")}

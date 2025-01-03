@@ -53,7 +53,9 @@ FROM
 JOIN 
     evaluation e ON u.user_id = e.coach_id
 GROUP BY 
-    u.name;
+    u.name
+ORDER BY 
+    AverageRating DESC;
 """
 
 GET_EVALUATIONS_FOR_COACH = """
@@ -90,7 +92,9 @@ LEFT JOIN
 LEFT JOIN
     pool p ON b.pool_id = p.pool_id
 WHERE
-    e.coach_id = %(coach_id)s;
+    e.coach_id = %(coach_id)s
+ORDER BY
+    e.evaluation_date DESC;
 """
 
 GET_CLASS_EVALUATIONS_FOR_COACH = """
@@ -121,6 +125,8 @@ LEFT JOIN
 LEFT JOIN
     pool p ON b.pool_id = p.pool_id
 WHERE
-    e.training_id IS NULL AND e.coach_id = %(coach_id)s;
+    e.training_id IS NULL AND e.coach_id = %(coach_id)s
+ORDER BY
+    e.evaluation_date DESC;
 """
 
