@@ -98,7 +98,7 @@ const Sidebar = () => {
             </li>
           </>
         )}
-        {user?.user_type === "admin" && (
+        {user?.user_type === "administrator" && (
           <li>
             <NavLink
               to="/reports"
@@ -139,7 +139,7 @@ const Sidebar = () => {
           >
             Be Member
           </NavLink>
-        </li>  
+        </li>
         <li>
           <NavLink
             to="/cart"
@@ -147,7 +147,7 @@ const Sidebar = () => {
           >
             Cart
           </NavLink>
-        </li>        
+        </li>
         <li>
           <NavLink
             to="/evaluation"
@@ -172,17 +172,6 @@ const Sidebar = () => {
             Profile
           </NavLink>
         </li>
-
-        {/* Conditionally Render System Reports Link */}
-        {localStorage.getItem("role") === "administrator" && (
-          <li>
-            <NavLink
-              to="/system-reports"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              System Reports
-            </NavLink>
-          </li>)}
       </ul>
     </div>
   );
