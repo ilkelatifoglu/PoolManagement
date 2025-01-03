@@ -1,6 +1,8 @@
 # Queries for fetching swimmer activities
 GET_SWIMMER_ACTIVITIES = """
-SELECT 
+SELECT
+    c.class_id AS activity_id,
+    b.status,
     c.name AS activity_name,
     s.date AS activity_date,
     s.start_time,
@@ -19,6 +21,8 @@ WHERE sch.swimmer_id = %s
 UNION ALL
 
 SELECT 
+    st.self_training_id AS activity_id,
+    b.status,
     'Self-Training' AS activity_name,
     s.date AS activity_date,
     s.start_time,
@@ -34,6 +38,8 @@ WHERE st.swimmer_id = %s
 UNION ALL
 
 SELECT 
+    t.training_id AS activity_id,
+    b.status,
     'Training' AS activity_name,
     s.date AS activity_date,
     s.start_time,
@@ -56,6 +62,8 @@ LIMIT 0, 1000;
 # Queries for fetching coach activities
 GET_COACH_ACTIVITIES = """
 SELECT 
+    c.class_id AS activity_id,
+    b.status,
     c.name AS activity_name,
     s.date AS activity_date,
     s.start_time,
@@ -63,12 +71,35 @@ SELECT
     p.name AS pool_name,
     COUNT(sch.swimmer_id) AS participant_count
 FROM class c
+JOIN coach co ON co.coach_id = c.coach_id
 JOIN booking b ON c.class_id = b.booking_id
-JOIN session s ON b.booking_id = s.session_id
-JOIN lifeguard_session ls ON s.session_id = ls.session_id
-JOIN pool p ON ls.pool_id = p.pool_id
+JOIN session s ON s.session_id = b.session_id
+JOIN pool p ON co.pool_id = p.pool_id
 LEFT JOIN schedules sch ON c.class_id = sch.class_id
 WHERE c.coach_id = %s
-GROUP BY c.name, s.date, s.start_time, s.end_time, p.name
-ORDER BY s.date, s.start_time;
+GROUP BY c.class_id, b.status, c.name, s.date, s.start_time, s.end_time, p.name
+
+UNION
+
+SELECT
+    t.training_id AS activity_id,
+    b.status,
+    'Training' AS activity_name,
+    s.date AS activity_date,
+    s.start_time,
+    s.end_time,
+    p.name AS pool_name,
+    u.name AS participant_count
+FROM training t
+JOIN coach co ON co.coach_id = t.coach_id
+JOIN booking b ON t.training_id = b.booking_id
+JOIN session s ON s.session_id = b.session_id
+JOIN pool p ON co.pool_id = p.pool_id
+JOIN user u ON u.user_id = t.swimmer_id
+WHERE t.coach_id = %s
+GROUP BY t.training_id, b.status, s.date, s.start_time, s.end_time, p.name
+
+ORDER BY activity_date, start_time;
 """
+
+
