@@ -21,42 +21,70 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Cards Grid */}
+      {/* Features Grid */}
       <div className="dashboard-grid">
-        {/* User Info Card */}
+        {/* Activities Card */}
         <div className="dashboard-card">
-          <h2>Summary</h2>
-          <div className="info-list">
-            <div className="info-item">
-              <span className="label">Balance</span>
-              <span className="value">$50.00</span>
-            </div>
-            <div className="info-item">
-              <span className="label">Phone</span>
-              <span className="value">{user?.phone_number}</span>
-            </div>
-            {user?.role === "swimmer" && (
-              <div className="info-item">
-                <span className="label">Swim Level</span>
-                <span className="value">Intermediate</span>
-              </div>
-            )}
+          <h2>My Activities</h2>
+          <div className="feature-description">
+            <p>
+              Track and manage your swimming activities, classes, and events.
+              View your schedule and progress.
+            </p>
           </div>
         </div>
 
-        {/* Notifications Card (replacing Quick Actions) */}
+        {/* Training Card */}
         <div className="dashboard-card">
-          <h2>Notifications</h2>
-          <div className="notifications-list">
-            <p className="empty-state">No new notifications</p>
+          <h2>Training</h2>
+          <div className="feature-description">
+            <p>
+              Access your training programs, workout schedules, and swimming
+              techniques.
+            </p>
           </div>
         </div>
 
-        {/* Upcoming Schedule Card */}
+        {/* Classes Card */}
         <div className="dashboard-card">
-          <h2>Upcoming Sessions</h2>
-          <div className="sessions-list">
-            <p className="empty-state">No upcoming sessions</p>
+          <h2>Swimming Classes</h2>
+          <div className="feature-description">
+            <p>
+              Browse and enroll in swimming classes.{" "}
+              {user?.user_type === "coach" &&
+                "As a coach, you can also create and manage classes."}
+            </p>
+          </div>
+        </div>
+
+        {/* Events Card */}
+        <div className="dashboard-card">
+          <h2>Events</h2>
+          <div className="feature-description">
+            <p>
+              Participate in swimming events and competitions.{" "}
+              {user?.user_type === "manager" &&
+                "Managers can create and organize events."}
+            </p>
+          </div>
+        </div>
+
+        {/* Membership Card */}
+        <div className="dashboard-card">
+          <h2>Membership</h2>
+          <div className="feature-description">
+            <p>Explore membership benefits and join our swimming community.</p>
+          </div>
+        </div>
+
+        {/* Evaluation Card */}
+        <div className="dashboard-card">
+          <h2>Evaluations</h2>
+          <div className="feature-description">
+            <p>
+              Provide and view feedback for coaches and classes to help improve
+              our services.
+            </p>
           </div>
         </div>
       </div>
