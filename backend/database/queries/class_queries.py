@@ -162,19 +162,33 @@ def fetch_classes():
 def add_class_to_cart_query(data):
     conn = get_db()
     try:
-        with conn.cursor() as cursor:
-            query = """
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # First check if the enrollment deadline hasn't passed
+            check_deadline_query = """
+                SELECT enroll_deadline 
+                FROM class 
+                WHERE class_id = %(class_id)s 
+                AND enroll_deadline >= CURDATE()
+            """
+            cursor.execute(check_deadline_query, data)
+            deadline_check = cursor.fetchone()
+            
+            if not deadline_check:
+                raise Exception("Enrollment deadline has passed for this class")
+
+            # If deadline hasn't passed, proceed with insertion
+            insert_query = """
                 INSERT INTO schedules (swimmer_id, class_id, is_paid)
                 VALUES (%(swimmer_id)s, %(class_id)s, 0)
             """
-            cursor.execute(query, data)
+            cursor.execute(insert_query, data)
             conn.commit()
     except pymysql.err.IntegrityError as e:
         conn.rollback()
         raise Exception(f"Integrity error: {e}")
     except Exception as e:
         conn.rollback()
-        raise Exception(f"Error adding to cart: {e}")
+        raise Exception(str(e))
     
 def get_unadded_classes(swimmer_id):
     conn = get_db()
