@@ -72,12 +72,19 @@ const CreateClass = () => {
     e.preventDefault();
 
     if (new Date(formData.enroll_deadline) >= new Date(formData.session_date)) {
-      setErrorMessage("Enrollment deadline must be earlier than the session date.");
+      setErrorMessage(
+        "Enrollment deadline must be earlier than the session date."
+      );
       return;
     }
-    if (formData.start_time >= formData.end_time) {
-      setErrorMessage("Start time must be earlier than end time.");
-      return;
+    if (formData.start_time && formData.end_time) {
+      const [startHour] = formData.start_time.split(":").map(Number);
+      const [endHour] = formData.end_time.split(":").map(Number);
+
+      if (startHour >= endHour) {
+        setErrorMessage("Start time must be earlier than end time.");
+        return;
+      }
     }
 
     try {
@@ -209,14 +216,6 @@ const CreateClass = () => {
             return { value: `${hour}:00`, label: `${hour}:00` };
           })}
           value={formData.end_time}
-          onChange={handleInputChange}
-          required
-        />
-        <Input
-          label="Lane Number"
-          name="lane_number"
-          type="number"
-          value={formData.lane_number}
           onChange={handleInputChange}
           required
         />
