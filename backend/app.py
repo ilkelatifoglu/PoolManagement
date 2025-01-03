@@ -16,7 +16,7 @@ from routes.lane_routes import lane_bp
 from flask_mail import Mail
 from routes.user_routes import user_bp
 from flask_apscheduler import APScheduler
-from scheduler.tasks import update_session_status, check_membership_expiration
+from scheduler.tasks import check_membership_expiration, update_past_activities_status
 from routes.report_routes import report_bp  # Import report routes
 from routes.manager_routes import manager_bp  # Import report routes
 import logging
@@ -93,8 +93,8 @@ def create_app():
     
     # Add scheduled jobs to run daily at 00:01 AM
     scheduler.add_job(
-        id='update_session_status',
-        func=update_session_status,
+        id='update_past_activities_status',
+        func=update_past_activities_status,
         trigger='cron',
         hour=0,
         minute=1
@@ -110,12 +110,15 @@ def create_app():
     
     scheduler.start()
     
-    # Print all scheduled jobs
+    # Print all scheduled jobs with better error handling
     jobs = scheduler.get_jobs()
     print("\nScheduled jobs:")
     for job in jobs:
         print(f"Job ID: {job.id}")
-        print(f"Next run time: {job.next_run_time}")
+        try:
+            print(f"Next run time: {job.next_run_time}")
+        except AttributeError:
+            print("Next run time: Not yet scheduled")
         print(f"Trigger: {job.trigger}")
         print("---")
 
@@ -123,10 +126,10 @@ def create_app():
 
 app = create_app()
 
-@app.route('/api/maintenance/update-sessions', methods=['POST'])
-def manual_update_sessions():
-    update_session_status()
-    return jsonify({'message': 'Session status update triggered successfully'})
+@app.route('/api/maintenance/update-activities', methods=['POST'])
+def manual_update_activities():
+    update_past_activities_status()
+    return jsonify({'message': 'Activities status update triggered successfully'})
 
 @app.route('/api/maintenance/check-memberships', methods=['POST'])
 def manual_check_memberships():

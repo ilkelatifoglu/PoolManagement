@@ -8,11 +8,13 @@ def create_class(class_data, coach_id):
         print("Coach ID:", coach_id)
 
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            # Validate if the coach works in the given pool
+            # Validate if the coach works in the given pool and get pool capacity
             print("Validating pool association for coach")
             pool_query = """
-            SELECT pool_id FROM coach 
-            WHERE coach_id = %(coach_id)s AND pool_id = %(pool_id)s
+            SELECT pool_id, capacity FROM pool 
+            WHERE pool_id = %(pool_id)s AND pool_id IN (
+                SELECT pool_id FROM coach WHERE coach_id = %(coach_id)s
+            )
             """
             cursor.execute(pool_query, {"pool_id": class_data["pool_id"], "coach_id": coach_id})
             pool = cursor.fetchone()
@@ -21,7 +23,9 @@ def create_class(class_data, coach_id):
             if not pool:
                 raise Exception("Unauthorized: You can only create classes in pools you are associated with.")
             
-            print("Pool validated:", pool)
+            # Validate class capacity against pool capacity
+            if int(class_data['capacity']) > pool['capacity']:
+                raise Exception(f"Class capacity cannot exceed pool capacity ({pool['capacity']})")
             
             # Step 1: Check if the session already exists
             session_query = """
@@ -44,8 +48,8 @@ def create_class(class_data, coach_id):
 
             # Step 3: Insert a new booking with status as 'READY'
             booking_query = """
-            INSERT INTO booking (session_id, lane_number, pool_id, status)
-            VALUES (%(session_id)s, %(lane_number)s, %(pool_id)s, 'READY')
+            INSERT INTO booking (session_id, pool_id, lane_number, status)
+            VALUES (%(session_id)s, %(pool_id)s, %(lane_number)s, 'READY')
             """
             cursor.execute(booking_query, {**class_data, "session_id": session_id})
             booking_id = cursor.lastrowid
