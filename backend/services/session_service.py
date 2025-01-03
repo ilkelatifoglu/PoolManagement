@@ -24,16 +24,16 @@ class SessionService:
             raise
 
     @staticmethod
-    def get_available_sessions():
+    def get_available_sessions(pool_id):
         try:
             cursor = get_cursor()
             print("Executing query to fetch available sessions...")
-            cursor.execute(GET_AVAILABLE_SESSIONS)
+            cursor.execute(GET_AVAILABLE_SESSIONS, (pool_id,))
             sessions = cursor.fetchall()
             
             # Serialize datetime and timedelta objects
             for session in sessions:
-                session['date'] = session['date'].strftime('%Y-%m-%d')  # Convert datetime to string
+                session['date'] = session['date']  # Convert datetime to string
                 session['start_time'] = str(session['start_time'])  # Convert timedelta to string
                 session['end_time'] = str(session['end_time'])  # Convert timedelta to string
             

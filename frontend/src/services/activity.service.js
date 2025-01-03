@@ -33,12 +33,12 @@ const ActivityService = {
             throw error; // Re-throw the error for error handling in the component
         }
     },
-    withdrawClass: async (userId, classId) => {
+    withdrawClass: async (userId, classId, activityType) => {
         try {
             const response = await axios.delete(
                 `${API_BASE_URL}/activities/withdraw-class`,
                 {
-                    data: { userId, classId }, // Pass data in the request body for DELETE
+                    data: { userId, classId, activityType }, // Pass data in the request body for DELETE
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
