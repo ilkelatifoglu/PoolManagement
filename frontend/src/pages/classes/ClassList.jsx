@@ -41,22 +41,68 @@ const ClassList = () => {
     }
   };
 
+  // Add this function to check if enrollment deadline has passed
+  const isEnrollmentDeadlinePassed = (deadline) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    const deadlineDate = new Date(deadline);
+    return deadlineDate < today;
+  };
+
   const handleAddToCart = async (classData) => {
     try {
-      await addToCart({ swimmer_id: user.user_id, class_id: classData.class_id });
-      setSuccess("Class added to cart successfully!");
+      // Check enrollment deadline before making the API call
+      if (isEnrollmentDeadlinePassed(classData.enroll_deadline)) {
+        setError("❌ Cannot add to cart: Enrollment deadline has passed");
+        return;
+      }
+
+      await addToCart({
+        swimmer_id: user.user_id,
+        class_id: classData.class_id,
+      });
+      setSuccess("✅ Class added to cart successfully!");
       setFilteredClasses((prev) =>
         prev.filter((cls) => cls.class_id !== classData.class_id)
       );
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      setError("Failed to add class to cart");
+      console.log("Error details:", err); // Add this for debugging
+
+      // Get the error message from the response
+      const errorMessage =
+        err.error || err.message || "Failed to add class to cart";
+
+      // Add emoji indicators for different types of errors
+      let formattedError = "❌ ";
+      if (errorMessage.includes("gender")) {
+        formattedError += "Gender Restriction: " + errorMessage;
+      } else if (errorMessage.includes("age")) {
+        formattedError += "Age Restriction: " + errorMessage;
+      } else if (
+        errorMessage.includes("capacity") ||
+        errorMessage.includes("full")
+      ) {
+        formattedError += "Class Full: " + errorMessage;
+      } else if (errorMessage.includes("scheduled")) {
+        formattedError += "Schedule Conflict: " + errorMessage;
+      } else {
+        formattedError += errorMessage;
+      }
+
+      setError(formattedError);
+      setTimeout(() => setError(""), 3000);
     }
   };
 
   const applyFilters = () => {
     let filtered = classes;
 
-    if (filters.start_time && filters.end_time && filters.start_time >= filters.end_time) {
+    if (
+      filters.start_time &&
+      filters.end_time &&
+      filters.start_time >= filters.end_time
+    ) {
       setError("Start Time must be earlier than End Time");
       return;
     }
@@ -75,10 +121,14 @@ const ClassList = () => {
       filtered = filtered.filter((cls) => cls.level === Number(filters.level));
     }
     if (filters.gender_req) {
-      filtered = filtered.filter((cls) => cls.gender_req === filters.gender_req);
+      filtered = filtered.filter(
+        (cls) => cls.gender_req === filters.gender_req
+      );
     }
     if (filters.capacity) {
-      filtered = filtered.filter((cls) => cls.capacity >= Number(filters.capacity));
+      filtered = filtered.filter(
+        (cls) => cls.capacity >= Number(filters.capacity)
+      );
     }
     if (filters.date) {
       filtered = filtered.filter((cls) =>
@@ -86,16 +136,22 @@ const ClassList = () => {
       );
     }
     if (filters.start_time) {
-      filtered = filtered.filter((cls) => cls.start_time === filters.start_time);
+      filtered = filtered.filter(
+        (cls) => cls.start_time === filters.start_time
+      );
     }
     if (filters.end_time) {
       filtered = filtered.filter((cls) => cls.end_time === filters.end_time);
     }
     if (filters.duration) {
-      filtered = filtered.filter((cls) => cls.duration === Number(filters.duration));
+      filtered = filtered.filter(
+        (cls) => cls.duration === Number(filters.duration)
+      );
     }
     if (filters.lane_number) {
-      filtered = filtered.filter((cls) => cls.lane_number === Number(filters.lane_number));
+      filtered = filtered.filter(
+        (cls) => cls.lane_number === Number(filters.lane_number)
+      );
     }
 
     setFilteredClasses(filtered);
@@ -111,12 +167,13 @@ const ClassList = () => {
     { header: "Pool", accessor: "pool_name" },
     { header: "Coach", accessor: "coach_name" },
     { header: "Level", accessor: "level" },
-    { header: "Gender Requirement", accessor: "gender_req" },
+    { header: "Age Req.", accessor: "age_req" },
+    { header: "Gender", accessor: "gender_req" },
     { header: "Capacity", accessor: "capacity" },
     { header: "Date", accessor: "session_date" },
     { header: "Start Time", accessor: "start_time" },
     { header: "End Time", accessor: "end_time" },
-    { header: "Duration (hrs)", accessor: "duration" },
+    { header: "Duration", accessor: "duration" },
     { header: "Lane", accessor: "lane_number" },
     { header: "Price", accessor: "price" },
   ];
@@ -131,20 +188,50 @@ const ClassList = () => {
   return (
     <div className="class-list-container">
       <h2>Pool Booking System</h2>
-      {success && <p className="success">{success}</p>}
-      {error && <p className="error">{error}</p>}
+      {success && (
+        <p
+          className="success"
+          style={{
+            backgroundColor: "#e7f7e7",
+            color: "#2e7d32",
+            padding: "10px",
+            borderRadius: "4px",
+            marginBottom: "10px",
+          }}
+        >
+          {success}
+        </p>
+      )}
+      {error && (
+        <p
+          className="error"
+          style={{
+            backgroundColor: "#ffebee",
+            color: "#c62828",
+            padding: "10px",
+            borderRadius: "4px",
+            marginBottom: "10px",
+          }}
+        >
+          {error}
+        </p>
+      )}
 
       <div className="filter-section">
         <Input
           name="pool_name"
           label="Pool Name"
-          onChange={(e) => setFilters({ ...filters, pool_name: e.target.value })}
+          onChange={(e) =>
+            setFilters({ ...filters, pool_name: e.target.value })
+          }
           value={filters.pool_name || ""}
         />
         <Input
           name="coach_name"
           label="Coach Name"
-          onChange={(e) => setFilters({ ...filters, coach_name: e.target.value })}
+          onChange={(e) =>
+            setFilters({ ...filters, coach_name: e.target.value })
+          }
           value={filters.coach_name || ""}
         />
         <Input
@@ -163,7 +250,9 @@ const ClassList = () => {
             { value: "M", label: "Male" },
             { value: "F", label: "Female" },
           ]}
-          onChange={(e) => setFilters({ ...filters, gender_req: e.target.value })}
+          onChange={(e) =>
+            setFilters({ ...filters, gender_req: e.target.value })
+          }
           value={filters.gender_req || ""}
         />
         <Input
@@ -185,7 +274,9 @@ const ClassList = () => {
           label="Start Time"
           isSelect
           options={timeOptions.map((time) => ({ value: time, label: time }))}
-          onChange={(e) => setFilters({ ...filters, start_time: e.target.value })}
+          onChange={(e) =>
+            setFilters({ ...filters, start_time: e.target.value })
+          }
           value={filters.start_time || ""}
         />
         <Input
@@ -207,7 +298,9 @@ const ClassList = () => {
           name="lane_number"
           label="Lane Number"
           type="number"
-          onChange={(e) => setFilters({ ...filters, lane_number: e.target.value })}
+          onChange={(e) =>
+            setFilters({ ...filters, lane_number: e.target.value })
+          }
           value={filters.lane_number || ""}
         />
         <div className="button-group">

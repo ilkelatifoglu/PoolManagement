@@ -150,7 +150,7 @@ class TrainingService:
                     "specialization": coach["specialization"],
                     "session_id": coach["session_id"],
                     "pool_id": coach["pool_id"],
-                    "date": coach["date"].strftime("%Y-%m-%d"),  # Format date for JSON response
+                    "date": coach["date"],
                     "start_time": str(coach["start_time"]),
                     "end_time": str(coach["end_time"]),
                 }

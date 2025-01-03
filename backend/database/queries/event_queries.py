@@ -89,21 +89,30 @@ def fetch_ready_events(swimmer_id):
                 e.status,
                 s.date AS session_date, 
                 CONCAT(TIME_FORMAT(s.start_time, '%%H:%%i'), ' - ', TIME_FORMAT(s.end_time, '%%H:%%i')) AS session_time, 
-                p.name AS pool_name
+                p.name AS pool_name,
+                COUNT(a.swimmer_id) as current_attendees
             FROM event e
             JOIN event_session es ON e.event_id = es.event_id
             JOIN session s ON es.session_id = s.session_id
             JOIN pool p ON es.pool_id = p.pool_id
-            LEFT JOIN attends a ON e.event_id = a.event_id AND a.swimmer_id = %s
-            WHERE e.status = 'READY' AND a.event_id IS NULL
+            LEFT JOIN attends a ON e.event_id = a.event_id
+            JOIN has h ON h.swimmer_id = %s
+            JOIN membership m ON h.membership_id = m.membership_id
+            WHERE e.status = 'READY' 
+            AND es.pool_id = m.pool_id
+            AND NOT EXISTS (
+                SELECT 1 FROM attends a2 
+                WHERE a2.event_id = e.event_id 
+                AND a2.swimmer_id = %s
+            )
+            GROUP BY e.event_id
+            HAVING current_attendees < e.capacity
             """
-            print(f"Executing query for swimmer_id: {swimmer_id}")  # Debugging log
-            cursor.execute(query, (swimmer_id,))
+            cursor.execute(query, (swimmer_id, swimmer_id))
             results = cursor.fetchall()
-            print(f"Query results: {results}")  # Debugging log
             return results
     except Exception as e:
-        print(f"Error in fetch_ready_events: {str(e)}")  # Debugging log
+        print(f"Error in fetch_ready_events: {str(e)}")
         raise Exception(f"Error fetching ready events: {e}")
 
 def add_attendance(swimmer_id, event_id):
@@ -112,7 +121,10 @@ def add_attendance(swimmer_id, event_id):
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             # Check if swimmer has a valid membership
             check_membership_query = """
-            SELECT membership_id FROM has WHERE swimmer_id = %s
+            SELECT h.membership_id, m.pool_id 
+            FROM has h
+            JOIN membership m ON h.membership_id = m.membership_id
+            WHERE h.swimmer_id = %s
             """
             cursor.execute(check_membership_query, (swimmer_id,))
             membership = cursor.fetchone()
@@ -120,7 +132,33 @@ def add_attendance(swimmer_id, event_id):
             if not membership:
                 raise Exception("You need a membership to attend events.")
 
-            # Check if already registered
+            # Check if event is in an accessible pool
+            check_pool_access_query = """
+            SELECT es.pool_id
+            FROM event_session es
+            WHERE es.event_id = %s
+            """
+            cursor.execute(check_pool_access_query, (event_id,))
+            event_pool = cursor.fetchone()
+            
+            if event_pool['pool_id'] != membership['pool_id']:
+                raise Exception("You don't have access to this pool.")
+
+            # Check event capacity
+            check_capacity_query = """
+            SELECT e.capacity, COUNT(a.swimmer_id) as current_attendees
+            FROM event e
+            LEFT JOIN attends a ON e.event_id = a.event_id
+            WHERE e.event_id = %s
+            GROUP BY e.event_id, e.capacity
+            """
+            cursor.execute(check_capacity_query, (event_id,))
+            capacity_info = cursor.fetchone()
+            
+            if capacity_info['current_attendees'] >= capacity_info['capacity']:
+                raise Exception("Event has reached maximum capacity.")
+
+            # Add attendance if all checks pass
             query = """
             INSERT INTO attends (swimmer_id, event_id)
             VALUES (%s, %s)
@@ -131,7 +169,7 @@ def add_attendance(swimmer_id, event_id):
         raise Exception("You have already registered for this event.")
     except Exception as e:
         conn.rollback()
-        raise Exception(f"Error adding attendance: {e}")
+        raise Exception(f"Error adding attendance: {str(e)}")
 
 def cancel_event(event_id):
     conn = get_db()

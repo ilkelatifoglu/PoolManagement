@@ -1,7 +1,19 @@
-GET_POOLS_BY_MANAGER = """SELECT *
-FROM pool
-WHERE manager_id = %s;
+GET_POOLS_BY_MANAGER = """
+SELECT 
+    p.*, 
+    COUNT(l.lane_number) AS number_of_lanes
+FROM 
+    pool p
+LEFT JOIN 
+    lane l
+ON 
+    p.pool_id = l.pool_id
+WHERE 
+    p.manager_id = %s
+GROUP BY 
+    p.pool_id;
 """
+
 CREATE_MEMBERSHIP = """INSERT INTO membership (pool_id, price, duration)
 VALUES (%s, %s, %s);
 """
@@ -43,7 +55,10 @@ GET_STAFFS = """
             SELECT 
                 u.user_id, 
                 u.name, 
-                u.email, 
+                u.email,
+                u.gender,
+                u.birth_date,
+                u.blood_type,
                 'Lifeguard' AS role,
                 lg.pool_id, 
                 p.name AS pool_name
@@ -62,6 +77,9 @@ GET_STAFFS = """
                 u.user_id, 
                 u.name, 
                 u.email, 
+                u.gender,
+                u.birth_date,
+                u.blood_type,
                 'Coach' AS role,
                 c.pool_id, 
                 p.name AS pool_name
@@ -74,3 +92,7 @@ GET_STAFFS = """
             WHERE 
                 p.manager_id = %s
             """
+
+INSERT_LANES = """INSERT INTO lane (pool_id, lane_number)
+VALUES (%s, %s);
+"""

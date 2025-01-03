@@ -4,7 +4,7 @@ import { useAuth } from "../../../context/AuthContext";
 import "./sidebar.css";
 
 const Sidebar = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   if (!localStorage.getItem("token")) {
     return null;
   }
@@ -44,14 +44,16 @@ const Sidebar = () => {
             Enroll to Class
           </NavLink>
         </li>
-        <li>
-          <NavLink
-            to="/create-class"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Create Class
-          </NavLink>
-        </li>
+        {user?.user_type === "coach" && (
+          <li>
+            <NavLink
+              to="/create-class"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Create Class
+            </NavLink>
+          </li>
+        )}
         <li>
           <NavLink
             to="/cancel-class"
@@ -76,14 +78,36 @@ const Sidebar = () => {
             Attend Event
           </NavLink>
         </li>
-        <li>
-          <NavLink
-            to="/create-event"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Create Event
-          </NavLink>
-        </li>
+        {user?.user_type === "manager" && (
+          <>
+            <li>
+              <NavLink
+                to="/create-event"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Create Event
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/manager-page"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Manager Dashboard
+              </NavLink>
+            </li>
+          </>
+        )}
+        {user?.user_type === "admin" && (
+          <li>
+            <NavLink
+              to="/reports"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Reports
+            </NavLink>
+          </li>
+        )}
         <li>
           <NavLink
             to="/cancel-event"
@@ -142,20 +166,23 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/reports"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Reports
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
             to="/profile"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Profile
           </NavLink>
         </li>
+
+        {/* Conditionally Render System Reports Link */}
+        {localStorage.getItem("role") === "administrator" && (
+          <li>
+            <NavLink
+              to="/system-reports"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              System Reports
+            </NavLink>
+          </li>)}
       </ul>
     </div>
   );

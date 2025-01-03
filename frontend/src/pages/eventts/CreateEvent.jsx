@@ -11,7 +11,7 @@ import { useAuth } from "../../context/AuthContext";
 
 const CreateEvent = () => {
   const { user, loading } = useAuth();
-  console.log("User in CreateEvent:", user);
+
   const [eventData, setEventData] = useState({
     event_name: "",
     event_type: "",
@@ -27,7 +27,12 @@ const CreateEvent = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    // Only proceed with fetching if we have a valid user
+    const role = localStorage.getItem("role");
+    if (role !== "manager") {
+      setErrorMessage("Unauthorized: Only managers can create events");
+      return;
+    }
+
     if (user && user.user_type === "manager") {
       const fetchData = async () => {
         try {

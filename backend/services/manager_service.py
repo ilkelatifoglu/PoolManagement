@@ -1,22 +1,34 @@
 from database.connection import get_cursor, commit_db
 from database.queries.manager_queries import *  # Assuming manager-related queries are stored here
+from werkzeug.security import generate_password_hash
 
 class ManagerService:
 
     @staticmethod
-    def create_pool(manager_id, name, capacity, general_price, training_price):
+    def create_pool(manager_id, name, capacity, general_price, training_price, lanes):
         """
-        Create a new pool for a specific manager.
+        Create a new pool for a specific manager and initialize lanes for the pool.
         """
         cursor = get_cursor()
         try:
             # Execute the query to create a pool
             cursor.execute(CREATE_POOL, (manager_id, name, capacity, general_price, training_price))
+            
+            # Get the ID of the newly created pool
+            pool_id = cursor.lastrowid  # Or use the appropriate method for your database to get the last inserted ID
+
+            # Insert rows into the lane table for each lane
+            for lane_number in range(1, int(lanes) + 1):  # Assuming lanes are numbered 1 to N
+                cursor.execute(INSERT_LANES, (pool_id, lane_number))
+
+            # Commit the transaction
             commit_db()
-            return "Pool created successfully."
+
+            return "Pool and lanes created successfully."
         except Exception as e:
-            print(f"Error creating pool for manager_id={manager_id}: {e}")
+            print(f"Error creating pool and lanes for manager_id={manager_id}: {e}")
             raise
+
 
     @staticmethod
     def delete_pool(pool_id):
@@ -147,17 +159,73 @@ class ManagerService:
             raise
 
     @staticmethod
-    def create_staff(name, email, password, role, pool_id):
+    def create_staff(name, email, password, role, pool_id, gender, birth_date, blood_type):
         """
         Create a new staff account (Coach or Lifeguard) and associate it with the specified pool.
+        If a staff member with the same name and email already exists and their pool_id is NULL, update their pool_id.
         """
         cursor = get_cursor()
         try:
-            # Insert user into the 'user' table
+            # Check if a staff member with the same name and email exists and has NULL pool_id
             cursor.execute("""
-                INSERT INTO user (name, email, password)
-                VALUES (%s, %s, %s)
-            """, (name, email, password))
+                SELECT user_id
+                FROM user
+                WHERE name = %s AND email = %s
+            """, (name, email))
+            existing_user = cursor.fetchone()
+            hashed_password = generate_password_hash(password)
+
+            if existing_user:
+                user_id = existing_user['user_id']
+
+                # Check role-specific table for NULL pool_id
+                if role == "coach":
+                    cursor.execute("""
+                        SELECT pool_id
+                        FROM coach
+                        WHERE coach_id = %s AND pool_id IS NULL
+                    """, (user_id,))
+                elif role == "lifeguard":
+                    cursor.execute("""
+                        SELECT pool_id
+                        FROM lifeguard
+                        WHERE lifeguard_id = %s AND pool_id IS NULL
+                    """, (user_id,))
+                else:
+                    raise ValueError("Invalid role provided. Must be 'coach' or 'lifeguard'.")
+
+                existing_pool = cursor.fetchone()
+
+                if existing_pool:
+                    # Update pool_id and password for the existing record
+                    cursor.execute("""
+                        UPDATE user
+                        SET password = %s
+                        WHERE user_id = %s
+                    """, (hashed_password, user_id))
+
+                    if role == "coach":
+                        cursor.execute("""
+                            UPDATE coach
+                            SET pool_id = %s
+                            WHERE coach_id = %s
+                        """, (pool_id, user_id))
+                    elif role == "lifeguard":
+                        cursor.execute("""
+                            UPDATE lifeguard
+                            SET pool_id = %s
+                            WHERE lifeguard_id = %s
+                        """, (pool_id, user_id))
+
+                    # Commit the transaction
+                    commit_db()
+                    return f"Existing {role} updated with new pool_id."
+            
+            # If no existing user with NULL pool_id, create a new user
+            cursor.execute("""
+                INSERT INTO user (name, email, password, gender, birth_date, blood_type)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (name, email, hashed_password, gender, birth_date, blood_type))
 
             # Get the last inserted user_id
             user_id = cursor.lastrowid
@@ -182,6 +250,7 @@ class ManagerService:
         except Exception as e:
             print(f"Error creating staff account: {e}")
             raise
+
 
     @staticmethod
     def delete_staff(staff_id, role):

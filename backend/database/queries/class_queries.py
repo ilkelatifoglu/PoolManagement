@@ -162,19 +162,82 @@ def fetch_classes():
 def add_class_to_cart_query(data):
     conn = get_db()
     try:
-        with conn.cursor() as cursor:
-            query = """
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # First check if the enrollment deadline hasn't passed
+            validation_query = """
+                SELECT 
+                    c.class_id,
+                    c.gender_req,
+                    c.age_req,
+                    c.capacity,
+                    u.gender,
+                    u.birth_date,
+                    (SELECT COUNT(*) FROM schedules WHERE class_id = c.class_id) as enrolled_count,
+                    s.date as session_date,
+                    s.start_time,
+                    s.end_time
+                FROM class c
+                JOIN user u ON u.user_id = %(swimmer_id)s
+                JOIN booking b ON c.class_id = b.booking_id
+                JOIN session s ON b.session_id = s.session_id
+                WHERE c.class_id = %(class_id)s
+            """
+            cursor.execute(validation_query, data)
+            class_info = cursor.fetchone()
+            
+            if not class_info:
+                raise Exception("Class not found")
+
+            # Check gender requirement
+            if class_info['gender_req'] and class_info['gender_req'] != class_info['gender']:
+                raise Exception("This class is restricted to a different gender")
+
+            # Check age requirement
+            from datetime import datetime
+            birth_date = datetime.strptime(str(class_info['birth_date']), '%Y-%m-%d')
+            today = datetime.now()
+            age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+            if age < class_info['age_req']:
+                raise Exception(f"Minimum age requirement is {class_info['age_req']} years")
+
+            # Check capacity
+            if class_info['enrolled_count'] >= class_info['capacity']:
+                raise Exception("Class is already full")
+
+            # Check for time conflicts
+            conflict_query = """
+                SELECT c2.class_id 
+                FROM schedules s2
+                JOIN class c2 ON s2.class_id = c2.class_id
+                JOIN booking b2 ON c2.class_id = b2.booking_id
+                JOIN session ss2 ON b2.session_id = ss2.session_id
+                WHERE s2.swimmer_id = %(swimmer_id)s
+                AND ss2.date = %(session_date)s
+                AND (
+                    (ss2.start_time < %(end_time)s AND ss2.end_time > %(start_time)s)
+                    OR (ss2.start_time = %(start_time)s AND ss2.end_time = %(end_time)s)
+                )
+            """
+            cursor.execute(conflict_query, {
+                'swimmer_id': data['swimmer_id'],
+                'session_date': class_info['session_date'],
+                'start_time': class_info['start_time'],
+                'end_time': class_info['end_time']
+            })
+            
+            if cursor.fetchone():
+                raise Exception("You have another class scheduled at this time")
+
+            # If all validations pass, proceed with insertion
+            insert_query = """
                 INSERT INTO schedules (swimmer_id, class_id, is_paid)
                 VALUES (%(swimmer_id)s, %(class_id)s, 0)
             """
-            cursor.execute(query, data)
+            cursor.execute(insert_query, data)
             conn.commit()
-    except pymysql.err.IntegrityError as e:
-        conn.rollback()
-        raise Exception(f"Integrity error: {e}")
     except Exception as e:
         conn.rollback()
-        raise Exception(f"Error adding to cart: {e}")
+        raise Exception(str(e))
     
 def get_unadded_classes(swimmer_id):
     conn = get_db()
@@ -215,7 +278,6 @@ def get_unadded_classes(swimmer_id):
             WHERE
                 sch.class_id IS NULL
                 AND b.status = 'READY'  -- Filter classes with READY status
-                AND (SELECT COUNT(*) FROM schedules sch WHERE sch.class_id = c.class_id) < c.capacity
             ORDER BY s.date ASC, s.start_time ASC
             """
             params = {'swimmer_id': swimmer_id}
