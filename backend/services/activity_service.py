@@ -6,7 +6,7 @@ class ActivityService:
     def get_swimmer_activities(swimmer_id):
         try:
             cursor = get_cursor()
-            cursor.execute(GET_SWIMMER_ACTIVITIES, (swimmer_id, swimmer_id, swimmer_id))
+            cursor.execute(GET_SWIMMER_ACTIVITIES, (swimmer_id, swimmer_id, swimmer_id, swimmer_id))
             activities = cursor.fetchall()
             print("Swimmer activities:", activities)
 
@@ -15,6 +15,7 @@ class ActivityService:
             for activity in activities:
                 serialized_activities.append({
                     "activity_id": activity["activity_id"],
+                    "activity_type": activity["activity_type"],
                     "status": activity["status"],
                     "activity_name": activity["activity_name"],
                     "activity_date": activity["activity_date"].strftime('%Y-%m-%d'),  # Format date
@@ -74,34 +75,56 @@ class ActivityService:
             raise
 
     @staticmethod
-    def withdraw_class(user_id, class_id):
+    def withdraw_class(user_id, activity_id, activity_type):
         """
-        Remove the schedule entry for a swimmer and class.
+        Remove the schedule entry for a swimmer and class/event.
         """
         cursor = get_cursor()
         try:
-            # Check if the entry exists
-            cursor.execute(
-                "SELECT * FROM schedules WHERE swimmer_id = %s AND class_id = %s",
-                (user_id, class_id)
-            )
-            schedule_entry = cursor.fetchone()
+            if activity_type == "class":
+                # Check if the entry exists in the schedules table
+                cursor.execute(
+                    "SELECT * FROM schedules WHERE swimmer_id = %s AND class_id = %s",
+                    (user_id, activity_id)
+                )
+                schedule_entry = cursor.fetchone()
 
-            if not schedule_entry:
-                return "Schedule entry not found."
+                if not schedule_entry:
+                    return "Schedule entry not found."
 
-            # Delete the entry
-            cursor.execute(
-                "DELETE FROM schedules WHERE swimmer_id = %s AND class_id = %s",
-                (user_id, class_id)
-            )
+                # Delete the entry from the schedules table
+                cursor.execute(
+                    "DELETE FROM schedules WHERE swimmer_id = %s AND class_id = %s",
+                    (user_id, activity_id)
+                )
+
+            elif activity_type == "event":
+                # Check if the entry exists in the attends table
+                cursor.execute(
+                    "SELECT * FROM attends WHERE swimmer_id = %s AND event_id = %s",
+                    (user_id, activity_id)
+                )
+                attends_entry = cursor.fetchone()
+
+                if not attends_entry:
+                    return "Attendance entry not found."
+
+                # Delete the entry from the attends table
+                cursor.execute(
+                    "DELETE FROM attends WHERE swimmer_id = %s AND event_id = %s",
+                    (user_id, activity_id)
+                )
+
+            else:
+                return "Invalid activity type."
+
             commit_db()
-            return "Class withdrawn successfully."
+            return "Activity withdrawn successfully."
+
         except Exception as e:
             print(f"Error in withdraw_class: {e}")
             raise
 
-    from database.connection import get_cursor, commit_db
 
     @staticmethod
     def cancel_class(class_id):

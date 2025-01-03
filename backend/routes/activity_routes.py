@@ -56,14 +56,14 @@ def withdraw_class(current_user):
         data = request.json
         user_id = data.get('userId')
         class_id = data.get('classId')
-
+        activity_type = data.get('activityType')
         if not user_id or not class_id:
             return jsonify({'message': 'Missing required fields'}), 400
 
         if current_user['user_id'] != user_id or current_user['user_type'] != 'swimmer':
             return jsonify({'message': 'Unauthorized access'}), 403
 
-        message = ActivityService.withdraw_class(user_id, class_id)
+        message = ActivityService.withdraw_class(user_id, class_id, activity_type)
         return jsonify({'message': message}), 200
     except Exception as e:
         print(f"Error in /activities/withdraw-class: {e}")
