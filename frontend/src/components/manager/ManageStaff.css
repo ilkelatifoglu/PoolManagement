@@ -1,0 +1,116 @@
+/* ManageStaff.css */
+
+/* General container styling */
+.manage-staff-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  /* Form styling */
+  .create-staff-form {
+    margin-bottom: 20px;
+  }
+  
+  .create-staff-form h3 {
+    margin-bottom: 10px;
+  }
+  
+  .create-staff-form .form-input,
+  .create-staff-form .form-select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .create-staff-form .form-input:focus,
+  .create-staff-form .form-select:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* Message styling */
+  .message {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: green;
+  }
+  
+  /* Table styling */
+  .staff-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+  }
+  
+  .staff-table thead tr {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .staff-table thead th {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .staff-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .staff-table tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .staff-table tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* Button styling */
+  .btn {
+    border: none;
+    padding: 10px 20px;
+    font-family: "Lexend Deca", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  .btn-danger {
+    background-color: #dc2626;
+    color: white;
+  }
+  
+  .btn-danger:hover {
+    background-color: #b91c1c;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .staff-table {
+      font-size: 14px;
+    }
+  
+    .btn {
+      font-size: 12px;
+      padding: 8px 16px;
+    }
+  }
+  

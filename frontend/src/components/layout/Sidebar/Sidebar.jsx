@@ -132,6 +132,28 @@ const Sidebar = () => {
             Profile
           </NavLink>
         </li>
+        {/* Conditionally Render Manager Page Link */}
+        {localStorage.getItem("role") === "manager" && (
+          <li>
+            <NavLink
+              to="/manager-page"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Manager Page
+            </NavLink>
+          </li>
+        )}
+
+        {/* Conditionally Render System Reports Link */}
+        {localStorage.getItem("role") === "administrator" && (
+          <li>
+            <NavLink
+              to="/system-reports"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              System Reports
+            </NavLink>
+          </li>)}
       </ul>
     </div>
   );

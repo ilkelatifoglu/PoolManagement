@@ -58,11 +58,11 @@ const MyActivities = () => {
     }
   };
 
-  const handleWithdrawClass = async (classId) => {
+  const handleWithdrawClass = async (classId, activityType) => {
     setButtonLoading((prev) => ({ ...prev, [classId]: true }));
     try {
       // Use the user's ID from the auth context
-      const response = await ActivityService.withdrawClass(user.user_id, classId);
+      const response = await ActivityService.withdrawClass(user.user_id, classId, activityType);
       alert(response.message || "Class withdrawn successfully!");
       fetchActivities();
     } catch (error) {
@@ -72,6 +72,7 @@ const MyActivities = () => {
       setButtonLoading((prev) => ({ ...prev, [classId]: false }));
     }
   };
+  
 
   const handleCancelClass = async (classId) => {
     setButtonLoading((prev) => ({ ...prev, [classId]: true }));
@@ -136,8 +137,8 @@ const MyActivities = () => {
               {(activity.activity_name !== "Self-Training" && activity.activity_name !== "Training") && activity.status === "READY" && (
                 user.user_type === "swimmer" ? (
                   <button
-                    onClick={() => handleWithdrawClass(activity.activity_id)}
-                    className="cancel-button"
+                  onClick={() => handleWithdrawClass(activity.activity_id, activity.activity_type)}
+                  className="cancel-button"
                     disabled={buttonLoading[activity.activity_id]} // Disable while loading
                   >
                     {buttonLoading[activity.activity_id] ? "Withdrawing..." : "Withdraw"}
