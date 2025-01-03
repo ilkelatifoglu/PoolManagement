@@ -33,22 +33,6 @@ const Navbar = () => {
         {isAuthenticated ? (
           <div className="navbar-links">
             <Link
-              to="/notifications"
-              className={`nav-link icon-link ${
-                isActive("/notifications") ? "active" : ""
-              }`}
-            >
-              <img
-                src={
-                  isActive("/notifications")
-                    ? bellIconPrimary
-                    : bellIconSecondary
-                }
-                alt="Notifications"
-                className="nav-icon"
-              />
-            </Link>
-            <Link
               to="/cart"
               className={`nav-link icon-link ${
                 isActive("/cart") ? "active" : ""

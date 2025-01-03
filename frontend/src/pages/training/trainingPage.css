@@ -37,21 +37,6 @@
   background-color: #f9f9f9;
 }
 
-/* Action button styles */
-.training-page-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.training-page-button:hover {
-  background-color: #45a049;
-}
-
 .self-trainings-section {
   margin-top: 2rem;
 }

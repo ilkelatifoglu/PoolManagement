@@ -13,6 +13,7 @@
   padding: var(--spacing-xs) 0;
   display: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
 }
 
 .app-container .sidebar {
@@ -67,4 +68,42 @@
 
 .main-content.no-sidebar {
   margin-left: 0;
+}
+
+.sidebar-toggle {
+  position: fixed;
+  left: 216px;
+  top: 105px;
+  z-index: 1001;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.sidebar-toggle:hover {
+  background: var(--primary-dark);
+  transform: scale(1.05);
+}
+
+/* Update toggle button position when sidebar is collapsed */
+.sidebar.collapsed + .sidebar-toggle {
+  left: 16px;
+}
+
+.sidebar.collapsed {
+  transform: translateX(-216px);
 }

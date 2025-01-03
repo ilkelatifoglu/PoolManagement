@@ -32,6 +32,7 @@ const Profile = () => {
   });
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [memberships, setMemberships] = useState([]);
 
   const timeSlots = Array.from(
     { length: 15 },
@@ -192,10 +193,24 @@ const Profile = () => {
     }
   };
 
+  // Add this new function to load memberships
+  const loadMemberships = async () => {
+    try {
+      const response = await UserService.getSwimmerMemberships(user.user_id);
+      console.log("Memberships data:", response);
+      // Access the nested memberships array
+      setMemberships(response.memberships || []);
+    } catch (error) {
+      console.error("Failed to load memberships:", error);
+      setMemberships([]);
+    }
+  };
+
   // Load schedule on component mount
   useEffect(() => {
     loadSchedule();
     loadProfile();
+    loadMemberships();
   }, []);
 
   return (
@@ -209,12 +224,20 @@ const Profile = () => {
 
       <div className="profile-grid">
         <div className="profile-card">
-          <h2>Membership Status</h2>
+          <h2>User Status</h2>
           <div className="info-list">
             <div className="info-item">
               <span>Role</span>
               <span className="value status-active">{userRole}</span>
             </div>
+            {memberships.map((membership, index) => (
+              <div key={index} className="info-item">
+                <span>Membership - {membership.name}</span>
+                <span className="value status-active">
+                  Expires: {new Date(membership.end_date).toLocaleDateString()}
+                </span>
+              </div>
+            ))}
             <div className="info-item">
               <span>Status</span>
               <span className="value status-active">Active</span>
