@@ -13,4 +13,4 @@ def send_password_reset_email(user_email, reset_token):
                              reset_token=reset_token,
                              frontend_url=frontend_url)
     
-    mail.send(msg) 
+    mail.send(msg)
