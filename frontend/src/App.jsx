@@ -35,6 +35,7 @@ import ViewRatePage from "./pages/viewrate/ViewRatePage"; // Corrected path
 import CoachEvaluationPage from "./pages/evalcoach/CoachEvaluationPage";
 import ViewClassEvaluationsPage from "./pages/viewclasseval/ViewClassEvaluationPage";
 import BeMemberPage from "./pages/bemember/BeMemberPage";
+import LifeguardSchedules from "./pages/lifeguard/LifeguardSchedules";
 
 const Layout = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -68,8 +69,14 @@ function App() {
             <Route path="/attend-event" element={<AttendEvent />} />
             <Route path="/cancel-event" element={<CancelEvent />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/coach-evaluations/:coachId" element={<CoachEvaluationPage />} />
-            <Route path="/class-evaluations/:coachId" element={<ViewClassEvaluationsPage />} />
+            <Route
+              path="/coach-evaluations/:coachId"
+              element={<CoachEvaluationPage />}
+            />
+            <Route
+              path="/class-evaluations/:coachId"
+              element={<ViewClassEvaluationsPage />}
+            />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/system-reports" element={<SystemReport />} />
             <Route path="/manager-page" element={<ManagerPage />} />
@@ -123,27 +130,35 @@ function App() {
                 </ProtectedRoute>
               }
             />
-              <Route
-                path="/add-money"
-                element={
-                  <ProtectedRoute>
-                    <AddMoneyPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/viewrate"
-                element={
-                  <ProtectedRoute>
-                    <ViewRatePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
+            <Route
+              path="/add-money"
+              element={
+                <ProtectedRoute>
+                  <AddMoneyPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/viewrate"
+              element={
+                <ProtectedRoute>
+                  <ViewRatePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/become-member"
               element={
                 <ProtectedRoute>
                   <BeMemberPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/lifeguard-schedules"
+              element={
+                <ProtectedRoute>
+                  <LifeguardSchedules />
                 </ProtectedRoute>
               }
             />

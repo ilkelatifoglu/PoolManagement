@@ -213,6 +213,9 @@ const Profile = () => {
     loadMemberships();
   }, []);
 
+  // Check if user is a lifeguard
+  const isLifeguard = user?.user_type === "lifeguard";
+
   return (
     <div className="profile-container">
       <div className="profile-header">
@@ -315,98 +318,106 @@ const Profile = () => {
           </form>
         </div>
 
-        <div className="profile-card">
-          <h2>Availability Schedule</h2>
-          <div className="schedule-container">
-            <ScheduleGrid schedule={currentSchedule} readOnly={true} />
+        {/* Only show Availability Schedule for lifeguards */}
+        {isLifeguard && (
+          <div className="profile-card">
+            <h2>Availability Schedule</h2>
+            <div className="schedule-container">
+              <ScheduleGrid schedule={currentSchedule} readOnly={true} />
+            </div>
+            <div className="button-group">
+              <Button onClick={handleUpdateScheduleClick}>
+                Upload a New Schedule
+              </Button>
+            </div>
           </div>
-          <div className="button-group">
-            <Button onClick={handleUpdateScheduleClick}>
-              Upload a New Schedule
-            </Button>
-          </div>
-        </div>
+        )}
       </div>
 
-      {/* View Schedule Modal */}
-      <Modal
-        isOpen={isViewModalOpen}
-        onClose={() => setIsViewModalOpen(false)}
-        title="Current Availability Schedule"
-      >
-        <div className="schedule-grid-container">
-          <div className="schedule-grid">
-            <div className="time-labels">
-              <div className="time-slot empty-header"></div>
-              {timeSlots.map((time) => (
-                <div key={time} className="time-slot">
-                  {time}
+      {/* Modals should only be rendered for lifeguards */}
+      {isLifeguard && (
+        <>
+          {/* View Schedule Modal */}
+          <Modal
+            isOpen={isViewModalOpen}
+            onClose={() => setIsViewModalOpen(false)}
+            title="Current Availability Schedule"
+          >
+            <div className="schedule-grid-container">
+              <div className="schedule-grid">
+                <div className="time-labels">
+                  <div className="time-slot empty-header"></div>
+                  {timeSlots.map((time) => (
+                    <div key={time} className="time-slot">
+                      {time}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            {daysOfWeek.map((day) => (
-              <div key={day} className="day-column">
-                <div className="day-header">{day}</div>
-                {timeSlots.map((time) => (
-                  <div
-                    key={`${day}-${time}`}
-                    className={`schedule-cell ${
-                      currentSchedule[day]?.[time] ? "selected" : ""
-                    }`}
-                    role="presentation"
-                  />
+                {daysOfWeek.map((day) => (
+                  <div key={day} className="day-column">
+                    <div className="day-header">{day}</div>
+                    {timeSlots.map((time) => (
+                      <div
+                        key={`${day}-${time}`}
+                        className={`schedule-cell ${
+                          currentSchedule[day]?.[time] ? "selected" : ""
+                        }`}
+                        role="presentation"
+                      />
+                    ))}
+                  </div>
                 ))}
               </div>
-            ))}
-          </div>
-          <div className="modal-actions">
-            <Button onClick={() => setIsViewModalOpen(false)}>Close</Button>
-          </div>
-        </div>
-      </Modal>
+              <div className="modal-actions">
+                <Button onClick={() => setIsViewModalOpen(false)}>Close</Button>
+              </div>
+            </div>
+          </Modal>
 
-      {/* Update Schedule Modal */}
-      <Modal
-        isOpen={isScheduleModalOpen}
-        onClose={() => setIsScheduleModalOpen(false)}
-        title="Update Availability Schedule"
-      >
-        <div className="schedule-grid-container">
-          <div className="schedule-grid">
-            <div className="time-labels">
-              <div className="time-slot empty-header"></div>
-              {timeSlots.map((time) => (
-                <div key={time} className="time-slot">
-                  {time}
+          {/* Update Schedule Modal */}
+          <Modal
+            isOpen={isScheduleModalOpen}
+            onClose={() => setIsScheduleModalOpen(false)}
+            title="Update Availability Schedule"
+          >
+            <div className="schedule-grid-container">
+              <div className="schedule-grid">
+                <div className="time-labels">
+                  <div className="time-slot empty-header"></div>
+                  {timeSlots.map((time) => (
+                    <div key={time} className="time-slot">
+                      {time}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            {daysOfWeek.map((day) => (
-              <div key={day} className="day-column">
-                <div className="day-header">{day}</div>
-                {timeSlots.map((time) => (
-                  <div
-                    key={`${day}-${time}`}
-                    className={`schedule-cell ${
-                      selectedCells[day]?.[time] ? "selected" : ""
-                    }`}
-                    onClick={() => toggleCell(day, time)}
-                    role="checkbox"
-                    aria-checked={selectedCells[day]?.[time]}
-                    tabIndex={0}
-                  />
+                {daysOfWeek.map((day) => (
+                  <div key={day} className="day-column">
+                    <div className="day-header">{day}</div>
+                    {timeSlots.map((time) => (
+                      <div
+                        key={`${day}-${time}`}
+                        className={`schedule-cell ${
+                          selectedCells[day]?.[time] ? "selected" : ""
+                        }`}
+                        onClick={() => toggleCell(day, time)}
+                        role="checkbox"
+                        aria-checked={selectedCells[day]?.[time]}
+                        tabIndex={0}
+                      />
+                    ))}
+                  </div>
                 ))}
               </div>
-            ))}
-          </div>
-          <div className="modal-actions">
-            <Button onClick={() => setIsScheduleModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={saveSchedule}>Save Schedule</Button>
-          </div>
-        </div>
-      </Modal>
+              <div className="modal-actions">
+                <Button onClick={() => setIsScheduleModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={saveSchedule}>Save Schedule</Button>
+              </div>
+            </div>
+          </Modal>
+        </>
+      )}
 
       {/* Password Change Modal */}
       <Modal

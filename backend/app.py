@@ -19,6 +19,7 @@ from flask_apscheduler import APScheduler
 from scheduler.tasks import check_membership_expiration, update_past_activities_status
 from routes.report_routes import report_bp  # Import report routes
 from routes.manager_routes import manager_bp  # Import report routes
+from routes.lifeguard_routes import lifeguard_bp
 import logging
 
 load_dotenv()
@@ -86,6 +87,7 @@ def create_app():
     app.register_blueprint(training_bp, url_prefix='/api') 
     app.register_blueprint(session_routes, url_prefix='/api')
     app.register_blueprint(lane_bp, url_prefix="/api")
+    app.register_blueprint(lifeguard_bp, url_prefix='/api/lifeguard')
 
     # Configure APScheduler
     app.config['SCHEDULER_API_ENABLED'] = True
