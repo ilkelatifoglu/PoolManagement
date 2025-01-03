@@ -62,14 +62,6 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/events"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Events
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
             to="/attend-event"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
