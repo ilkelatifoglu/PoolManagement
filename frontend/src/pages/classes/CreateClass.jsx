@@ -239,6 +239,15 @@ const CreateClass = () => {
           onChange={handleInputChange}
           required
         />
+        <Input
+          label="Lane Number"
+          name="lane_number"
+          type="number"
+          min="1"
+          value={formData.lane_number}
+          onChange={handleInputChange}
+          required
+        />
         <Button type="submit">Create Class</Button>
       </form>
     </div>
