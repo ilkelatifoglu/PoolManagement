@@ -109,12 +109,15 @@ const EvaluationPage = () => {
               <td>{item.Pool}</td>
               <td>${item.Price}</td>
               <td>
+                {/* Show Evaluate Coach Button */}
                 {!item.is_evaluated_coach && (
                   <Button onClick={() => handleEvaluate(item, "coach")}>
                     Evaluate Coach
                   </Button>
                 )}
-                {!item.is_evaluated_class && (
+
+                {/* Show Evaluate Class Button only for Class reservations */}
+                {item.Reservation === "Class" && !item.is_evaluated_class && (
                   <Button onClick={() => handleEvaluate(item, "class")}>
                     Evaluate Class
                   </Button>

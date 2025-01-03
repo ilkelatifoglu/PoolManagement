@@ -81,7 +81,7 @@ const AddMoneyPage = () => {
         </label>
         <div className="add-money-date-cvv">
           <label>
-            Expiration Month:
+            Month:
             <select value={month} onChange={(e) => setMonth(e.target.value)}>
               {Array.from({ length: 12 }, (_, i) => (
                 <option key={i + 1} value={i + 1}>
@@ -91,7 +91,7 @@ const AddMoneyPage = () => {
             </select>
           </label>
           <label>
-            Expiration Year:
+            Year:
             <select value={year} onChange={(e) => setYear(e.target.value)}>
               {years.map((y) => (
                 <option key={y} value={y}>

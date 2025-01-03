@@ -141,6 +141,11 @@ const Sidebar = () => {
             Cancel Event
           </NavLink>
         </li>
+        <li>
+          <Link to="/viewrate" onClick={toggleSidebar}>
+            Coach/Class Evaluations
+          </Link>
+        </li>
       </ul>
     </div>
   );

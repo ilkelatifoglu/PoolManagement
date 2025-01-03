@@ -19,5 +19,31 @@ export const evaluationService = {
       throw error;
     }
   },
-};
 
+  getCoachAverageRatings: async () => {
+    try {
+      const response = await api.get("/eval/coach-average-rating");
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  getCoachEvaluations: async (coachId) => {
+    try {
+      const response = await api.get(`/eval/coach-evaluations/${coachId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  getClassEvaluations:async (coachId) => {
+    try {
+      const response = await api.get(`/eval/class-evaluations/${coachId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+};

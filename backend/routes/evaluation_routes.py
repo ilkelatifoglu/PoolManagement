@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from services.evaluation_service import EvaluationService
-from utils.jwt_util import token_required
+from utils.jwt_util import token_required 
 
 evaluation_bp = Blueprint('eval', __name__)
 @evaluation_bp.route('/evaluations', methods=['GET'])
@@ -19,3 +19,23 @@ def submit_evaluation(current_user):
     EvaluationService.save_evaluation(data, swimmer_id)
     return jsonify({"message": "Evaluation submitted successfully"}), 200
 
+@evaluation_bp.route('/coach-average-rating', methods=['GET'])
+@token_required
+def get_coach_average_rating(current_user):
+    ratings = EvaluationService.get_coach_average_rating()
+    print("Backend Coach Ratings Response:", ratings)  # Debugging backend response
+    return jsonify(ratings), 200
+
+@evaluation_bp.route('/coach-evaluations/<int:coach_id>', methods=['GET'])
+@token_required
+def get_coach_evaluations(current_user, coach_id):
+    print("Requested CoachID:", coach_id)  # Debugging incoming coach_id
+    evaluations = EvaluationService.get_evaluations_for_coach(coach_id)
+    return jsonify(evaluations), 200
+
+@evaluation_bp.route('/class-evaluations/<int:coach_id>', methods=['GET'])
+@token_required
+def get_class_evaluations(current_user, coach_id):
+    print("Requested CoachID for Class Evaluations:", coach_id)  # Debugging
+    evaluations = EvaluationService.get_class_evaluations_for_coach(coach_id)
+    return jsonify(evaluations), 200

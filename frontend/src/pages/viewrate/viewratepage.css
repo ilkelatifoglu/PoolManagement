@@ -1,0 +1,47 @@
+.viewrate-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.viewrate-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.viewrate-table th,
+.viewrate-table td {
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.viewrate-table th {
+  background-color: #dbdbf8;
+  font-weight: bold;
+  border-bottom: 2px solid #ddd;
+}
+
+.viewrate-table td {
+  border-top: 1px solid #ddd;
+}
+
+.action-buttons {
+  display: flex; /* Aligns buttons in a row */
+  justify-content: center; /* Center-aligns the buttons */
+  align-items: center; /* Vertically aligns the buttons */
+  gap: 10px; /* Adds space between the buttons */
+  flex-wrap: nowrap; /* Prevents wrapping to a new line */
+}
+
+.coach-rating-title{
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 26px;
+  margin-bottom: 20px;
+  color: #000000;
+  text-align: center;
+}
